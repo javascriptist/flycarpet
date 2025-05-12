@@ -17,7 +17,6 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
   const customer = await retrieveCustomer()
   const cart = await retrieveCart()
   let shippingOptions: StoreCartShippingOption[] = []
-
   if (cart) {
     const { shipping_options } = await listCartOptions()
 

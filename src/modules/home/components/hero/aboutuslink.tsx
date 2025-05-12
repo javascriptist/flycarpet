@@ -24,7 +24,7 @@ const AboutUsLink: React.FC<AboutusLinkProps> = ({ countryCode }) => {
               ? "Nafis gilamlar yasash bo‘yicha sayohatimiz hamda sifat va innovatsiyalarga bo‘lgan sadoqatimiz bilan tanishing."
               : "Познакомьтесь с нашим путешествием по созданию изысканных ковров и нашей преданностью качеству и инновациям."}
           </p>
-          <Link href="/about-us">
+          <Link href="/about">
             <Button variant="primary" className="bg-ui-fg-component bg-black rounded-3xl py-4 px-8 text-bold">
               {isLang ? "Biz haqimizda" : "О нас"}
             </Button> 

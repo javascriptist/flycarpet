@@ -39,7 +39,7 @@ const WhyUs: React.FC = () => {
   return (
     <div className="cover">
       <div className="cover bg-gray-100 my-10 mx-14">
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px', padding: '20px' }}>
+        <div style={{ gap: '20px', padding: '20px' }} className='flex justify-between max-md:flex-col'>
           {items.map((item, index) => (
             <div
               className='flex flex-col bg-white'

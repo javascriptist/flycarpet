@@ -91,7 +91,7 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
               level="h1"
               className="text-3xl leading-10 text-ui-fg-component text-white font-normal"
             >
-              {isLang ? "Urgaz gilamlari" : "Ковры Urgaz"}
+              {isLang ? "Fly Carpet gilamlari" : "Ковры Fly Carpet"}
             </Heading>
             <Heading
               level="h2"
