@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 import createMiddleware from 'next-intl/middleware';
 
 const BACKEND_URL = process.env.MEDUSA_BACKEND_URL
-const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "pk_c7743b1c0214b07fc28b46c900e8c370708bc9a61a310fe78d6ae87f458715bd"
 const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "us"
 
 export default createMiddleware({
