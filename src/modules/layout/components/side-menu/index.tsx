@@ -101,7 +101,7 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                         />
                       </div>
                       <Text className="flex justify-between txt-compact-small">
-                        © {new Date().getFullYear()} Urgaz store. All rights
+                        © {new Date().getFullYear()} Fly Carpet. All rights
                         reserved.
                       </Text>
                     </div>

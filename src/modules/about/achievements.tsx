@@ -1,12 +1,16 @@
 import React from 'react';
 
-const Achievements = () => {
+interface AchievementsProps {
+  countryCode?: string;
+}
+const Achievements = ({ countryCode }: AchievementsProps) => {
+  const isLang = countryCode === "uz";
   const data = [
-    { number: '10M+', text: 'Happy Customers Worldwide' },
-    { number: '99.9%', text: 'Uptime Guarantee' },
-    { number: '50+', text: 'Countries Served' },
-    { number: '25 Years', text: 'Industry Experience' },
-  ];
+    { number: '10k+', text: isLang ? 'Baxtli mijozlar O‘zbekiston bo‘ylab' : 'довольных клиентов по всему Узбекистану' },
+    { number: '99.9%', text: isLang ? 'aniqlik va ishonch ' : 'точность и надёжность сервиса' },
+    { number: '800+', text: isLang ? 'dizayn assortimentda — har bir did uchun' : 'дизайнов в ассортименте — на любой вкус' },
+    { number: '8', text: isLang ? 'yillik tajriba' : 'лет опыта' },
+  ]
 
   return (
     <div className='cover'>
@@ -16,7 +20,7 @@ const Achievements = () => {
             key={index}
             className="text-center p-6 flex flex-col w-1/4 max-md:w-full"
           >
-            <h2 className="text-4xl">{item.number}</h2>
+            <h2 className="text-4xl text-[#FF6A1A]">{item.number}</h2>
             <p className="text-gray-700 mt-2">{item.text}</p>
           </div>
         ))}

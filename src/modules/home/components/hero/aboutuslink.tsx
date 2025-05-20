@@ -25,7 +25,7 @@ const AboutUsLink: React.FC<AboutusLinkProps> = ({ countryCode }) => {
               : "Познакомьтесь с нашим путешествием по созданию изысканных ковров и нашей преданностью качеству и инновациям."}
           </p>
           <Link href="/about">
-            <Button variant="primary" className="bg-ui-fg-component bg-black rounded-3xl py-4 px-8 text-bold">
+            <Button variant="secondary" className="bg-ui-fg-component bg-[#FF6A1A] hover:bg-[#e55d17] rounded-3xl py-4 px-8 text-bold border-0">
               {isLang ? "Biz haqimizda" : "О нас"}
             </Button> 
           </Link>

@@ -10,7 +10,24 @@ const HeroCollections: React.FC<HeroCollectionsProps> = ({ countryCode }) => {
   return (
     <section className="py-14 px-12 bg-gray-100">
       <div className="container mx-auto px-4 py-5">
-        <h2 className="text-3xl font-bold text-center mb-3 mt-2 coll-text"> {isLang ? "Bizning to'plamlar" : "Наши коллекции"}</h2>
+      <h2 className="text-3xl font-bold text-center mb-3 mt-2 coll-text">
+        {isLang ? (
+          <>
+            Biz<span className="border-b-4 border-[#FF6A1A] inline-block">ning{' '}
+            
+              to'plam</span>lar
+            
+          </>
+        ) : (
+          <>
+            На<span className="border-b-4 border-[#FF6A1A] inline-block">ши{' '}
+            
+              коллекц</span>ии
+            
+          </>
+        )}
+      </h2>
+
         <div className="flex justify-between text-white div-container">
           <div className="div1 flex justify-between flex-col w-1/2 h-41rem">
             <div className="bg-white div1-1 p-6 mb-1 group relative flex flex-col justify-end bg-opacity-50" style={{ backgroundImage: 'url(/alawn.png)', height: '20rem', backgroundSize: "cover" }}>

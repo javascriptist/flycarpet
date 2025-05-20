@@ -29,7 +29,9 @@ const About: React.FC<AboutProps> = ({ title, description, imageUrl }) => {
               alt="Current Image"
               layout={'fill'}
               objectFit="cover"
+              className="rounded-lg shadow-lg border-t-4 border-[#FF6A1A] bg-gray-100 border-r-4"
             />
+            
           </div>
 
     </div>

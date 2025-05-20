@@ -31,7 +31,7 @@ export default async function Nav() {
             >
               <Image  
                 src="/flycarpetlogo.png"
-                alt="Urgaz Logo"
+                alt="Fly Carpet Logo"
                 width={150}
                 height={40}
               />

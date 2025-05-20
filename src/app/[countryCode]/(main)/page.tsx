@@ -9,9 +9,9 @@ import AboutUsLink from "@modules/home/components/hero/aboutuslink"
 import CollectionSlide from "@modules/home/components/hero/collectionslide"
 import ProductSlide from "@modules/home/components/hero/productsslide"
 export const metadata: Metadata = {
-  title: "URGAZ Store",
+  title: "FLY Carpet Store",
   description:
-    "Urgaz gilamlarini sotib oling. O'zbekiston bo'ylab yetkazib berish.",
+    "FLY CARPET Gilamlari. O'zbekiston bo'ylab yetkazib berish.",
 }
 
 export default async function Home(props: {

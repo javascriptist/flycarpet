@@ -147,7 +147,7 @@ export default async function Footer() {
         </div>
         <div className="flex w-full mb-16 justify-between text-ui-fg-muted">
           <Text className="txt-compact-small">
-            © {new Date().getFullYear()} Urgaz store. All rights reserved.
+            © {new Date().getFullYear()} Fly Carpet. All rights reserved.
           </Text>
           {/* <MedusaCTA /> */}
         </div>

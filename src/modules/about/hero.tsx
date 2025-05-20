@@ -16,7 +16,7 @@ const AboutHero = () => {
         className='mt-5'
         style={{
           height: '200px',
-          backgroundImage: 'url("/logoblackss.png")',
+          backgroundImage: 'url("/flycarpetlogo.png")',
           backgroundSize: 'contain',
           // no-repeat
           backgroundRepeat: 'no-repeat',

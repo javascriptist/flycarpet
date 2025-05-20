@@ -7,6 +7,7 @@ import ProductList from "./products-list"
 import Footer from "@modules/layout/templates/footer"
 import { useTranslation } from "next-i18next"
 
+
 interface HeroProps {
   countryCode: string;
 }
@@ -74,7 +75,7 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
       <div className="img w-[100%] h-[40vh]">
         <Image
           src="/rug-hero.jpg"
-          alt="Picture of the author"
+          alt="Hero Image"
           objectFit="cover"
           width={0}
           height={0}
@@ -87,11 +88,26 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
       <div className="txt-and-btn w-[100%] h-[45vh]">
         <div className="flex flex-col small:pr-16 pl-12 pt-28 pb-28 gap-3 bg-black">
           <span>
-            <Heading
+          <Heading
               level="h1"
-              className="text-3xl leading-10 text-ui-fg-component text-white font-normal"
+              className="text-3xl leading-10 text-ui-fg-component text-white font-normal mb-6"
             >
-              {isLang ? "Fly Carpet gilamlari" : "Ковры Fly Carpet"}
+              {isLang ? (
+                <>
+                <span className="border-b-4 border-[#FF6A1A] inline-block">
+                  Fly Carpet 
+                  </span>
+                    {' '}gilamlari
+                  
+                </>
+              ) : (
+                <>
+                  Ковры{' '}
+                  <span className="border-b-4 border-[#FF6A1A] inline-block">
+                    Fly Carpet
+                  </span>
+                </>
+              )}
             </Heading>
             <Heading
               level="h2"
@@ -104,7 +120,7 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
             href=""
             target="_blank"
           >
-            <Button variant="secondary" className="bg-ui-fg-component bg-white rounded-3xl py-4 px-8 text-md">
+            <Button variant="secondary" className="bg-ui-fg-component bg-[#FF6A1A] hover:bg-[#e55d17] text-white rounded-3xl py-4 px-8 text-md">
               {isLang ? "Mahsulotlarni ko'rish" : "Посмотреть продукты"}
             </Button>
           </a>

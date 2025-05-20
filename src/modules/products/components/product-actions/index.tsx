@@ -119,10 +119,10 @@ export default function ProductActions({
       <div className="flex flex-col gap-y-2" ref={actionsRef}>
         <div>
           {(product.variants?.length ?? 0) > 1 && (
-            <div className="flex flex-col gap-y-4">
+            <div className="flex flex-col gap-y-4 mb-4 ">
               {(product.options || []).map((option) => {
                 return (
-                  <div key={option.id}>
+                  <div key={option.id} >
                     <OptionSelect
                       option={option}
                       current={options[option.id]}
@@ -150,8 +150,8 @@ export default function ProductActions({
             isAdding ||
             !isValidVariant
           }
-          variant="primary"
-          className="w-full h-10 rounded-3xl"
+          variant="secondary"
+          className="w-full h-10 rounded-3xl bg-[#FF6A1A] text-white hover:bg-[#D4682D] transition-all duration-200 border-transparent outline-none focus:outline-none focus:ring-2 focus:ring-[#FF6A1A] focus:ring-offset-2 focus:ring-offset-white"
           isLoading={isAdding}
           data-testid="add-product-button"
         >
