@@ -20,23 +20,12 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "http",
-        hostname: "localhost",
-      },
-      {
-        protocol: "https",
-        hostname: "medusa-public-images.s3.eu-west-1.amazonaws.com",
-      },
-      {
-        protocol: "https",
-        hostname: "medusa-server-testing.s3.amazonaws.com",
-      },
-      {
-        protocol: "https",
-        hostname: "flycarpet.s3.eu-west-2.amazonaws.com",
-      },
+    domains: [
+      "flycarpet.s3.eu-west-2.amazonaws.com",
+      "localhost",
+      "images.unsplash.com",
+      "avatars.githubusercontent.com",
+      "lh3.googleusercontent.com",
     ],
   },
 }
