@@ -81,7 +81,7 @@ const ProductSlide: React.FC<ProductSlideProps> = ({ listOfProducts, countryCode
                   alt={`Slide ${index}`}
                 />
                 <div className="product-card-text py-5 px-2 text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%'} }>
-                  <h2 className="text-lg text-center">{product.title}</h2>
+                  <h2 className="text-lg text-center">{product.title.includes("###") ? (isLang ? product.title.split("###")[0] : product.title.split("###")[1]) : product.title}</h2>
                   <div className="text-center text-blue-500 underline opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out absolute left-[42%] top-[300px] text-black bg-white rounded-full p-2">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" className="size-6">
                     <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />

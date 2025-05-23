@@ -26,7 +26,7 @@ const ProductInfo = ({ product, countryCode }: ProductInfoProps) => {
           className="text-3xl leading-10 text-ui-fg-base"
           data-testid="product-title"
         >
-          {product.title.includes("###") ? isLang ? product.title.split("###")[0] : product.title.split("###")[1] : product.title}
+          {product.title.includes("###") ? (isLang ? product.title.split("###")[0] : product.title.split("###")[1]) : product.title}
         </Heading>
 
         <Text
@@ -34,7 +34,7 @@ const ProductInfo = ({ product, countryCode }: ProductInfoProps) => {
           data-testid="product-description"
         >
           {
-            product.description?.includes("###") ? isLang ? product.description.split("###")[0] : product.description.split("###")[1] : product.description
+            product.description?.includes("###") ? (isLang ? product.description.split("###")[0] : product.description.split("###")[1]) : product.description
 }
           {product.description}
         </Text>

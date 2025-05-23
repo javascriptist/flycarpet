@@ -1,6 +1,7 @@
 'use client';
 import React, { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
+import toCyrillic from '@lib/util/latintocrylic';
 
 interface CollectionSlideProps {
   listOfCollections: Array<{ id: string; handle: string; title: string }>;
@@ -67,7 +68,10 @@ const CollectionSlide: React.FC<CollectionSlideProps> = ({ listOfCollections, co
                   alt={`Slide ${index}`}
                 />
                 <div className="collection-card-text py-5 px-2" style={{ display: 'flex', justifyContent: 'space-between', width: '100%'} }>
-                  <h2 className="text-center text-xl font-bold">{collection.title}</h2>
+                  <h2 className="text-center text-xl font-bold">{
+                    isLang ? collection.title : toCyrillic(collection.title)
+                  }
+                  </h2>
                   <a href={`/collections/${collection.handle}`} className="text-center text-blue-500 underline">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#FF6A1A" className="size-6">
                       <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
