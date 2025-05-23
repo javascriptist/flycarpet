@@ -31,7 +31,6 @@ const ProductSlide: React.FC<ProductSlideProps> = ({ listOfProducts, countryCode
     },
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
-
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
     setSelectedIndex(emblaApi.selectedScrollSnap());
@@ -46,7 +45,7 @@ const ProductSlide: React.FC<ProductSlideProps> = ({ listOfProducts, countryCode
   const isLang = countryCode === "uz";
   // create a function that gives true if countryCode is kg else false
   return (
-    <div className="relative mx-14 my-10 px-5 py-10 bg-gray-100">
+    <div className="relative mx-14 my-10 px-5 py-10 bg-gray-100 max-md: px-2 max-md:mx-2">
       <div className="title-and-button" style={{ display: 'flex', justifyContent: 'space-between'}}>
         <div className="title-text mb-10">
           <h2 className="text-4xl"> {isLang ? "Eng so'ngi mahsulotlar" : "Последние продукты"}</h2>

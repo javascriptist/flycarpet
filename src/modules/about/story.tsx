@@ -18,18 +18,14 @@ const About: React.FC<AboutProps> = ({ title, description, imageUrl }) => {
         </p>
       </div>
       <div
-            style={{
-              position: 'relative',
-              width: '500px',
-              height: '425px',
-            }}
+            className=" relative w-[500px] h-[425px] max-md:w-[360px]"
           >
             <Image
               src={imageUrl}
               alt="Current Image"
               layout={'fill'}
               objectFit="cover"
-              className="rounded-lg shadow-lg border-t-4 border-[#FF6A1A] bg-gray-100 border-r-4"
+              className="rounded-lg shadow-lg border-t-4 border-[#FF6A1A] bg-gray-100 border-r-4 max-md: w-full max-md:h-1/2"
             />
             
           </div>

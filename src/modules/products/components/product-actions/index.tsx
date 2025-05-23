@@ -172,6 +172,7 @@ export default function ProductActions({
           isAdding={isAdding}
           show={!inView}
           optionsDisabled={!!disabled || isAdding}
+          isLang={isLang}
         />
       </div>
     </>

@@ -27,10 +27,10 @@ const CollectionSlide: React.FC<CollectionSlideProps> = ({ listOfCollections, co
   }, [emblaApi, onSelect]);
   const isLang = countryCode === "uz";
   return (
-    <div className="relative mx-14 my-10 px-5 py-10 bg-gray-100">
+    <div className="relative mx-14 my-10 px-5 py-10 bg-gray-100 max-md: px-2 max-md:mx-2">
       <div className="title-and-button" style={{ display: 'flex', justifyContent: 'space-between'}}>
         <div className="title-text">
-          <h2 className="text-4xl text-left"> 
+          <h2 className="text-4xl text-left max-md:text-3xl"> 
             {isLang ? "Eng so'ngi kolleksiyalar" : "Последние коллекции"}
           </h2>
           <div className="w-100 h-[1.9px] bg-[#FF6A1A] mb-6 rounded-full"></div>

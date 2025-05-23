@@ -21,6 +21,7 @@ type MobileActionsProps = {
   isAdding?: boolean
   show: boolean
   optionsDisabled: boolean
+  isLang?: boolean
 }
 
 const MobileActions: React.FC<MobileActionsProps> = ({
@@ -33,6 +34,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   isAdding,
   show,
   optionsDisabled,
+  isLang,
 }) => {
   const { state, open, close } = useToggleState()
 
@@ -111,7 +113,9 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                   <span>
                     {variant
                       ? Object.values(options).join(" / ")
-                      : "Select Options"}
+                      : isLang
+                      ? "Tanlang"
+                      : "Выберите"} 
                   </span>
                   <ChevronDown />
                 </div>
@@ -119,15 +123,17 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               <Button
                 onClick={handleAddToCart}
                 disabled={!inStock || !variant}
-                className="w-full"
+                className="w-full rounded-3xl bg-[#FF6A1A] text-white hover:bg-[#D4682D] transition-all duration-200 "
                 isLoading={isAdding}
                 data-testid="mobile-cart-button rounded-3xl"
+                //secondary
+                variant="secondary"
               >
                 {!variant
-                  ? "Select variant"
+                  ? (isLang ? "Tanlang" : "Выберите")
                   : !inStock
-                  ? "Out of stock"
-                  : "Add to cart"}
+                  ? (isLang ? "Mavjud emas" : "Недоступно")
+                  : (isLang ? "Savatchaga qo'shish" : "Добавить в корзину")}
               </Button>
             </div>
           </div>

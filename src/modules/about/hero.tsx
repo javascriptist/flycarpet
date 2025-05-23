@@ -2,7 +2,7 @@ import React from 'react';
 
 const AboutHero = () => {
   return (
-    <div style={{ textAlign: 'center' }} className='px-16 py-10'>
+    <div style={{ textAlign: 'center' }} className='px-16 py-10 max-md:px-2 max-md:mx-2'>
       <div
         style={{
           width: '100%',

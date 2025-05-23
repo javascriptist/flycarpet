@@ -72,7 +72,7 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
             className="h-[75vh] w-[50%] object-cover"
           />
         </div>*/}
-      <div className="img w-[100%] h-[40vh]">
+      <div className="img w-[100%] h-[50vh]">
         <Image
           src="/rug-hero.jpg"
           alt="Hero Image"
@@ -80,12 +80,12 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
           width={0}
           height={0}
           sizes="100vw"
-          style={{ width: '100%', height: '40vh' }}
+          style={{ width: '100%', height: '50vh' }}
           quality={100}
           className="object-cover"
         />
       </div>
-      <div className="txt-and-btn w-[100%] h-[45vh]">
+      <div className="txt-and-btn w-[100%] h-[55vh]">
         <div className="flex flex-col small:pr-16 pl-12 pt-28 pb-28 gap-3 bg-black">
           <span>
           <Heading

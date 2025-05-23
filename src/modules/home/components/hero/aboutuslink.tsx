@@ -9,7 +9,7 @@ interface AboutusLinkProps {
 const AboutUsLink: React.FC<AboutusLinkProps> = ({ countryCode }) => {
   const isLang = countryCode === "uz";
   return (
-    <div className="cover p-14">
+    <div className="cover p-14 max-md:p-2 max-md:mx-2">
       <div
         className="relative w-full h-screen bg-cover bg-center h-30vh md:h-50vh flex items-center justify-center"
         style={{ backgroundImage: 'url(/aboutuslink.jpg)', height: '400px' }}

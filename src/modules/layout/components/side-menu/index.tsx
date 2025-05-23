@@ -8,6 +8,7 @@ import { Fragment } from "react"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CountrySelect from "../country-select"
 import { HttpTypes } from "@medusajs/types"
+import { usePathname } from "next/navigation"
 
 const SideMenuItems = {
   Bosh: "/",
@@ -26,7 +27,8 @@ const SideMenuItems2 = {
 
 const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
   const toggleState = useToggleState()
-
+  const pathname = usePathname()
+  const isLang = pathname.split("/")[1] === "uz"
   return (
     <div className="h-full">
       <div className="flex items-center h-full">
@@ -75,7 +77,7 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                               className="hover:text-gray-200 flex gap-2"
                               onClick={close}
                             >
-                              {value[1]}
+                              { isLang ? value[1] : value[2]}
                             </LocalizedClientLink>
                           </li>
                         )

@@ -3,10 +3,13 @@ import { Heading, Text } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 type ProductInfoProps = {
-  product: HttpTypes.StoreProduct
+  product: HttpTypes.StoreProduct,
+  countryCode?: string
 }
 
-const ProductInfo = ({ product }: ProductInfoProps) => {
+const ProductInfo = ({ product, countryCode }: ProductInfoProps) => {
+  const isLang = countryCode === "uz"
+
   return (
     <div id="product-info">
       <div className="flex flex-col gap-y-4 lg:max-w-[500px] mx-auto">
@@ -23,13 +26,16 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           className="text-3xl leading-10 text-ui-fg-base"
           data-testid="product-title"
         >
-          {product.title}
+          {product.title.includes("###") ? isLang ? product.title.split("###")[0] : product.title.split("###")[1] : product.title}
         </Heading>
 
         <Text
           className="text-medium text-ui-fg-subtle whitespace-pre-line"
           data-testid="product-description"
         >
+          {
+            product.description?.includes("###") ? isLang ? product.description.split("###")[0] : product.description.split("###")[1] : product.description
+}
           {product.description}
         </Text>
       </div>

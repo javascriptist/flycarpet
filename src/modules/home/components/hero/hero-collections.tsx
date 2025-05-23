@@ -8,7 +8,7 @@ interface HeroCollectionsProps {
 const HeroCollections: React.FC<HeroCollectionsProps> = ({ countryCode }) => {
   const isLang = countryCode === "uz";
   return (
-    <section className="py-14 px-12 bg-gray-100">
+    <section className="py-14 px-12 bg-gray-100 max-md: px-2 max-md:mx-2 max-md:py-14">
       <div className="container mx-auto px-4 py-5">
       <h2 className="text-3xl font-bold text-center mb-3 mt-2 coll-text">
         {isLang ? (
