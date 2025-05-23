@@ -28,6 +28,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
                   style={{
                     objectFit: "cover",
                   }}
+                  unoptimized
                 />
               )}
             </Container>
