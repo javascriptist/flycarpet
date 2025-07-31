@@ -41,7 +41,6 @@ const ProductSlide: React.FC<ProductSlideProps> = ({ listOfProducts, countryCode
     emblaApi.on('select', onSelect);
     onSelect();
   }, [emblaApi, onSelect]);
-
   const isLang = countryCode === "uz";
   // create a function that gives true if countryCode is kg else false
   return (
@@ -71,7 +70,7 @@ const ProductSlide: React.FC<ProductSlideProps> = ({ listOfProducts, countryCode
           <div className={styles.container}>
             {listOfProducts.map((product, index) => (
               <a className={styles.slide} key={index} 
-              href={`/products/${countryCode ? countryCode + '/' : ''}${product.handle}`}
+              href={`/${countryCode ? countryCode + '/' : ''}products/${product.handle}`}
               // 3 slides per view
               >
                 {/* Adjust the styles as needed */}
