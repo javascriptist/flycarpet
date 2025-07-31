@@ -71,7 +71,7 @@ const ProductSlide: React.FC<ProductSlideProps> = ({ listOfProducts, countryCode
           <div className={styles.container}>
             {listOfProducts.map((product, index) => (
               <a className={styles.slide} key={index} 
-              href={`/products/${product.handle}`}
+              href={`/products/${countryCode ? countryCode + '/' : ''}${product.handle}`}
               // 3 slides per view
               >
                 {/* Adjust the styles as needed */}
