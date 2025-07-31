@@ -35,8 +35,7 @@ const ProductInfo = ({ product, countryCode }: ProductInfoProps) => {
         >
           {
             product.description?.includes("###") ? (isLang ? product.description.split("###")[0] : product.description.split("###")[1]) : product.description
-}
-          {product.description}
+          }
         </Text>
       </div>
     </div>

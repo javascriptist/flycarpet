@@ -36,7 +36,11 @@ const HeroCollections: React.FC<HeroCollectionsProps> = ({ countryCode }) => {
                       {isLang ? "Ko'rish" : "Посмотреть"}
                     </Button>
                 </a>
-                <h3 className="text-xl font-semibold mt-4">{isLang ? "Sun'iy gazon" : "Искусственный газон"}</h3>
+                <h3 className="text-xl font-semibold mt-4 inline-block">
+                  <span className="border-b-0 border-transparent group-hover:border-b-4 group-hover:border-[#FF6A1A] transition-all duration-300 inline-block">
+                  {isLang ? "Sun'iy gazon" : "Искусственный газон"}
+                  </span>
+                </h3>
                 <p className="mt-2 text-white opacity-0 max-h-0 overflow-hidden group-hover:opacity-100 group-hover:max-h-[100px] transition-all duration-500">
                   {isLang ? "Ichki va tashqi foydalanish uchun mo‘ljallangan sun’iy chim qoplamalar."
                     : "Искусственные покрытия для внутреннего и внешнего использования."}
@@ -48,7 +52,10 @@ const HeroCollections: React.FC<HeroCollectionsProps> = ({ countryCode }) => {
                   {isLang ? "Ko'rish" : "Посмотреть"}
                 </Button>
               </a>
-              <h3 className="text-xl font-semibold mt-4">{isLang ? "Tafting" : "Туфтинг"}</h3>
+              <h3 className="text-xl font-semibold mt-4">
+                <span className="border-b-0 border-transparent group-hover:border-b-4 group-hover:border-[#FF6A1A] transition-all duration-300 inline-block">
+                  {isLang ? "Tafting" : "Туфтинг"}</span>
+                </h3>
               <p className="mt-2 text-white opacity-0 max-h-0 overflow-hidden group-hover:opacity-100 group-hover:max-h-[100px] transition-all duration-500">
                {isLang ? 
                   "Tufted texnologiyasi asosida ishlab chiqarilgan gilamlar"
@@ -64,7 +71,11 @@ const HeroCollections: React.FC<HeroCollectionsProps> = ({ countryCode }) => {
                   {isLang ? "Ko'rish" : "Посмотреть"}
                 </Button>
               </a>
-            <h3 className="text-xl font-semibold mt-4">{isLang ? "Gilamlar" : "Ковры"}</h3>
+            <h3 className="text-xl font-semibold mt-4">
+              <span className="border-b-0 border-transparent group-hover:border-b-4 group-hover:border-[#FF6A1A] transition-all duration-300 inline-block">
+                {isLang ? "Gilamlar" : "Ковры"}
+              </span>
+            </h3>
             <p className="mt-2 text-white opacity-0 max-h-0 overflow-hidden group-hover:opacity-100 group-hover:max-h-[100px] transition-all duration-500">
               {isLang ? "An’anaviy tugun usuli hamda mashina to'qilgan zamonaviy dizayndagi gilamlar." : "Традиционные ковры ручной работы и современные машинные ковры."}
             </p>
