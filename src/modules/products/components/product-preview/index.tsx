@@ -26,7 +26,7 @@ export default async function ProductPreview({
 
   const { cheapestPrice } = getProductPrice({
     product,
-  })∞
+  })
   return (
     <LocalizedClientLink href={`/products/${product.handle}`} className="group ">
       <div data-testid="product-wrapper p-4">
