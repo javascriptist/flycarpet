@@ -10,6 +10,11 @@ export const paymentInfoMap: Record<
   string,
   { title: string; icon: React.JSX.Element }
 > = {
+  // Custom Payme (Paycom) pseudo provider id used by the storefront
+  pp_payme_custom: {
+    title: "Payme",
+    icon: <CreditCard />,
+  },
   pp_stripe_stripe: {
     title: "Credit card",
     icon: <CreditCard />,
@@ -27,7 +32,7 @@ export const paymentInfoMap: Record<
     icon: <PayPal />,
   },
   pp_system_default: {
-    title: "Manual Payment",
+    title: "Yetkazgandan keyingi to'lov",
     icon: <CreditCard />,
   },
   // Add more payment providers here
@@ -42,6 +47,9 @@ export const isPaypal = (providerId?: string) => {
 }
 export const isManual = (providerId?: string) => {
   return providerId?.startsWith("pp_system_default")
+}
+export const isPayme = (providerId?: string) => {
+  return providerId?.startsWith("pp_payme_")
 }
 
 // Add currencies that don't need to be divided by 100

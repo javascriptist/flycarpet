@@ -1,7 +1,7 @@
 "use client"
 
 import { RadioGroup } from "@headlessui/react"
-import { isStripe as isStripeFunc, paymentInfoMap } from "@lib/constants"
+import { isStripe as isStripeFunc, paymentInfoMap, isPayme } from "@lib/constants"
 import { initiatePaymentSession } from "@lib/data/cart"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
 import { Button, Container, Heading, Text, clx } from "@medusajs/ui"
@@ -10,6 +10,7 @@ import PaymentContainer, {
   StripeCardContainer,
 } from "@modules/checkout/components/payment-container"
 import Divider from "@modules/common/components/divider"
+import { getPaymeStatus, createPaymeReceipt, buildPaymeCheckoutUrl } from "@lib/paymeClient"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 
@@ -39,6 +40,7 @@ const Payment = ({
   const isOpen = searchParams.get("step") === "payment"
 
   const isStripe = isStripeFunc(selectedPaymentMethod)
+  const [paymeEnabled, setPaymeEnabled] = useState(false)
 
   const setPaymentMethod = async (method: string) => {
     setError(null)
@@ -75,13 +77,24 @@ const Payment = ({
   const handleSubmit = async () => {
     setIsLoading(true)
     try {
+      // If Payme is selected, create a receipt and redirect instead of creating a Medusa payment session
+      if (isPayme(selectedPaymentMethod)) {
+        const { receiptId } = await createPaymeReceipt({
+          amount: Math.max(0, cart?.total || 0),
+          orderId: cart?.id || "order",
+          returnUrl: typeof window !== "undefined" ? window.location.href : undefined,
+        })
+        window.location.href = buildPaymeCheckoutUrl(receiptId)
+        return
+      }
+
       const shouldInputCard =
         isStripeFunc(selectedPaymentMethod) && !activeSession
 
       const checkActiveSession =
         activeSession?.provider_id === selectedPaymentMethod
 
-      if (!checkActiveSession) {
+  if (!checkActiveSession && !isPayme(selectedPaymentMethod)) {
         await initiatePaymentSession(cart, {
           provider_id: selectedPaymentMethod,
         })
@@ -105,6 +118,17 @@ const Payment = ({
   useEffect(() => {
     setError(null)
   }, [isOpen])
+
+  // Check Payme availability on mount
+  useEffect(() => {
+    let mounted = true
+    getPaymeStatus()
+      .then((s) => mounted && setPaymeEnabled(Boolean(s?.paymeEnabled)))
+      .catch(() => mounted && setPaymeEnabled(false))
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   return (
     <div className="bg-white">
@@ -162,6 +186,13 @@ const Payment = ({
                     )}
                   </div>
                 ))}
+                {paymeEnabled && (
+                  <PaymentContainer
+                    paymentInfoMap={paymentInfoMap}
+                    paymentProviderId="pp_payme_custom"
+                    selectedPaymentOptionId={selectedPaymentMethod}
+                  />
+                )}
               </RadioGroup>
             </>
           )}
