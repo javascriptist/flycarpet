@@ -37,3 +37,4 @@ export default async function CheckoutForm({
       <Review cart={cart} countryCode={countryCode} />
     </div>
   )
+}
