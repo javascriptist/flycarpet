@@ -17,10 +17,13 @@ import { SubmitButton } from "../submit-button"
 const Addresses = ({
   cart,
   customer,
+  countryCode,
 }: {
   cart: HttpTypes.StoreCart | null
   customer: HttpTypes.StoreCustomer | null
+  countryCode?: string
 }) => {
+  const isLang = countryCode === "uz"
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -46,7 +49,7 @@ const Addresses = ({
           level="h2"
           className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
         >
-          Shipping Address
+          {isLang ? "Yetkazib berish manzili" : "Адрес доставки"}
           {!isOpen && <CheckCircleSolid />}
         </Heading>
         {!isOpen && cart?.shipping_address && (
@@ -80,11 +83,11 @@ const Addresses = ({
                   Billing address
                 </Heading>
 
-                <BillingAddress cart={cart} />
+                <BillingAddress />
               </div>
             )}
             <SubmitButton className="mt-6" data-testid="submit-address-button">
-              Continue to delivery
+              {isLang ? "Yetkazib berishga o'tish" : "Перейти к доставке"}
             </SubmitButton>
             <ErrorMessage error={message} data-testid="address-error-message" />
           </div>
@@ -100,7 +103,7 @@ const Addresses = ({
                     data-testid="shipping-address-summary"
                   >
                     <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                      Shipping Address
+                      {isLang ? "Yetkazib berish manzili" : "Адрес доставки"}
                     </Text>
                     <Text className="txt-medium text-ui-fg-subtle">
                       {cart.shipping_address.first_name}{" "}
@@ -124,7 +127,7 @@ const Addresses = ({
                     data-testid="shipping-contact-summary"
                   >
                     <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                      Contact
+                      {isLang ? "Aloqa" : "Контакт"}
                     </Text>
                     <Text className="txt-medium text-ui-fg-subtle">
                       {cart.shipping_address.phone}
@@ -139,12 +142,12 @@ const Addresses = ({
                     data-testid="billing-address-summary"
                   >
                     <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                      Billing Address
+                      {isLang ? "Hisob-kitob manzili" : "Адрес для выставления счета"}
                     </Text>
 
                     {sameAsBilling ? (
                       <Text className="txt-medium text-ui-fg-subtle">
-                        Billing- and delivery address are the same.
+                        {isLang ? "Hisob-kitob va yetkazib berish manzili bir xil." : "Адрес для выставления счета и доставки совпадают."}
                       </Text>
                     ) : (
                       <>

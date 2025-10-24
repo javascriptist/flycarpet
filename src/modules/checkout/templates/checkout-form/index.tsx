@@ -9,16 +9,18 @@ import Shipping from "@modules/checkout/components/shipping"
 export default async function CheckoutForm({
   cart,
   customer,
+  countryCode,
 }: {
   cart: HttpTypes.StoreCart | null
   customer: HttpTypes.StoreCustomer | null
+  countryCode: string
 }) {
   if (!cart) {
     return null
   }
 
   const shippingMethods = await listCartShippingMethods(cart.id)
-  const paymentMethods = await listCartPaymentMethods(cart.region?.id ?? "")
+  const paymentMethods = await listCartPaymentMethods(cart.region?.id!)
 
   if (!shippingMethods || !paymentMethods) {
     return null
@@ -26,13 +28,12 @@ export default async function CheckoutForm({
 
   return (
     <div className="w-full grid grid-cols-1 gap-y-8">
-      <Addresses cart={cart} customer={customer} />
+      <Addresses cart={cart} customer={customer} countryCode={countryCode} />
 
-      <Shipping cart={cart} availableShippingMethods={shippingMethods} />
+      <Shipping cart={cart} availableShippingMethods={shippingMethods} countryCode={countryCode} />
 
-      <Payment cart={cart} availablePaymentMethods={paymentMethods} />
+      <Payment cart={cart} availablePaymentMethods={paymentMethods} countryCode={countryCode} />
 
-      <Review cart={cart} />
+      <Review cart={cart} countryCode={countryCode} />
     </div>
   )
-}

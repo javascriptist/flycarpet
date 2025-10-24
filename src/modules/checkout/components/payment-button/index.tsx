@@ -11,12 +11,15 @@ import ErrorMessage from "../error-message"
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
   "data-testid": string
+  countryCode?: string
 }
 
 const PaymentButton: React.FC<PaymentButtonProps> = ({
   cart,
   "data-testid": dataTestId,
+  countryCode,
 }) => {
+  const isLang = countryCode === "uz"
   const notReady =
     !cart ||
     !cart.shipping_address ||
@@ -37,10 +40,10 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
       )
     case isManual(paymentSession?.provider_id):
       return (
-        <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />
+        <ManualTestPaymentButton notReady={notReady} countryCode={countryCode} />
       )
     default:
-      return <Button disabled>Select a payment method</Button>
+      return <Button disabled>{isLang ? "To'lov usulini tanlang" : "Выберите способ оплаты"}</Button>
   }
 }
 
@@ -151,7 +154,8 @@ const StripePaymentButton = ({
   )
 }
 
-const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
+const ManualTestPaymentButton = ({ notReady, countryCode }: { notReady: boolean; countryCode?: string }) => {
+  const isLang = countryCode === "uz"
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -180,7 +184,7 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
         size="large"
         data-testid="submit-order-button"
       >
-        Place order
+        {isLang ? "Buyurtma berish" : "Оформить заказ"}
       </Button>
       <ErrorMessage
         error={errorMessage}

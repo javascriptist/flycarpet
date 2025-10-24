@@ -4,8 +4,12 @@ import ItemsPreviewTemplate from "@modules/cart/templates/preview"
 import DiscountCode from "@modules/checkout/components/discount-code"
 import CartTotals from "@modules/common/components/cart-totals"
 import Divider from "@modules/common/components/divider"
+import { getExchangeRate } from "@lib/data/exchange-rate"
 
-const CheckoutSummary = ({ cart }: { cart: any }) => {
+const CheckoutSummary = async ({ cart, countryCode }: { cart: any; countryCode: string }) => {
+  const exchangeRate = await getExchangeRate()
+  const rate = exchangeRate?.rate
+
   return (
     <div className="sticky top-0 flex flex-col-reverse small:flex-col gap-y-8 py-8 small:py-0 ">
       <div className="w-full bg-white flex flex-col">
@@ -14,13 +18,13 @@ const CheckoutSummary = ({ cart }: { cart: any }) => {
           level="h2"
           className="flex flex-row text-3xl-regular items-baseline"
         >
-          In your Cart
+          {countryCode === "uz" ? "Hisob" : "Счет"}   
         </Heading>
         <Divider className="my-6" />
-        <CartTotals totals={cart} />
-        <ItemsPreviewTemplate cart={cart} />
+        <CartTotals totals={cart} exchangeRate={rate} countryCode={countryCode} />
+        <ItemsPreviewTemplate cart={cart} exchangeRate={rate} countryCode={countryCode} />
         <div className="my-6">
-          <DiscountCode cart={cart} />
+          <DiscountCode cart={cart} countryCode={countryCode} />
         </div>
       </div>
     </div>

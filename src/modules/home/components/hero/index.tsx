@@ -120,7 +120,7 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
             href=""
             target="_blank"
           >
-            <Button variant="secondary" className="bg-ui-fg-component bg-[#FF6A1A] hover:bg-[#e55d17] text-white rounded-3xl py-4 px-8 text-md">
+            <Button variant="secondary" className="bg-ui-fg-component liquid-glass text-white rounded-3xl py-4 px-8 text-md">
               {isLang ? "Mahsulotlarni ko'rish" : "Посмотреть продукты"}
             </Button>
           </a>

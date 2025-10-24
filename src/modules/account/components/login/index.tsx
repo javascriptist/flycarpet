@@ -46,7 +46,7 @@ const Login = ({ setCurrentView , countryCode }: Props) => {
           />
         </div>
         <ErrorMessage error={message} data-testid="login-error-message" />
-        <SubmitButton data-testid="sign-in-button" className="w-full mt-6 rounded-3xl">
+        <SubmitButton data-testid="sign-in-button" className="w-full mt-6 rounded-3xl liquid-glass">
           { isLang ? "Kirish" : "Войти" }
         </SubmitButton>
       </form>

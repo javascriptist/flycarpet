@@ -1,9 +1,12 @@
 import { listProducts } from "@lib/data/products"
+import { retrieveCart } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
-import ProductActions from "@modules/products/components/product-actions"
+import EnhancedProductActions from "@modules/products/components/enhanced-product-actions"
+import { getExchangeRate } from "@lib/data/exchange-rate"
 
 /**
- * Fetches real time pricing for a product and renders the product actions component.
+ * Fetches real time pricing for a product and renders the enhanced product actions component.
+ * Supports both regular products and roll carpets with custom length selection.
  */
 export default async function ProductActionsWrapper({
   id,
@@ -13,7 +16,7 @@ export default async function ProductActionsWrapper({
   region: HttpTypes.StoreRegion
 }) {
   const product = await listProducts({
-    queryParams: { id: [id] },
+    queryParams: { id: [id] } as any,
     regionId: region.id,
   }).then(({ response }) => response.products[0])
 
@@ -21,5 +24,15 @@ export default async function ProductActionsWrapper({
     return null
   }
 
-  return <ProductActions product={product} region={region} />
+  const exchangeRate = await getExchangeRate()
+  const cart = await retrieveCart().catch(() => null)
+
+  return (
+    <EnhancedProductActions 
+      product={product} 
+      region={region} 
+      exchangeRate={exchangeRate?.rate}
+      cartId={cart?.id}
+    />
+  )
 }

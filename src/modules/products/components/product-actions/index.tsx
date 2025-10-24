@@ -16,6 +16,7 @@ type ProductActionsProps = {
   product: HttpTypes.StoreProduct
   region: HttpTypes.StoreRegion
   disabled?: boolean
+  exchangeRate?: number
 }
 
 const optionsAsKeymap = (
@@ -29,7 +30,9 @@ const optionsAsKeymap = (
 
 export default function ProductActions({
   product,
+  region,
   disabled,
+  exchangeRate,
 }: ProductActionsProps) {
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
@@ -139,7 +142,7 @@ export default function ProductActions({
           )}
         </div>
 
-        <ProductPrice product={product} variant={selectedVariant} />
+        <ProductPrice product={product} variant={selectedVariant} exchangeRate={exchangeRate} />
 
         <Button
           onClick={handleAddToCart}
@@ -173,6 +176,7 @@ export default function ProductActions({
           show={!inView}
           optionsDisabled={!!disabled || isAdding}
           isLang={isLang}
+          exchangeRate={exchangeRate}
         />
       </div>
     </>

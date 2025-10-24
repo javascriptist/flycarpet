@@ -1,7 +1,8 @@
 "use client"
 
-import { convertToLocale } from "@lib/util/money"
+import { convertToLocale, formatUzsAmount } from "@lib/util/money"
 import React from "react"
+import PriceWithTooltip from "@modules/common/components/price-with-tooltip"
 
 type CartTotalsProps = {
   totals: {
@@ -14,10 +15,11 @@ type CartTotalsProps = {
     currency_code: string
     shipping_subtotal?: number | null
   },
-  countryCode: string
+  countryCode?: string
+  exchangeRate?: number // UZS exchange rate
 }
 
-const CartTotals: React.FC<CartTotalsProps> = ({ totals, countryCode }) => {
+const CartTotals: React.FC<CartTotalsProps> = ({ totals, countryCode, exchangeRate }) => {
   const isLang = countryCode === "uz"
   const {
     currency_code,
@@ -29,6 +31,20 @@ const CartTotals: React.FC<CartTotalsProps> = ({ totals, countryCode }) => {
     shipping_subtotal,
   } = totals
 
+  // Convert to UZS if rate provided and currency is USD
+  const isUsd = currency_code?.toLowerCase() === "usd"
+  const shouldConvert = isUsd && exchangeRate
+
+  const formatPrice = (amount: number) => {
+    if (shouldConvert) {
+      // Convert USD cents to UZS
+      const usdDollars = amount
+      const uzsAmount = Math.round(usdDollars * exchangeRate!)
+      return formatUzsAmount(uzsAmount)
+    }
+    return convertToLocale({ amount, currency_code })
+  }
+
   return (
     <div>
       <div className="flex flex-col gap-y-2 txt-medium text-ui-fg-subtle ">
@@ -37,19 +53,18 @@ const CartTotals: React.FC<CartTotalsProps> = ({ totals, countryCode }) => {
             {isLang? 'Oraliq hisob (yetkazib berish va soliqdan tashqari)' : 'Промежуточный итог (без доставки и налогов)'}
           </span>
           <span data-testid="cart-subtotal" data-value={subtotal || 0}>
-            {convertToLocale({ amount: subtotal ?? 0, currency_code })}
+            {formatPrice(subtotal ?? 0)}
           </span>
         </div>
         {!!discount_total && (
           <div className="flex items-center justify-between">
-            <span>Discount</span>
+            <span>{isLang ? "Chegirma" : "Скидка"}</span>
             <span
               className="text-ui-fg-interactive"
               data-testid="cart-discount"
               data-value={discount_total || 0}
             >
-              -{" "}
-              {convertToLocale({ amount: discount_total ?? 0, currency_code })}
+              - {formatPrice(discount_total ?? 0)}
             </span>
           </div>
         )}
@@ -58,7 +73,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ totals, countryCode }) => {
             {isLang ? "Yetkazib berish" : "Доставка"}
           </span>
           <span data-testid="cart-shipping" data-value={shipping_subtotal || 0}>
-            {convertToLocale({ amount: shipping_subtotal ?? 0, currency_code })}
+            {formatPrice(shipping_subtotal ?? 0)}
           </span>
         </div>
         <div className="flex justify-between">
@@ -66,19 +81,18 @@ const CartTotals: React.FC<CartTotalsProps> = ({ totals, countryCode }) => {
             {isLang ? "Soliq" : "Налог"}
           </span>
           <span data-testid="cart-taxes" data-value={tax_total || 0}>
-            {convertToLocale({ amount: tax_total ?? 0, currency_code })}
+            {formatPrice(tax_total ?? 0)}
           </span>
         </div>
         {!!gift_card_total && (
           <div className="flex items-center justify-between">
-            <span>Gift card</span>
+            <span>{isLang ? "Sovg'a kartasi" : "Подарочная карта"}</span>
             <span
               className="text-ui-fg-interactive"
               data-testid="cart-gift-card-amount"
               data-value={gift_card_total || 0}
             >
-              -{" "}
-              {convertToLocale({ amount: gift_card_total ?? 0, currency_code })}
+              - {formatPrice(gift_card_total ?? 0)}
             </span>
           </div>
         )}
@@ -93,7 +107,14 @@ const CartTotals: React.FC<CartTotalsProps> = ({ totals, countryCode }) => {
           data-testid="cart-total"
           data-value={total || 0}
         >
-          {convertToLocale({ amount: total ?? 0, currency_code })}
+          {shouldConvert ? (
+            <PriceWithTooltip 
+              uzsAmount={Math.round((total ?? 0) * exchangeRate!)}
+              usdAmount={total ?? 0}
+            />
+          ) : (
+            formatPrice(total ?? 0)
+          )}
         </span>
       </div>
       <div className="h-px w-full border-b border-gray-200 mt-4" />

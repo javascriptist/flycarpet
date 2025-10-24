@@ -17,11 +17,14 @@ const getCountryCode = () => {
 const CartTemplate = ({
   cart,
   customer,
+  exchangeRate,
 }: {
   cart: HttpTypes.StoreCart | null
   customer: HttpTypes.StoreCustomer | null
+  exchangeRate: number | undefined
 }) => {
   const countryCode = getCountryCode()
+
   return (
     <div className="py-12">
       <div className="content-container" data-testid="cart-container">
@@ -34,14 +37,14 @@ const CartTemplate = ({
                   <Divider />
                 </>
               )}
-              <ItemsTemplate cart={cart} countryCode={countryCode} />
+              <ItemsTemplate cart={cart} countryCode={countryCode} exchangeRate={exchangeRate} />
             </div>
             <div className="relative">
               <div className="flex flex-col gap-y-8 sticky top-12">
                 {cart && cart.region && (
                   <>
                     <div className="bg-white py-6">
-                      <Summary cart={cart as any} countryCode={countryCode} />
+                      <Summary cart={cart as any} countryCode={countryCode} exchangeRate={exchangeRate} />
                     </div>
                   </>
                 )}
@@ -50,7 +53,7 @@ const CartTemplate = ({
           </div>
         ) : (
           <div>
-            <EmptyCartMessage />
+            <EmptyCartMessage countryCode={countryCode} />
           </div>
         )}
       </div>

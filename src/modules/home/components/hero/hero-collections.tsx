@@ -32,7 +32,7 @@ const HeroCollections: React.FC<HeroCollectionsProps> = ({ countryCode }) => {
           <div className="div1 flex justify-between flex-col w-1/2 h-41rem">
             <div className="bg-white div1-1 p-6 mb-1 group relative flex flex-col justify-end bg-opacity-50" style={{ backgroundImage: 'url(/alawn.png)', height: '20rem', backgroundSize: "cover" }}>
                 <a href= {countryCode + "/categories/gazon"} target="_blank" className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out absolute top-10 right-5">
-                    <Button variant="secondary" className="bg-ui-fg-component bg-white rounded-3xl py-3 px-6 text-md">
+                    <Button variant="secondary" className="bg-ui-fg-component liquid-glass-button-secondary rounded-3xl py-3 px-6 text-md shadow-lg">
                       {isLang ? "Ko'rish" : "Посмотреть"}
                     </Button>
                 </a>
@@ -48,7 +48,7 @@ const HeroCollections: React.FC<HeroCollectionsProps> = ({ countryCode }) => {
             </div>
             <div className="bg-white p-6 relative group relative flex flex-col justify-end" style={{ backgroundImage: 'url(/tufting.png)', height: '20rem', backgroundSize: "cover", backdropFilter: "contrast(0.5)" }}>
               <a href={countryCode + "/categories/tufting"} target="_blank" className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out absolute top-10 right-5">
-                <Button variant="secondary" className="bg-ui-fg-component bg-white rounded-3xl py-3 px-6 text-md">
+                <Button variant="secondary" className="bg-ui-fg-component liquid-glass-button-secondary rounded-3xl py-3 px-6 text-md shadow-lg">
                   {isLang ? "Ko'rish" : "Посмотреть"}
                 </Button>
               </a>
@@ -67,7 +67,7 @@ const HeroCollections: React.FC<HeroCollectionsProps> = ({ countryCode }) => {
           <div className="div2 bg-white p-6 w-1/2 h-41rem group relative flex flex-col justify-end ml-2"
            style={{ backgroundImage: 'url(/gilam-stock.png)', backgroundSize: "cover" }}>
               <a href={countryCode + "/categories/gilam"} target="_blank" className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out absolute top-10 right-5">
-                <Button variant="secondary" className="bg-ui-fg-component bg-white rounded-3xl py-3 px-6 text-md">
+                <Button variant="secondary" className="bg-ui-fg-component liquid-glass-button-secondary rounded-3xl py-3 px-6 text-md shadow-lg">
                   {isLang ? "Ko'rish" : "Посмотреть"}
                 </Button>
               </a>

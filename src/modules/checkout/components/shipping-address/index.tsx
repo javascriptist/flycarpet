@@ -1,11 +1,9 @@
 import { HttpTypes } from "@medusajs/types"
 import { Container } from "@medusajs/ui"
-import Checkbox from "@modules/common/components/checkbox"
 import Input from "@modules/common/components/input"
 import { mapKeys } from "lodash"
 import React, { useEffect, useMemo, useState } from "react"
 import AddressSelect from "../address-select"
-import CountrySelect from "../country-select"
 
 const ShippingAddress = ({
   customer,
@@ -18,17 +16,82 @@ const ShippingAddress = ({
   checked: boolean
   onChange: () => void
 }) => {
+  // Helper: normalize Uzbek phone numbers to +998XXXXXXXXX
+  const normalizeUzPhone = (input: string) => {
+    let digits = (input || "").replace(/\D/g, "")
+    if (digits.startsWith("00")) digits = digits.slice(2)
+    if (digits.startsWith("998")) {
+      // already in international format
+    } else if (digits.startsWith("8") && digits.length === 11) {
+      digits = "998" + digits.slice(1)
+    } else if (digits.startsWith("0")) {
+      digits = "998" + digits.replace(/^0+/, "")
+    } else if (digits.length <= 9) {
+      digits = "998" + digits
+    }
+    // Keep max 12 digits (998 + 9 local digits)
+    digits = digits.slice(0, 12)
+    return `+${digits}`
+  }
+
+  // Helper: mask phone as +998 90 123 45 67 while typing
+  const formatUzPhone = (input: string) => {
+    let digits = (input || "").replace(/\D/g, "")
+    if (digits.startsWith("00")) digits = digits.slice(2)
+    if (digits.startsWith("998")) {
+      digits = digits.slice(3)
+    } else if (digits.startsWith("8") && digits.length === 11) {
+      digits = digits.slice(1)
+    } else if (digits.startsWith("0")) {
+      digits = digits.replace(/^0+/, "")
+    }
+    // Limit to 9 local digits
+    digits = digits.slice(0, 9)
+    const p1 = digits.slice(0, 2)
+    const p2 = digits.slice(2, 5)
+    const p3 = digits.slice(5, 7)
+    const p4 = digits.slice(7, 9)
+    let out = "+998"
+    if (p1) out += ` ${p1}`
+    if (p2) out += ` ${p2}`
+    if (p3) out += ` ${p3}`
+    if (p4) out += ` ${p4}`
+    return out
+  }
+
+  // Simplified for Uzbekistan: only need address line, city, phone; email optional.
   const [formData, setFormData] = useState<Record<string, any>>({
+    // Required by backend: first_name; we treat user single name as first name.
     "shipping_address.first_name": cart?.shipping_address?.first_name || "",
-    "shipping_address.last_name": cart?.shipping_address?.last_name || "",
+    // Backend may still require last_name; auto-populate with first name if user doesn't provide one separately (we don't show separate field).
+    "shipping_address.last_name": cart?.shipping_address?.last_name || cart?.shipping_address?.first_name || "",
     "shipping_address.address_1": cart?.shipping_address?.address_1 || "",
-    "shipping_address.company": cart?.shipping_address?.company || "",
-    "shipping_address.postal_code": cart?.shipping_address?.postal_code || "",
     "shipping_address.city": cart?.shipping_address?.city || "",
-    "shipping_address.country_code": cart?.shipping_address?.country_code || "",
-    "shipping_address.province": cart?.shipping_address?.province || "",
-    "shipping_address.phone": cart?.shipping_address?.phone || "",
+  "shipping_address.company": cart?.shipping_address?.company || "N/A",
+    // Force Uzbekistan
+    "shipping_address.country_code": "uz",
+    "shipping_address.phone": cart?.shipping_address?.phone
+      ? formatUzPhone(cart.shipping_address.phone)
+      : "",
+    // Hidden fallback placeholders for fields some backends mark required; adjust as needed.
+    "shipping_address.postal_code": cart?.shipping_address?.postal_code || "100000", // default Uzbek postal code placeholder
+    "shipping_address.province": cart?.shipping_address?.province || "Berilmagan", // placeholder province
     email: cart?.email || "",
+    // Billing placeholders (backend may require). We'll keep them in sync when checkbox is checked.
+    "billing_address.first_name": cart?.billing_address?.first_name || "",
+    "billing_address.last_name":
+      cart?.billing_address?.last_name ||
+      cart?.billing_address?.first_name ||
+      "",
+    "billing_address.address_1": cart?.billing_address?.address_1 || "",
+    "billing_address.city": cart?.billing_address?.city || "",
+    "billing_address.company": cart?.billing_address?.company || "N/A",
+    "billing_address.country_code": "uz",
+    "billing_address.phone": cart?.billing_address?.phone
+      ? normalizeUzPhone(cart.billing_address.phone)
+      : "",
+    "billing_address.postal_code": cart?.billing_address?.postal_code || "100000",
+    "billing_address.province": cart?.billing_address?.province || "Berilmagan",
   })
 
   const countriesInRegion = useMemo(
@@ -45,29 +108,36 @@ const ShippingAddress = ({
     [customer?.addresses, countriesInRegion]
   )
 
-  const setFormAddress = (
-    address?: HttpTypes.StoreCartAddress,
-    email?: string
-  ) => {
+  const setFormAddress = (address?: HttpTypes.StoreCartAddress, email?: string) => {
     address &&
-      setFormData((prevState: Record<string, any>) => ({
-        ...prevState,
-        "shipping_address.first_name": address?.first_name || "",
-        "shipping_address.last_name": address?.last_name || "",
+      setFormData((prev) => ({
+        ...prev,
+        "shipping_address.first_name": address?.first_name || prev["shipping_address.first_name"],
+        "shipping_address.last_name": address?.last_name || prev["shipping_address.last_name"] || address?.first_name || prev["shipping_address.first_name"],
         "shipping_address.address_1": address?.address_1 || "",
-        "shipping_address.company": address?.company || "",
-        "shipping_address.postal_code": address?.postal_code || "",
         "shipping_address.city": address?.city || "",
-        "shipping_address.country_code": address?.country_code || "",
-        "shipping_address.province": address?.province || "",
-        "shipping_address.phone": address?.phone || "",
+  "shipping_address.company": prev["shipping_address.company"] || "N/A",
+        // Always enforce Uzbekistan
+        "shipping_address.country_code": "uz",
+        "shipping_address.phone": address?.phone
+          ? formatUzPhone(address.phone)
+          : prev["shipping_address.phone"],
+        "shipping_address.postal_code": prev["shipping_address.postal_code"],
+        "shipping_address.province": prev["shipping_address.province"],
+        // Always mirror billing to shipping
+        "billing_address.first_name": address?.first_name || prev["shipping_address.first_name"],
+        "billing_address.last_name": address?.last_name || address?.first_name || prev["shipping_address.first_name"],
+        "billing_address.address_1": address?.address_1 || "",
+        "billing_address.city": address?.city || "",
+        "billing_address.company": prev["billing_address.company"] || "N/A",
+        "billing_address.country_code": "uz",
+        "billing_address.phone": address?.phone
+          ? normalizeUzPhone(address.phone)
+          : prev["shipping_address.phone"],
+        "billing_address.postal_code": prev["shipping_address.postal_code"],
+        "billing_address.province": prev["shipping_address.province"],
       }))
-
-    email &&
-      setFormData((prevState: Record<string, any>) => ({
-        ...prevState,
-        email: email,
-      }))
+    email && setFormData((prev) => ({ ...prev, email }))
   }
 
   useEffect(() => {
@@ -81,16 +151,69 @@ const ShippingAddress = ({
     }
   }, [cart]) // Add cart as a dependency
 
+  // Safety net: ensure required fields never end up empty/null
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      "shipping_address.last_name": prev["shipping_address.last_name"] || prev["shipping_address.first_name"] || "Customer",
+      "billing_address.last_name": prev["billing_address.last_name"] || prev["billing_address.first_name"] || prev["shipping_address.first_name"] || "Customer",
+      "shipping_address.company": prev["shipping_address.company"] || "N/A",
+      "billing_address.company": prev["billing_address.company"] || "N/A",
+    }))
+  }, [formData["shipping_address.first_name"], formData["billing_address.first_name"]])
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLInputElement | HTMLSelectElement
     >
   ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+    const { name, value } = e.target
+    setFormData((prev) => {
+      const next: Record<string, any> = { ...prev, [name]: value }
+      // Keep last_name synced if user changes first_name and last_name is same or empty
+      if (name === "shipping_address.first_name") {
+        if (!prev["shipping_address.last_name"] || prev["shipping_address.last_name"] === prev["shipping_address.first_name"]) {
+          next["shipping_address.last_name"] = value
+        }
+        // Always mirror to billing
+        if (!prev["billing_address.first_name"]) next["billing_address.first_name"] = value
+        if (!prev["billing_address.last_name"] || prev["billing_address.last_name"] === prev["billing_address.first_name"]) {
+          next["billing_address.last_name"] = value
+        }
+      }
+      // Live mask for phone input
+      if (name === "shipping_address.phone") {
+        next[name] = formatUzPhone(value)
+        next["billing_address.phone"] = formatUzPhone(value)
+      }
+      // Guard country code to 'uz' regardless of UI
+      if (name === "shipping_address.country_code") {
+        next["shipping_address.country_code"] = "uz"
+        next["billing_address.country_code"] = "uz"
+      }
+      // Always mirror basic address fields
+      if (name === "shipping_address.address_1") next["billing_address.address_1"] = value
+      if (name === "shipping_address.city") next["billing_address.city"] = value
+      return next
     })
   }
+
+  const handlePhoneBlur = () => {
+    setFormData((prev) => ({
+      ...prev,
+      "shipping_address.phone": normalizeUzPhone(prev["shipping_address.phone"] || ""),
+      "billing_address.phone": normalizeUzPhone(prev["shipping_address.phone"] || ""),
+    }))
+  }
+
+  // Ensure last_name has safe fallbacks before submit flow reads state (do not auto-fill email visually)
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      "shipping_address.last_name": prev["shipping_address.last_name"] || prev["shipping_address.first_name"] || "Customer",
+      "billing_address.last_name": prev["billing_address.last_name"] || prev["billing_address.first_name"] || prev["shipping_address.first_name"] || "Customer",
+    }))
+  }, [])
 
   return (
     <>
@@ -112,7 +235,7 @@ const ShippingAddress = ({
       )}
       <div className="grid grid-cols-2 gap-4">
         <Input
-          label="First name"
+          label="Ism" // First name required
           name="shipping_address.first_name"
           autoComplete="given-name"
           value={formData["shipping_address.first_name"]}
@@ -121,16 +244,7 @@ const ShippingAddress = ({
           data-testid="shipping-first-name-input"
         />
         <Input
-          label="Last name"
-          name="shipping_address.last_name"
-          autoComplete="family-name"
-          value={formData["shipping_address.last_name"]}
-          onChange={handleChange}
-          required
-          data-testid="shipping-last-name-input"
-        />
-        <Input
-          label="Address"
+          label="Manzil" // Address
           name="shipping_address.address_1"
           autoComplete="address-line1"
           value={formData["shipping_address.address_1"]}
@@ -139,24 +253,7 @@ const ShippingAddress = ({
           data-testid="shipping-address-input"
         />
         <Input
-          label="Company"
-          name="shipping_address.company"
-          value={formData["shipping_address.company"]}
-          onChange={handleChange}
-          autoComplete="organization"
-          data-testid="shipping-company-input"
-        />
-        <Input
-          label="Postal code"
-          name="shipping_address.postal_code"
-          autoComplete="postal-code"
-          value={formData["shipping_address.postal_code"]}
-          onChange={handleChange}
-          required
-          data-testid="shipping-postal-code-input"
-        />
-        <Input
-          label="City"
+          label="Shahar" // City
           name="shipping_address.city"
           autoComplete="address-level2"
           value={formData["shipping_address.city"]}
@@ -164,53 +261,54 @@ const ShippingAddress = ({
           required
           data-testid="shipping-city-input"
         />
-        <CountrySelect
-          name="shipping_address.country_code"
-          autoComplete="country"
-          region={cart?.region}
-          value={formData["shipping_address.country_code"]}
-          onChange={handleChange}
-          required
-          data-testid="shipping-country-select"
-        />
         <Input
-          label="State / Province"
-          name="shipping_address.province"
-          autoComplete="address-level1"
-          value={formData["shipping_address.province"]}
-          onChange={handleChange}
-          data-testid="shipping-province-input"
-        />
-      </div>
-      <div className="my-8">
-        <Checkbox
-          label="Billing address same as shipping address"
-          name="same_as_billing"
-          checked={checked}
-          onChange={onChange}
-          data-testid="billing-address-checkbox"
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <Input
-          label="Email"
-          name="email"
-          type="email"
-          title="Enter a valid email address."
-          autoComplete="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          data-testid="shipping-email-input"
-        />
-        <Input
-          label="Phone"
+          label="Telefon (+998 …)"
           name="shipping_address.phone"
           autoComplete="tel"
           value={formData["shipping_address.phone"]}
           onChange={handleChange}
+          onBlur={handlePhoneBlur}
+          required
           data-testid="shipping-phone-input"
         />
+        {/* Country selector removed in UI; force 'uz' */}
+        <input type="hidden" name="shipping_address.country_code" value="uz" />
+        {/* Hidden shipping fields to satisfy backend if required */}
+        <input type="hidden" name="shipping_address.last_name" value={formData["shipping_address.last_name"] || formData["shipping_address.first_name"] || "Customer"} />
+        <input type="hidden" name="shipping_address.company" value={formData["shipping_address.company"] || "N/A"} />
+  <input type="hidden" name="shipping_address.postal_code" value={formData["shipping_address.postal_code"] || "100000"} />
+  <input type="hidden" name="shipping_address.province" value={formData["shipping_address.province"] || "Toshkent"} />
+        {/* Hidden billing fields to satisfy backend if required */}
+        <input type="hidden" name="billing_address.first_name" value={formData["billing_address.first_name"] || formData["shipping_address.first_name"] || "Customer"} />
+        <input type="hidden" name="billing_address.last_name" value={formData["billing_address.last_name"] || formData["billing_address.first_name"] || formData["shipping_address.first_name"] || "Customer"} />
+        <input type="hidden" name="billing_address.address_1" value={formData["billing_address.address_1"] || formData["shipping_address.address_1"]} />
+        <input type="hidden" name="billing_address.city" value={formData["billing_address.city"] || formData["shipping_address.city"]} />
+        <input type="hidden" name="billing_address.company" value={formData["billing_address.company"] || "N/A"} />
+        <input type="hidden" name="billing_address.country_code" value="uz" />
+        <input type="hidden" name="billing_address.phone" value={normalizeUzPhone(formData["billing_address.phone"] || formData["shipping_address.phone"] || "")} />
+        <input type="hidden" name="billing_address.postal_code" value={formData["billing_address.postal_code"]} />
+        <input type="hidden" name="billing_address.province" value={formData["billing_address.province"]} />
+      </div>
+      {/* Billing is always same as shipping; checkbox removed. */}
+      <div className="grid grid-cols-2 gap-4 mb-4 mt-4">
+        <Input
+          label="Email (ixtiyoriy)"
+          name="email_display"
+          type="email"
+          title="Enter a valid email address."
+          autoComplete="email"
+          value={formData.email || ""}
+          onChange={handleChange}
+          data-testid="shipping-email-input"
+        />
+        {/* Hidden email actually submitted; uses fallback only if user left it empty */}
+        <input
+          type="hidden"
+          name="email"
+          value={formData.email || `guest+${Date.now()}@example.com`}
+        />
+        {/* Hidden normalized phone version for backend if it needs strict E.164 */}
+        <input type="hidden" name="shipping_address.phone_normalized" value={normalizeUzPhone(formData["shipping_address.phone"] || "")} />
       </div>
     </>
   )

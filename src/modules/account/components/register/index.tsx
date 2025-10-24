@@ -85,7 +85,7 @@ const Register = ({ setCurrentView, countryCode }: Props) => {
           </LocalizedClientLink>
           { isLang ? " rozi bo'lasiz." : " вы соглашаетесь." }
         </span>
-        <SubmitButton className="w-full mt-6 rounded-3xl" data-testid="register-button">
+        <SubmitButton className="w-full mt-6 rounded-3xl liquid-glass" data-testid="register-button">
           {isLang ? "Ro'yxatdan o'tish" : "Зарегистрироваться"}
         </SubmitButton>
       </form>

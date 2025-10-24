@@ -13,6 +13,7 @@ type SummaryProps = {
     promotions: HttpTypes.StorePromotion[]
   },
   countryCode: string
+  exchangeRate?: number
 }
 function getCheckoutStep(cart: HttpTypes.StoreCart) {
   if (!cart?.shipping_address?.address_1 || !cart.email) {
@@ -24,7 +25,7 @@ function getCheckoutStep(cart: HttpTypes.StoreCart) {
   }
 }
 
-const Summary = ({ cart, countryCode }: SummaryProps) => {
+const Summary = ({ cart, countryCode, exchangeRate }: SummaryProps) => {
   const isLang = countryCode === "uz"
   const step = getCheckoutStep(cart)
 
@@ -35,12 +36,12 @@ const Summary = ({ cart, countryCode }: SummaryProps) => {
       </Heading>
       <DiscountCode cart={cart} countryCode={countryCode}/>
       <Divider />
-      <CartTotals totals={cart} countryCode={countryCode} />
+      <CartTotals totals={cart} countryCode={countryCode} exchangeRate={exchangeRate} />
       <LocalizedClientLink
         href={"/checkout?step=" + step}
         data-testid="checkout-button"
       >
-        <Button className="w-full h-10">
+        <Button className="w-full h-10 liquid-glass rounded-3xl">
           {isLang ? "To'lov" : "Оплата"}
         </Button>
       </LocalizedClientLink>

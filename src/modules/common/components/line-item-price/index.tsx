@@ -1,5 +1,5 @@
 import { getPercentageDiff } from "@lib/util/get-precentage-diff"
-import { convertToLocale } from "@lib/util/money"
+import { convertToLocale, formatUzsAmount } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
 import { clx } from "@medusajs/ui"
 
@@ -7,17 +7,43 @@ type LineItemPriceProps = {
   item: HttpTypes.StoreCartLineItem | HttpTypes.StoreOrderLineItem
   style?: "default" | "tight"
   currencyCode: string
+  exchangeRate?: number // Optional UZS exchange rate
 }
 
 const LineItemPrice = ({
   item,
   style = "default",
   currencyCode,
+  exchangeRate,
 }: LineItemPriceProps) => {
   const { total, original_total } = item
   const originalPrice = original_total
   const currentPrice = total
   const hasReducedPrice = currentPrice < originalPrice
+
+  // Convert to UZS if rate provided and currency is USD
+  const isUsd = currencyCode?.toLowerCase() === "usd"
+  const shouldConvert = isUsd && exchangeRate
+
+  const formatPrice = (amount: number) => {
+    if (shouldConvert) {
+      // Convert USD cents to UZS and show both
+      const usdDollars = amount
+      const uzsAmount = Math.round(usdDollars * exchangeRate!)
+      const uzsFormatted = formatUzsAmount(uzsAmount)
+      const usdFormatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(usdDollars)
+      return `${uzsFormatted} (${usdFormatted})`
+    }
+    return convertToLocale({
+      amount,
+      currency_code: currencyCode,
+    })
+  }
 
   return (
     <div className="flex flex-col gap-x-2 text-ui-fg-subtle items-end">
@@ -32,10 +58,7 @@ const LineItemPrice = ({
                 className="line-through text-ui-fg-muted"
                 data-testid="product-original-price"
               >
-                {convertToLocale({
-                  amount: originalPrice,
-                  currency_code: currencyCode,
-                })}
+                {formatPrice(originalPrice)}
               </span>
             </p>
             {style === "default" && (
@@ -51,10 +74,7 @@ const LineItemPrice = ({
           })}
           data-testid="product-price"
         >
-          {convertToLocale({
-            amount: currentPrice,
-            currency_code: currencyCode,
-          })}
+          {formatPrice(currentPrice)}
         </span>
       </div>
     </div>

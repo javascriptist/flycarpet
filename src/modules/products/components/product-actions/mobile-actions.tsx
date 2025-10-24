@@ -7,6 +7,7 @@ import ChevronDown from "@modules/common/icons/chevron-down"
 import X from "@modules/common/icons/x"
 
 import { getProductPrice } from "@lib/util/get-product-price"
+import { convertUsdToUzs, formatUzsAmount } from "@lib/util/money"
 import OptionSelect from "./option-select"
 import { HttpTypes } from "@medusajs/types"
 import { isSimpleProduct } from "@lib/util/product"
@@ -22,6 +23,7 @@ type MobileActionsProps = {
   show: boolean
   optionsDisabled: boolean
   isLang?: boolean
+  exchangeRate?: number
 }
 
 const MobileActions: React.FC<MobileActionsProps> = ({
@@ -35,6 +37,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   show,
   optionsDisabled,
   isLang,
+  exchangeRate,
 }) => {
   const { state, open, close } = useToggleState()
 
@@ -48,9 +51,24 @@ const MobileActions: React.FC<MobileActionsProps> = ({
       return null
     }
     const { variantPrice, cheapestPrice } = price
-
-    return variantPrice || cheapestPrice || null
-  }, [price])
+    const selectedPrice = variantPrice || cheapestPrice || null
+    
+    if (!selectedPrice || !exchangeRate) {
+      return selectedPrice
+    }
+    
+    // Convert prices to UZS
+    const calculatedPriceUzs = convertUsdToUzs(selectedPrice.calculated_price_number, exchangeRate)
+    const originalPriceUzs = selectedPrice.original_price_number
+      ? convertUsdToUzs(selectedPrice.original_price_number, exchangeRate)
+      : null
+    
+    return {
+      ...selectedPrice,
+      calculated_price: formatUzsAmount(calculatedPriceUzs),
+      original_price: originalPriceUzs ? formatUzsAmount(originalPriceUzs) : selectedPrice.original_price,
+    }
+  }, [price, exchangeRate])
 
   const isSimple = isSimpleProduct(product)
 
@@ -72,11 +90,17 @@ const MobileActions: React.FC<MobileActionsProps> = ({
           leaveTo="opacity-0"
         >
           <div
-            className="bg-white flex flex-col gap-y-3 justify-center items-center text-large-regular p-4 h-full w-full border-t border-gray-200"
+            className="flex flex-col gap-y-3 justify-center items-center text-large-regular p-4 h-full w-full border-t border-gray-200 liquid-glass-card"
             data-testid="mobile-actions"
+            style={{
+              background: 'rgba(255, 255, 255, 0.85)',
+              backdropFilter: 'blur(20px) saturate(150%)',
+            }}
           >
             <div className="flex items-center gap-x-2">
-              <span data-testid="mobile-title">{product.title}</span>
+              <span data-testid="mobile-title">
+                {product.title.includes("###") ? (isLang ? product.title.split("###")[0] : product.title.split("###")[1]) : product.title}
+              </span>
               <span>—</span>
               {selectedPrice ? (
                 <div className="flex items-end gap-x-2 text-ui-fg-base">
@@ -123,7 +147,11 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               <Button
                 onClick={handleAddToCart}
                 disabled={!inStock || !variant}
-                className="w-full rounded-3xl bg-[#FF6A1A] text-white hover:bg-[#D4682D] transition-all duration-200 "
+                className="w-full rounded-3xl liquid-glass text-[#D4682D] hover:text-[#D4682D] transition-all duration-200" 
+                // border color orange
+                style={{
+                  border: '1px solid #FF6A1A',
+                }}
                 isLoading={isAdding}
                 data-testid="mobile-cart-button rounded-3xl"
                 //secondary

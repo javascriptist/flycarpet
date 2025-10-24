@@ -2,13 +2,17 @@ import { clx } from "@medusajs/ui"
 
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
+import { convertUsdToUzs } from "@lib/util/money"
+import PriceWithTooltip from "@modules/common/components/price-with-tooltip"
 
 export default function ProductPrice({
   product,
   variant,
+  exchangeRate,
 }: {
   product: HttpTypes.StoreProduct
   variant?: HttpTypes.StoreProductVariant
+  exchangeRate?: number
 }) {
   const { cheapestPrice, variantPrice } = getProductPrice({
     product,
@@ -21,6 +25,14 @@ export default function ProductPrice({
     return <div className="block w-32 h-9 bg-gray-100 animate-pulse" />
   }
 
+  // Use provided exchange rate or fallback
+  const rate = exchangeRate || 12750
+
+  const calculatedPriceUzs = convertUsdToUzs(selectedPrice.calculated_price_number, rate)
+  const originalPriceUzs = selectedPrice.original_price_number 
+    ? convertUsdToUzs(selectedPrice.original_price_number, rate)
+    : null
+
   return (
     <div className="flex flex-col text-ui-fg-base">
       <span
@@ -29,23 +41,25 @@ export default function ProductPrice({
         })}
       >
         {!variant && " "}
-        <span
-          data-testid="product-price"
-          data-value={selectedPrice.calculated_price_number}
-        >
-          {selectedPrice.calculated_price}
+        <span data-testid="product-price">
+          <PriceWithTooltip 
+            uzsAmount={calculatedPriceUzs}
+            usdAmount={selectedPrice.calculated_price_number}
+          />
         </span>
       </span>
-      {selectedPrice.price_type === "sale" && (
+      {selectedPrice.price_type === "sale" && originalPriceUzs && (
         <>
           <p>
             <span className="text-ui-fg-subtle">Original: </span>
             <span
               className="line-through"
               data-testid="original-product-price"
-              data-value={selectedPrice.original_price_number}
             >
-              {selectedPrice.original_price}
+              <PriceWithTooltip 
+                uzsAmount={originalPriceUzs}
+                usdAmount={selectedPrice.original_price_number!}
+              />
             </span>
           </p>
           <span className="text-ui-fg-interactive">

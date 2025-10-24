@@ -17,6 +17,7 @@ type PaymentContainerProps = {
   disabled?: boolean
   paymentInfoMap: Record<string, { title: string; icon: JSX.Element }>
   children?: React.ReactNode
+  countryCode?: string
 }
 
 const PaymentContainer: React.FC<PaymentContainerProps> = ({
@@ -25,6 +26,7 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
   paymentInfoMap,
   disabled = false,
   children,
+  countryCode,
 }) => {
   const isDevelopment = process.env.NODE_ENV === "development"
 
@@ -47,16 +49,16 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
           <Text className="text-base-regular">
             {paymentInfoMap[paymentProviderId]?.title || paymentProviderId}
           </Text>
-          {isManual(paymentProviderId) && isDevelopment && (
-            <PaymentTest className="hidden small:block" />
+                    {isManual(paymentProviderId) && isDevelopment && (
+            <PaymentTest className="hidden small:block" countryCode={countryCode} />
           )}
         </div>
         <span className="justify-self-end text-ui-fg-base">
           {paymentInfoMap[paymentProviderId]?.icon}
         </span>
       </div>
-      {isManual(paymentProviderId) && isDevelopment && (
-        <PaymentTest className="small:hidden text-[10px]" />
+            {isManual(paymentProviderId) && isDevelopment && (
+        <PaymentTest className="small:hidden text-[10px]" countryCode={countryCode} />
       )}
       {children}
     </RadioGroupOption>

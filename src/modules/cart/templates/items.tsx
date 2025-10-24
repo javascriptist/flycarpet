@@ -9,14 +9,17 @@ import { count } from "console"
 type ItemsTemplateProps = {
   cart?: HttpTypes.StoreCart,
   countryCode: string
+  exchangeRate?: number
 }
 
 const ItemsTemplate = ({ 
   cart,
   countryCode,
+  exchangeRate,
 }: ItemsTemplateProps) => {
   const isLang = countryCode === "uz"
   const items = cart?.items
+
   return (
     <div>
       <div className="pb-3 flex items-center">
@@ -54,6 +57,8 @@ const ItemsTemplate = ({
                       key={item.id}
                       item={item}
                       currencyCode={cart?.currency_code}
+                      exchangeRate={exchangeRate}
+                      countryCode={countryCode}
                     />
                   )
                 })

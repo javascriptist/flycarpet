@@ -12,17 +12,35 @@ import LineItemUnitPrice from "@modules/common/components/line-item-unit-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/products/components/thumbnail"
+import { RollCarpetItem } from "@modules/cart/components/roll-carpet-item"
 import { useState } from "react"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem
   type?: "full" | "preview"
   currencyCode: string
+  exchangeRate?: number // UZS exchange rate for cart items
+  countryCode?: string
 }
 
-const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
+const Item = ({ item, type = "full", currencyCode, exchangeRate, countryCode }: ItemProps) => {
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  
+  // Check if this is a custom roll carpet
+  const isCustomCarpet = item.metadata?.carpet_type === "roll_custom"
+  
+  // If it's a custom carpet, use the special component
+  if (isCustomCarpet) {
+    return (
+      <RollCarpetItem 
+        item={item} 
+        countryCode={countryCode} 
+        exchangeRate={exchangeRate}
+        type={type}
+      />
+    )
+  }
 
   const changeQuantity = async (quantity: number) => {
     setError(null)
@@ -110,6 +128,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
             item={item}
             style="tight"
             currencyCode={currencyCode}
+            exchangeRate={exchangeRate}
           />
         </Table.Cell>
       )}
@@ -127,6 +146,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
                 item={item}
                 style="tight"
                 currencyCode={currencyCode}
+                exchangeRate={exchangeRate}
               />
             </span>
           )}
@@ -134,6 +154,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
             item={item}
             style="tight"
             currencyCode={currencyCode}
+            exchangeRate={exchangeRate}
           />
         </span>
       </Table.Cell>

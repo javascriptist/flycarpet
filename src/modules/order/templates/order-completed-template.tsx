@@ -12,11 +12,14 @@ import { HttpTypes } from "@medusajs/types"
 
 type OrderCompletedTemplateProps = {
   order: HttpTypes.StoreOrder
+  countryCode?: string
 }
 
 export default async function OrderCompletedTemplate({
   order,
+  countryCode,
 }: OrderCompletedTemplateProps) {
+  const isLang = countryCode === "uz"
   const cookies = await nextCookies()
 
   const isOnboarding = cookies.get("_medusa_onboarding")?.value === "true"
@@ -38,10 +41,10 @@ export default async function OrderCompletedTemplate({
           </Heading>
           <OrderDetails order={order} />
           <Heading level="h2" className="flex flex-row text-3xl-regular">
-            Summary
+            {isLang ? "Xulosa" : "Резюме"}
           </Heading>
           <Items order={order} />
-          <CartTotals totals={order} />
+          <CartTotals totals={order} countryCode={countryCode} />
           <ShippingDetails order={order} />
           <PaymentDetails order={order} />
           <Help />

@@ -32,7 +32,7 @@ export const paymentInfoMap: Record<
     icon: <PayPal />,
   },
   pp_system_default: {
-    title: "Yetkazgandan keyingi to'lov",
+    title: "System Default",
     icon: <CreditCard />,
   },
   // Add more payment providers here

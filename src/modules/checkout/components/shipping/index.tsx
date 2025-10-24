@@ -16,12 +16,15 @@ import { useEffect, useState } from "react"
 type ShippingProps = {
   cart: HttpTypes.StoreCart
   availableShippingMethods: HttpTypes.StoreCartShippingOption[] | null
+  countryCode?: string
 }
 
 const Shipping: React.FC<ShippingProps> = ({
   cart,
   availableShippingMethods,
+  countryCode,
 }) => {
+  const isLang = countryCode === "uz"
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingPrices, setIsLoadingPrices] = useState(true)
   const [calculatedPricesMap, setCalculatedPricesMap] = useState<
@@ -104,7 +107,7 @@ const Shipping: React.FC<ShippingProps> = ({
             }
           )}
         >
-          Delivery
+          {isLang ? "Yetkazib berish" : "Доставка"}
           {!isOpen && (cart.shipping_methods?.length ?? 0) > 0 && (
             <CheckCircleSolid />
           )}
@@ -193,7 +196,7 @@ const Shipping: React.FC<ShippingProps> = ({
             disabled={!cart.shipping_methods?.[0]}
             data-testid="submit-delivery-option-button"
           >
-            Continue to payment
+            {isLang ? "To'lovga o'tish" : "Перейти к оплате"}
           </Button>
         </div>
       ) : (
@@ -202,12 +205,12 @@ const Shipping: React.FC<ShippingProps> = ({
             {cart && (cart.shipping_methods?.length ?? 0) > 0 && (
               <div className="flex flex-col w-1/3">
                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                  Method
+                  {isLang ? "Usul" : "Способ"}
                 </Text>
                 <Text className="txt-medium text-ui-fg-subtle">
                   {cart.shipping_methods?.at(-1)?.name}{" "}
                   {convertToLocale({
-                    amount: cart.shipping_methods.at(-1)?.amount!,
+                    amount: cart.shipping_methods?.at(-1)?.amount!,
                     currency_code: cart?.currency_code,
                   })}
                 </Text>

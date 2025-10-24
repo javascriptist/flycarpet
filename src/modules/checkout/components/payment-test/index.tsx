@@ -1,10 +1,10 @@
 import { Badge } from "@medusajs/ui"
 
-const PaymentTest = ({ className }: { className?: string }) => {
+const PaymentTest = ({ className, countryCode }: { className?: string; countryCode?: string }) => {
+  const isLang = countryCode === "uz"
   return (
     <Badge color="orange" className={className}>
-      <span className="font-semibold">Attention:</span> For testing purposes
-      only.
+      <span className="font-semibold">{isLang ? "Diqqat:" : "Внимание:"}</span> {isLang ? "Faqat sinov maqsadida." : "Только для тестирования."}
     </Badge>
   )
 }
