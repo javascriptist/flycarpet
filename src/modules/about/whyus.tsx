@@ -4,8 +4,8 @@ import React from 'react';
 interface WhyUsProps {
   countryCode?: string;
 }
-const WhyUs: React.FC = (whyUsProps: WhyUsProps) => {
-  const isLang = whyUsProps.countryCode === "uz";
+const WhyUs: React.FC<WhyUsProps> = ({ countryCode }) => {
+  const isLang = countryCode === "uz";
 
 
   const items = [

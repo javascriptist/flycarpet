@@ -76,7 +76,7 @@ const ProductSlide: React.FC<ProductSlideProps> = ({ listOfProducts, countryCode
                 {/* Adjust the styles as needed */}
                 <img
                   className={styles.image}
-                  src={product.img}
+                  src={product.img || '/nofound.jpg'}
                   alt={`Slide ${index}`}
                 />
                 <div className="product-card-text py-5 px-2 text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%'} }>

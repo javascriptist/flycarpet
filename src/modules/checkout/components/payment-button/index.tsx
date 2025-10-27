@@ -1,6 +1,6 @@
 "use client"
 
-import { isManual, isStripe } from "@lib/constants"
+import { isManual, isPayme, isStripe } from "@lib/constants"
 import { placeOrder } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@medusajs/ui"
@@ -37,6 +37,11 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
           cart={cart}
           data-testid={dataTestId}
         />
+      )
+    case isPayme(paymentSession?.provider_id):
+      // Payme payment happens AFTER order creation on confirmation page
+      return (
+        <ManualTestPaymentButton notReady={notReady} countryCode={countryCode} />
       )
     case isManual(paymentSession?.provider_id):
       return (

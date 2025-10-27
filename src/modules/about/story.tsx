@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 interface AboutProps {
-  title: string;
+  title: string | React.ReactNode;
   description: string;
   imageUrl: string;
 }
