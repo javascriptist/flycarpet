@@ -1,4 +1,6 @@
 import { Heading } from "@medusajs/ui"
+import { getExchangeRate } from "@lib/data/exchange-rate"
+import { convertUsdToUzs } from "@lib/util/money"
 import { cookies as nextCookies } from "next/headers"
 
 import CartTotals from "@modules/common/components/cart-totals"
@@ -20,6 +22,8 @@ export default async function OrderCompletedTemplate({
   order,
   countryCode,
 }: OrderCompletedTemplateProps) {
+  const exchangeRateObj = await getExchangeRate()
+  const exchangeRate = exchangeRateObj?.rate || 12750
   const isLang = countryCode === "uz"
   const cookies = await nextCookies()
 
@@ -50,20 +54,25 @@ export default async function OrderCompletedTemplate({
           />
 
             {/* Direct Payme Form Button */}
-            {order.total > 0 && (
-              <form
-                method="POST"
-                action="https://checkout.paycom.uz"
-                style={{ display: "inline-block", marginTop: 24 }}
-              >
-                <input type="hidden" name="merchant" value={process.env.NEXT_PUBLIC_PAYME_MERCHANT_ID} />
-                <input type="hidden" name="amount" value={order.total * 100} />
-                <input type="hidden" name="account[order_id]" value={order.id} />
-                <button type="submit" className="bg-blue-600 text-white rounded px-6 py-3 font-semibold">
-                  {isLang ? "Payme orqali to'g'ridan-to'g'ri to'lash" : "Оплатить напрямую через Payme"}
-                </button>
-              </form>
-            )}
+              {order.total > 0 && (() => {
+                // Use shared conversion logic
+                const uzs = convertUsdToUzs(order.total, exchangeRate)
+                const tiyin = Math.round(uzs * 100)
+                return (
+                  <form
+                    method="POST"
+                    action="https://checkout.paycom.uz"
+                    style={{ display: "inline-block", marginTop: 24 }}
+                  >
+                    <input type="hidden" name="merchant" value={process.env.NEXT_PUBLIC_PAYME_MERCHANT_ID} />
+                    <input type="hidden" name="amount" value={tiyin} />
+                    <input type="hidden" name="account[order_id]" value={order.id} />
+                    <button type="submit" className="bg-blue-600 text-white rounded px-6 py-3 font-semibold">
+                      {isLang ? "Payme orqali to'g'ridan-to'g'ri to'lash" : "Оплатить напрямую через Payme"}
+                    </button>
+                  </form>
+                )
+              })()}
           
           <OrderDetails order={order} />
           <Heading level="h2" className="flex flex-row text-3xl-regular">
