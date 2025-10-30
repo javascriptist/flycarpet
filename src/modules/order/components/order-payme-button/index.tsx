@@ -49,15 +49,15 @@ export default function OrderPaymeButton({
       const callbackUrl = `${window.location.origin}/${countryCode}/order/${orderId}/confirmed`
 
       // Call backend to generate Payme payment link
-      const response = await fetch(`${backendUrl}/admin/payme-generate-link`, {
+      // Backend will fetch order, convert USD→UZS→Tiyin automatically
+      const response = await fetch(`${backendUrl}/store/payme-merchant/generate-link`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           orderId: orderId,
-          amount: amount, // Amount in cents
-          callbackUrl: callbackUrl,
+          // Backend calculates amount from order total (USD → Tiyin conversion)
         }),
       })
 
