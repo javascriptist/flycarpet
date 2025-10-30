@@ -9,7 +9,6 @@ import OrderDetails from "@modules/order/components/order-details"
 import ShippingDetails from "@modules/order/components/shipping-details"
 import PaymentDetails from "@modules/order/components/payment-details"
 import OrderPaymeButton from "@modules/order/components/order-payme-button"
-import PaymeForm from "@modules/order/components/payme-direct-form"
 import { HttpTypes } from "@medusajs/types"
 
 type OrderCompletedTemplateProps = {
@@ -50,20 +49,20 @@ export default async function OrderCompletedTemplate({
             paymentStatus={order.payment_status}
           />
 
-            {/* Direct Payme Button (form method) */}
+            {/* Direct Payme Form Button */}
             {order.total > 0 && (
-              <div className="mt-8">
-                <Heading level="h3" className="mb-2 text-lg font-semibold">
-                  {isLang ? "To'lovni Payme orqali to'g'ridan-to'g'ri amalga oshirish" : "Оплатить напрямую через Payme"}
-                </Heading>
-                {/* Convert total to tiyin (UZS x 100) */}
-                <PaymeForm
-                  merchantId={process.env.NEXT_PUBLIC_PAYME_MERCHANT_ID}
-                  orderId={order.id}
-                  amountTiyin={order.total * 100}
-                  lang={isLang ? "uz" : "ru"}
-                />
-              </div>
+              <form
+                method="POST"
+                action="https://checkout.paycom.uz"
+                style={{ display: "inline-block", marginTop: 24 }}
+              >
+                <input type="hidden" name="merchant" value={process.env.NEXT_PUBLIC_PAYME_MERCHANT_ID} />
+                <input type="hidden" name="amount" value={order.total * 100} />
+                <input type="hidden" name="account[order_id]" value={order.id} />
+                <button type="submit" className="bg-blue-600 text-white rounded px-6 py-3 font-semibold">
+                  {isLang ? "Payme orqali to'g'ridan-to'g'ri to'lash" : "Оплатить напрямую через Payme"}
+                </button>
+              </form>
             )}
           
           <OrderDetails order={order} />
