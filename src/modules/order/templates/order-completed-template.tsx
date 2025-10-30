@@ -9,6 +9,7 @@ import OrderDetails from "@modules/order/components/order-details"
 import ShippingDetails from "@modules/order/components/shipping-details"
 import PaymentDetails from "@modules/order/components/payment-details"
 import OrderPaymeButton from "@modules/order/components/order-payme-button"
+import PaymeForm from "@modules/order/components/payme-direct-form"
 import { HttpTypes } from "@medusajs/types"
 
 type OrderCompletedTemplateProps = {
@@ -48,6 +49,22 @@ export default async function OrderCompletedTemplate({
             countryCode={countryCode}
             paymentStatus={order.payment_status}
           />
+
+            {/* Direct Payme Button (form method) */}
+            {order.total > 0 && (
+              <div className="mt-8">
+                <Heading level="h3" className="mb-2 text-lg font-semibold">
+                  {isLang ? "To'lovni Payme orqali to'g'ridan-to'g'ri amalga oshirish" : "Оплатить напрямую через Payme"}
+                </Heading>
+                {/* Convert total to tiyin (UZS x 100) */}
+                <PaymeForm
+                  merchantId={process.env.NEXT_PUBLIC_PAYME_MERCHANT_ID}
+                  orderId={order.id}
+                  amountTiyin={order.total * 100}
+                  lang={isLang ? "uz" : "ru"}
+                />
+              </div>
+            )}
           
           <OrderDetails order={order} />
           <Heading level="h2" className="flex flex-row text-3xl-regular">
