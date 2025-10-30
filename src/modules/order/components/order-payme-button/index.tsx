@@ -46,6 +46,7 @@ export default function OrderPaymeButton({
 
     try {
       const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
+      const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
       const callbackUrl = `${window.location.origin}/${countryCode}/order/${orderId}/confirmed`
 
       // Call backend to generate Payme payment link
@@ -54,6 +55,7 @@ export default function OrderPaymeButton({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-publishable-api-key": publishableKey,
         },
         body: JSON.stringify({
           orderId: orderId,
@@ -121,7 +123,7 @@ export default function OrderPaymeButton({
           </div>
           <div className="flex items-center gap-2">
             <span>✓</span>
-            <span>{isLang ? "Buyurtma raqami: {orderId}" : "Номер заказа: {orderId}"}</span>
+            <span>{isLang ? `Buyurtma raqami: ${orderId}` : `Номер заказа: ${orderId}`}</span>
           </div>
         </div>
 
