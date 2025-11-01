@@ -9,11 +9,7 @@ import ErrorMessage from "@modules/checkout/components/error-message"
 import PaymentContainer, {
   StripeCardContainer,
 } from "@modules/checkout/components/payment-container"
-import PaymeContainer from "@modules/checkout/components/payme-container"
-import PaymeMerchantButton from "@modules/checkout/components/payme-merchant-button"
 import Divider from "@modules/common/components/divider"
-import { getPaymeStatus } from "@lib/paymeClient"
-import { getExchangeRate } from "@lib/data/exchange-rate"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 
@@ -25,7 +21,7 @@ const getTranslatedPaymentInfoMap = (countryCode: string): typeof paymentInfoMap
     ...paymentInfoMap,
     pp_system_default: {
       ...paymentInfoMap.pp_system_default,
-      title: isLang ? "Tizim standartlari" : "Системный стандарт"
+      title: "Payme"
     },
     pp_stripe_stripe: {
       ...paymentInfoMap.pp_stripe_stripe,
@@ -64,10 +60,6 @@ const Payment = ({
   const isOpen = searchParams.get("step") === "payment"
 
   const isStripe = isStripeFunc(selectedPaymentMethod)
-  const [paymeEnabled, setPaymeEnabled] = useState(false)
-  const [paymeMerchantEnabled, setPaymeMerchantEnabled] = useState(true) // Merchant API is always available if backend supports it
-  const [paymeAmount, setPaymeAmount] = useState(0)
-  const [exchangeRate, setExchangeRate] = useState(12750)
 
   const setPaymentMethod = async (method: string) => {
     setError(null)
@@ -106,20 +98,6 @@ const Payment = ({
   const handleSubmit = async () => {
     setIsLoading(true)
     try {
-      // If Payme Merchant is selected, the button handles the payment redirect
-      if (selectedPaymentMethod === "pp_payme_merchant") {
-        // The PaymeMerchantButton component will handle the redirect
-        // This is just to show the loading state
-        return
-      }
-
-      // If Payme v2 Native Form is selected, the form will handle submission
-      if (isPayme(selectedPaymentMethod)) {
-        // Payme form will submit directly, but we still want to show review page
-        // Note: The form submission will redirect to Payme, so this won't actually execute
-        return
-      }
-
       const shouldInputCard =
         isStripeFunc(selectedPaymentMethod) && !activeSession
 
@@ -153,42 +131,6 @@ const Payment = ({
     setError(null)
   }, [isOpen])
 
-  // Check Payme availability on mount
-  useEffect(() => {
-    let mounted = true
-    getPaymeStatus()
-      .then((s) => mounted && setPaymeEnabled(Boolean(s?.paymeEnabled)))
-      .catch(() => mounted && setPaymeEnabled(false))
-    return () => {
-      mounted = false
-    }
-  }, [])
-
-  // Calculate Payme amount when cart changes
-  useEffect(() => {
-    const calculatePaymeAmount = async () => {
-      if (cart?.total) {
-        const exchangeRateData = await getExchangeRate()
-        const rate = exchangeRateData?.rate || 12750
-        setExchangeRate(rate)
-        
-        // Convert cart total (cents) to tiyin
-        const cartTotalInCents = Math.max(0, cart.total)
-        const amountInTiyin = Math.round(cartTotalInCents * rate)
-        setPaymeAmount(amountInTiyin)
-      }
-    }
-    
-    calculatePaymeAmount()
-  }, [cart?.total])
-
-  // If Payme is enabled and no method is selected (and there are no other providers), auto-select Payme
-  useEffect(() => {
-    if (paymeEnabled && !selectedPaymentMethod && (!availablePaymentMethods || availablePaymentMethods.length === 0)) {
-      setSelectedPaymentMethod("pp_payme_custom")
-    }
-  }, [paymeEnabled, selectedPaymentMethod, availablePaymentMethods])
-
   return (
     <div className="bg-white">
       <div className="flex flex-row items-center justify-between mb-6">
@@ -219,7 +161,7 @@ const Payment = ({
       </div>
       <div>
         <div className={isOpen ? "block" : "hidden"}>
-          {!paidByGiftcard && (availablePaymentMethods?.length || paymeEnabled || paymeMerchantEnabled) && (
+          {!paidByGiftcard && availablePaymentMethods?.length && (
             <>
               <RadioGroup
                 value={selectedPaymentMethod}
@@ -246,25 +188,6 @@ const Payment = ({
                     )}
                   </div>
                 ))}
-                {paymeEnabled && (
-                  <PaymeContainer
-                    paymentInfoMap={translatedPaymentInfoMap}
-                    paymentProviderId="pp_payme_custom"
-                    selectedPaymentOptionId={selectedPaymentMethod}
-                    merchantId={process.env.NEXT_PUBLIC_PAYME_MERCHANT_ID || ""}
-                    amount={paymeAmount}
-                    orderId={cart?.id || "order"}
-                  />
-                )}
-                {paymeMerchantEnabled && (
-                  <PaymeMerchantButton
-                    paymentProviderId="pp_payme_merchant"
-                    selectedPaymentOptionId={selectedPaymentMethod}
-                    orderId={cart?.id || "order"}
-                    amount={cart?.total || 0}
-                    countryCode={countryCode}
-                  />
-                )}
               </RadioGroup>
             </>
           )}
@@ -295,15 +218,12 @@ const Payment = ({
             isLoading={isLoading}
             disabled={
               (isStripe && !cardComplete) ||
-              (!selectedPaymentMethod && !paidByGiftcard) ||
-              selectedPaymentMethod === "pp_payme_merchant" // Disable for Merchant API - handled by component button
+              (!selectedPaymentMethod && !paidByGiftcard)
             }
             data-testid="submit-payment-button"
           >
             {!activeSession && isStripeFunc(selectedPaymentMethod)
               ? (isLang ? "Karta ma'lumotlarini kiriting" : "Введите данные карты")
-              : selectedPaymentMethod === "pp_payme_merchant"
-              ? (isLang ? "Yuqoridagi tugmani bosing" : "Нажмите кнопку выше")
               : (isLang ? "Ko'rib chiqishga o'tish" : "Перейти к обзору")}
           </Button>
         </div>
@@ -340,10 +260,6 @@ const Payment = ({
                     {isStripeFunc(selectedPaymentMethod) && cardBrand
                       ? cardBrand
                       : selectedPaymentMethod === "pp_system_default"
-                      ? (isLang ? "Qo'lda to'lov" : "Ручная оплата")
-                      : selectedPaymentMethod === "pp_payme_merchant"
-                      ? (isLang ? "Payme (To'lov havolasi)" : "Payme (Платёжная ссылка)")
-                      : isPayme(selectedPaymentMethod)
                       ? "Payme"
                       : (isLang ? "Boshqa qadam paydo bo'ladi" : "Появится другой шаг")}
                   </Text>

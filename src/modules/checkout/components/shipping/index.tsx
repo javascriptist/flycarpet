@@ -59,6 +59,18 @@ const Shipping: React.FC<ShippingProps> = ({
           setCalculatedPricesMap(pricesMap)
           setIsLoadingPrices(false)
         })
+      } else {
+        setIsLoadingPrices(false)
+      }
+      
+      // Auto-select free shipping if available and no shipping method is selected
+      if (!shippingMethodId) {
+        const freeShipping = availableShippingMethods.find(
+          (sm) => sm.amount === 0 || sm.amount === null
+        )
+        if (freeShipping) {
+          handleSetShippingMethod(freeShipping.id)
+        }
       }
     }
   }, [availableShippingMethods])

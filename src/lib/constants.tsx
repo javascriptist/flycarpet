@@ -32,7 +32,7 @@ export const paymentInfoMap: Record<
     icon: <PayPal />,
   },
   pp_system_default: {
-    title: "System Default",
+    title: "Payme",
     icon: <CreditCard />,
   },
   // Add more payment providers here
