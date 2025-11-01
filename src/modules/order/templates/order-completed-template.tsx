@@ -10,7 +10,6 @@ import OnboardingCta from "@modules/order/components/onboarding-cta"
 import OrderDetails from "@modules/order/components/order-details"
 import ShippingDetails from "@modules/order/components/shipping-details"
 import PaymentDetails from "@modules/order/components/payment-details"
-import OrderPaymeButton from "@modules/order/components/order-payme-button"
 import { HttpTypes } from "@medusajs/types"
 
 type OrderCompletedTemplateProps = {
@@ -41,38 +40,30 @@ export default async function OrderCompletedTemplate({
             level="h1"
             className="flex flex-col gap-y-3 text-ui-fg-base text-3xl mb-4"
           >
-            <span>{isLang ? "Rahmat!" : "Спасибо!"}</span>
-            <span>{isLang ? "Sizning buyurtmangiz muvaffaqiyatli yaratildi." : "Ваш заказ был успешно создан."}</span>
+            <span>{isLang ? "Buyurtma qabul qilindi!" : "Заказ принят!"}</span>
+            <span>{isLang ? "Davom etish uchun to'lovni amalga oshiring" : "Оплатите заказ для продолжения"}</span>
           </Heading>
           
-          {/* Payme Payment Button - Show if order is not paid yet */}
-          <OrderPaymeButton 
-            orderId={order.id}
-            amount={order.total || 0}
-            countryCode={countryCode}
-            paymentStatus={order.payment_status}
-          />
-
-            {/* Direct Payme Form Button */}
-              {order.total > 0 && (() => {
-                // Use shared conversion logic
-                const uzs = convertUsdToUzs(order.total, exchangeRate)
-                const tiyin = Math.round(uzs * 100)
-                return (
-                  <form
-                    method="POST"
-                    action="https://checkout.paycom.uz"
-                    style={{ display: "inline-block", marginTop: 24 }}
-                  >
-                    <input type="hidden" name="merchant" value={process.env.NEXT_PUBLIC_PAYME_MERCHANT_ID} />
-                    <input type="hidden" name="amount" value={tiyin} />
-                    <input type="hidden" name="account[order_id]" value={order.id} />
-                    <button type="submit" className="bg-blue-600 text-white rounded px-6 py-3 font-semibold">
-                      {isLang ? "Payme orqali to'g'ridan-to'g'ri to'lash" : "Оплатить напрямую через Payme"}
-                    </button>
-                  </form>
-                )
-              })()}
+          {/* Direct Payme Form Button */}
+          {order.total > 0 && (() => {
+            // Use shared conversion logic
+            const uzs = convertUsdToUzs(order.total, exchangeRate)
+            const tiyin = Math.round(uzs * 100)
+            return (
+              <form
+                method="POST"
+                action="https://checkout.paycom.uz"
+                style={{ display: "inline-block", marginTop: 24 }}
+              >
+                <input type="hidden" name="merchant" value={process.env.NEXT_PUBLIC_PAYME_MERCHANT_ID} />
+                <input type="hidden" name="amount" value={tiyin} />
+                <input type="hidden" name="account[order_id]" value={order.id} />
+                <button type="submit" className="bg-blue-600 text-white rounded px-6 py-3 font-semibold">
+                  {isLang ? "Payme orqali to'g'ridan-to'g'ri to'lash" : "Оплатить напрямую через Payme"}
+                </button>
+              </form>
+            )
+          })()}
           
           <OrderDetails order={order} />
           <Heading level="h2" className="flex flex-row text-3xl-regular">
