@@ -65,15 +65,15 @@ export default async function OrderCompletedTemplate({
             )
           })()}
           
-          <OrderDetails order={order} />
+          <OrderDetails order={order} countryCode={countryCode} />
           <Heading level="h2" className="flex flex-row text-3xl-regular">
             {isLang ? "Xulosa" : "Резюме"}
           </Heading>
           <Items order={order} />
           <CartTotals totals={order} countryCode={countryCode} />
-          <ShippingDetails order={order} />
-          <PaymentDetails order={order} />
-          <Help />
+          <ShippingDetails order={order} countryCode={countryCode} />
+          <PaymentDetails order={order} countryCode={countryCode} />
+          <Help countryCode={countryCode} />
         </div>
       </div>
     </div>
