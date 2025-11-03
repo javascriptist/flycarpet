@@ -3,6 +3,7 @@ import { Github } from "@medusajs/icons"
 import { Button, Heading } from "@medusajs/ui"
 // use client
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import ProductList from "./products-list"
 import Footer from "@modules/layout/templates/footer"
 import { useTranslation } from "next-i18next"
@@ -14,6 +15,16 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ countryCode }) => {
   const isLang = countryCode === "uz";
+  const [scrollY, setScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // const [emblaRef] = useEmblaCarousel({
   //   loop: true,
@@ -72,18 +83,24 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
             className="h-[75vh] w-[50%] object-cover"
           />
         </div>*/}
-      <div className="img w-[100%] h-[50vh]">
-        <Image
-          src="/rug-hero.jpg"
-          alt="Hero Image"
-          objectFit="cover"
-          width={0}
-          height={0}
-          sizes="100vw"
-          style={{ width: '100%', height: '50vh' }}
-          quality={100}
-          className="object-cover"
-        />
+      <div className="img w-[100%] h-[50vh] relative overflow-hidden">
+        <div 
+          className="absolute inset-0"
+          style={{ 
+            transform: `translateY(${scrollY * 0.5}px)`,
+            transition: 'transform 0.1s ease-out'
+          }}
+        >
+          <Image
+            src="/rug-hero.jpg"
+            alt="Hero Image"
+            fill
+            sizes="100vw"
+            quality={100}
+            className="object-cover"
+            priority
+          />
+        </div>
       </div>
       <div className="txt-and-btn w-[100%] h-[55vh]">
         <div className="flex flex-col small:pr-16 pl-12 pt-28 pb-28 gap-3 bg-black">

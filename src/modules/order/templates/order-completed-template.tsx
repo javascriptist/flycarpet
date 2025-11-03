@@ -2,6 +2,7 @@ import { Heading } from "@medusajs/ui"
 import { getExchangeRate } from "@lib/data/exchange-rate"
 import { convertUsdToUzs } from "@lib/util/money"
 import { cookies as nextCookies } from "next/headers"
+import Image from "next/image"
 
 import CartTotals from "@modules/common/components/cart-totals"
 import Help from "@modules/order/components/help"
@@ -53,13 +54,23 @@ export default async function OrderCompletedTemplate({
               <form
                 method="POST"
                 action="https://checkout.paycom.uz"
-                style={{ display: "inline-block", marginTop: 24 }}
+                className="w-full sm:w-auto"
               >
                 <input type="hidden" name="merchant" value={process.env.NEXT_PUBLIC_PAYME_MERCHANT_ID} />
                 <input type="hidden" name="amount" value={tiyin} />
                 <input type="hidden" name="account[order_id]" value={order.id} />
-                <button type="submit" className="bg-blue-600 text-white rounded px-6 py-3 font-semibold">
-                  {isLang ? "Payme orqali to'g'ridan-to'g'ri to'lash" : "Оплатить напрямую через Payme"}
+                <button 
+                  type="submit" 
+                  className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg px-8 py-4 font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-3"
+                >
+                  <Image 
+                    src="/payme_white.png" 
+                    alt="Payme" 
+                    width={80} 
+                    height={24}
+                    className="h-6 w-auto"
+                  />
+                  <span>{isLang ? "bilan to'lash" : "оплатить с"}</span>
                 </button>
               </form>
             )
