@@ -14,6 +14,7 @@ import MobileActions from "../product-actions/mobile-actions"
 import { RollCarpetSelector } from "../roll-carpet-selector"
 import { RollCarpetAddToCart } from "../roll-carpet-add-to-cart"
 import { ARToggleButton } from "../ar-toggle-button"
+import { RoomVisualizerButton } from "../room-visualizer-button"
 import { isRollCarpet, getCarpetWidth, getStockLength } from "@lib/util/carpet-helpers"
 import { getExchangeRate } from "@lib/data/exchange-rate"
 
@@ -158,6 +159,13 @@ export default function EnhancedProductActions({
           carpetSize={carpetSize}
         />
         
+        {/* Room Visualizer Button */}
+        <RoomVisualizerButton
+          productImage={carpetImage}
+          productTitle={product.title || ''}
+          countryCode={countryCode}
+        />
+        
         <RollCarpetSelector
           product={product}
           countryCode={countryCode}
@@ -195,6 +203,13 @@ export default function EnhancedProductActions({
           carpetImage={regularCarpetImage}
           carpetSize={regularCarpetSize}
           className="mb-4"
+        />
+        
+        {/* Room Visualizer for Regular Products */}
+        <RoomVisualizerButton
+          productImage={regularCarpetImage}
+          productTitle={product.title || ''}
+          countryCode={countryCode}
         />
         
         <div>
