@@ -30,7 +30,7 @@ export const ARToggleButton: React.FC<ARToggleButtonProps> = ({
         variant="secondary"
         className="w-full h-12 mb-4 relative overflow-hidden group"
         style={{
-          background: 'linear-gradient(135deg, rgba(255, 106, 26, 0.85) 0%, rgba(230, 81, 0, 0.85) 100%)',
+          background: 'linear-gradient(135deg, #e38329ff 0%, #b86111ff 100%)',
           backdropFilter: 'blur(20px) saturate(180%)',
           border: '1px solid rgba(255, 255, 255, 0.3)',
           boxShadow: '0 8px 32px rgba(255, 106, 26, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)',

@@ -1,26 +1,29 @@
 import { HttpTypes } from "@medusajs/types"
 import { Text } from "@medusajs/ui"
 
-type LineItemOptionsProps = {
-  variant: HttpTypes.StoreProductVariant | undefined
+type Props = {
+  variant?: HttpTypes.StoreProductVariant | HttpTypes.StoreCartLineItem["variant"]
   "data-testid"?: string
-  "data-value"?: HttpTypes.StoreProductVariant
 }
 
-const LineItemOptions = ({
-  variant,
-  "data-testid": dataTestid,
-  "data-value": dataValue,
-}: LineItemOptionsProps) => {
+export default function LineItemOptions({ variant, "data-testid": testId }: Props) {
+  if (!variant) {
+    return null
+  }
+
   return (
-    <Text
-      data-testid={dataTestid}
-      data-value={dataValue}
-      className="inline-block txt-medium text-ui-fg-subtle w-full overflow-hidden text-ellipsis"
-    >
-      Variant: {variant?.title}
+    <Text className="txt-medium text-ui-fg-subtle inline-flex flex-col" data-testid={testId}>
+      {variant.title && variant.title !== "Default" && (
+        <span>Variant: {variant.title}</span>
+      )}
+      {variant.options?.map((option) => {
+        const value = option.value
+        return (
+          <span key={option.id}>
+            {option.option?.title}: {value}
+          </span>
+        )
+      })}
     </Text>
   )
 }
-
-export default LineItemOptions

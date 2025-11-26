@@ -9,7 +9,7 @@ const SignInPrompt = (
   const { countryCode } = props
   const isLang = countryCode === "uz"
   return (
-    <div className="bg-white flex items-center justify-between">
+    <div className="flex items-center justify-between">
       <div>
         <Heading level="h2" className="txt-xlarge">
           {isLang ? "Ro'yxatdan o'ting" : "Зарегистрируйтесь"}
@@ -22,7 +22,8 @@ const SignInPrompt = (
       </div>
       <div>
         <LocalizedClientLink href="/account">
-          <Button variant="secondary" className="h-10" data-testid="sign-in-button">
+          <Button variant="secondary" className="h-10 bg-transparent rounded-3xl py-4 px-8 text-md border-2 border-brand-peach text-brand-peach hover:bg-brand-peach hover:text-white transition-colors"
+           data-testid="sign-in-button">
             {isLang ? "Kirish" : "Войти"}
           </Button>
         </LocalizedClientLink>

@@ -33,7 +33,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
           <div className="flex flex-col gap-y-4 h-full col-span-1 row-span-2 flex-1">
             <div className="flex items-start gap-x-16 mb-6">
               <div className="flex flex-col gap-y-4">
-                <h3 className="text-large-semi">Profil</h3>
+                <h3 className="text-large-semi text-brand-brown">Profil</h3>
                 <div className="flex items-end gap-x-2">
                   <span
                     className="text-3xl-semi leading-none"
@@ -49,7 +49,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
               </div>
 
               <div className="flex flex-col gap-y-4">
-                <h3 className="text-large-semi">Manzillar</h3>
+                <h3 className="text-large-semi text-brand-brown">Manzillar</h3>
                 <div className="flex items-end gap-x-2">
                   <span
                     className="text-3xl-semi leading-none"

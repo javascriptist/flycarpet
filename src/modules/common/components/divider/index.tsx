@@ -1,9 +1,9 @@
 import { clx } from "@medusajs/ui"
 
-const Divider = ({ className }: { className?: string }) => (
-  <div
-    className={clx("h-px w-full border-b border-gray-200 mt-1", className)}
-  />
-)
+type Props = {
+  className?: string
+}
 
-export default Divider
+export default function Divider({ className }: Props) {
+  return <div className={clx("h-px w-full border-b border-gray-200", className)} />
+}

@@ -19,10 +19,10 @@ const Register = ({ setCurrentView, countryCode }: Props) => {
 
   return (
     <div
-      className="max-w-sm flex flex-col items-center"
+      className="max-w-sm flex flex-col items-center p-8 rounded-3xl shadow-lg border border-gray-100"
       data-testid="register-page"
     >
-      <h1 className="text-large-semi uppercase mb-6">
+      <h1 className="text-large-semi uppercase mb-6 text-brand-brown">
         {isLang ? "Ro'yxatdan o'tish" : "Регистрация"}
       </h1>
       
@@ -94,7 +94,7 @@ const Register = ({ setCurrentView, countryCode }: Props) => {
         {" "}
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.SIGN_IN)}
-          className="underline"
+          className="underline hover:text-brand-peach transition-colors"
         >
           {isLang ? "kiring" : "войдите"}
         </button>

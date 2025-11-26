@@ -150,7 +150,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                 className="w-full rounded-3xl liquid-glass text-[#D4682D] hover:text-[#D4682D] transition-all duration-200" 
                 // border color orange
                 style={{
-                  border: '1px solid #FF6A1A',
+                  border: '1px solid #D9A676',
                 }}
                 isLoading={isAdding}
                 data-testid="mobile-cart-button rounded-3xl"

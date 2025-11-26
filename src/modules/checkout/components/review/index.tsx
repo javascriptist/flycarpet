@@ -19,7 +19,7 @@ const Review = ({ cart, countryCode }: { cart: any; countryCode?: string }) => {
     (cart.payment_collection || paidByGiftcard)
 
   return (
-    <div className="bg-white">
+    <div>
       <div className="flex flex-row items-center justify-between mb-6">
         <Heading
           level="h2"

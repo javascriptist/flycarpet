@@ -1,33 +1,32 @@
-import { ArrowUpRightMini } from "@medusajs/icons"
-import { Text } from "@medusajs/ui"
-import LocalizedClientLink from "../localized-client-link"
+"use client"
 
-type InteractiveLinkProps = {
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { ArrowUpRightMini } from "@medusajs/icons"
+
+type Props = {
   href: string
-  children?: React.ReactNode
+  children: React.ReactNode
+  className?: string
   onClick?: () => void
 }
 
-const InteractiveLink = ({
+export default function InteractiveLink({
   href,
   children,
+  className = "",
   onClick,
-  ...props
-}: InteractiveLinkProps) => {
+}: Props) {
   return (
     <LocalizedClientLink
-      className="flex gap-x-1 items-center group"
       href={href}
+      className={`flex items-center gap-x-1 text-ui-fg-interactive hover:text-ui-fg-interactive-hover transition-colors ${className}`}
       onClick={onClick}
-      {...props}
     >
-      <Text className="text-ui-fg-interactive">{children}</Text>
-      <ArrowUpRightMini
-        className="group-hover:rotate-45 ease-in-out duration-150"
-        color="var(--fg-interactive)"
-      />
+      <span>{children}</span>
+      <ArrowUpRightMini />
     </LocalizedClientLink>
   )
 }
 
-export default InteractiveLink
+// Export as named export for alternative imports (e.g., UnderlineLink)
+export { InteractiveLink as UnderlineLink }

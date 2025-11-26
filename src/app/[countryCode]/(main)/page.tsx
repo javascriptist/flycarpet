@@ -9,9 +9,9 @@ import AboutUsLink from "@modules/home/components/hero/aboutuslink"
 import CollectionSlide from "@modules/home/components/hero/collectionslide"
 import ProductSlide from "@modules/home/components/hero/productsslide"
 export const metadata: Metadata = {
-  title: "FLY Carpet Store",
+  title: "Premium Carpet Store",
   description:
-    "FLY CARPET Gilamlari. O'zbekiston bo'ylab yetkazib berish.",
+    "Premium Carpet Gilamlari. O'zbekiston bo'ylab yetkazib berish.",
 }
 
 export default async function Home(props: {
@@ -45,10 +45,18 @@ export default async function Home(props: {
   return (
     <>
       <Hero countryCode={countryCode} />
-      <HeroCollections countryCode={countryCode} />
-      <ProductSlide listOfProducts={productsToPass} countryCode={countryCode} />
-      <AboutUsLink countryCode={countryCode} />
-      <CollectionSlide listOfCollections={collections} countryCode={countryCode} />
+      <div className="py-12">
+        <HeroCollections countryCode={countryCode} />
+      </div>
+      <div className="py-12">
+        <ProductSlide listOfProducts={productsToPass} countryCode={countryCode} />
+      </div>
+      <div className="py-12">
+        <AboutUsLink countryCode={countryCode} />
+      </div>
+      <div className="py-12">
+        <CollectionSlide listOfCollections={collections} countryCode={countryCode} />
+      </div>
     </>
   )
 }

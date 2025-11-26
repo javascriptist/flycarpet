@@ -1,8 +1,11 @@
+"use client"
+
 import { EllipseMiniSolid } from "@medusajs/icons"
 import { Label, RadioGroup, Text, clx } from "@medusajs/ui"
+import React from "react"
 
 type FilterRadioGroupProps = {
-  title: string
+  title: React.ReactNode
   items: {
     value: string
     label: string
@@ -20,19 +23,26 @@ const FilterRadioGroup = ({
   "data-testid": dataTestId,
 }: FilterRadioGroupProps) => {
   return (
-    <div className="flex gap-x-3 flex-col gap-y-3">
-      <Text className="txt-compact-small-plus text-ui-fg-muted">{title}</Text>
-      <RadioGroup data-testid={dataTestId} onValueChange={handleChange}>
+    <div className="flex flex-col gap-y-3" data-testid={dataTestId}>
+      <div className="flex items-center gap-x-2">
+        {typeof title === "string" ? (
+          <Text className="txt-compact-small-plus text-ui-fg-muted">{title}</Text>
+        ) : (
+          title
+        )}
+      </div>
+      <RadioGroup>
         {items?.map((i) => (
           <div
             key={i.value}
             className={clx("flex gap-x-2 items-center", {
-              "ml-[-23px]": i.value === value,
+              "ml-[-1.75rem]": i.value === value,
             })}
           >
             {i.value === value && <EllipseMiniSolid />}
             <RadioGroup.Item
               checked={i.value === value}
+              onClick={(e) => handleChange(i.value)}
               className="hidden peer"
               id={i.value}
               value={i.value}

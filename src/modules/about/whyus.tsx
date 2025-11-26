@@ -45,12 +45,12 @@ const WhyUs: React.FC<WhyUsProps> = ({ countryCode }) => {
 
   return (
     <div className="cover">
-      <div className="cover bg-gray-100 my-10 mx-14 max-md:mx-2 max-md:my-5 px-5 py-10">
+      <div className="cover bg-[#F4E9DD] my-10 mx-14 max-md:mx-2 max-md:my-5 px-5 py-10 rounded-3xl">
         <div style={{ gap: '20px', padding: '20px' }} className='flex justify-between max-md:flex-col'>
 
           {items.map((item, index) => (
             <div
-              className='flex flex-col bg-white border border-transparent hover:border-[#FF6A1A] hover:shadow-md transition-all duration-200 rounded-md'
+              className='flex flex-col border-r border-brand-peach last:border-r-0 max-md:border-r-0 max-md:border-b max-md:last:border-b-0'
               key={index}
               style={{
                 flex: '1',
@@ -58,7 +58,7 @@ const WhyUs: React.FC<WhyUsProps> = ({ countryCode }) => {
                 padding: '50px 25px',
               }}
             >
-              <div style={{ fontSize: '40px', marginBottom: '10px' }} className='bg-[#FF6A1A] rounded-full w-[40px] h-[40px] flex items-center justify-center'>
+              <div style={{ fontSize: '40px', marginBottom: '10px' }} className='bg-brand-peach rounded-full w-[40px] h-[40px] flex items-center justify-center'>
                 {item.icon}</div>
               <h3 style={{ marginBottom: '10px' }}>{item.title}</h3>
               <p style={{ color: '#555' }}>{item.description}</p>

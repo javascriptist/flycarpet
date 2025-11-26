@@ -1,84 +1,62 @@
-import { getPercentageDiff } from "@lib/util/get-precentage-diff"
 import { convertToLocale, formatUzsAmount } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
-import { clx } from "@medusajs/ui"
+import { clx, Text } from "@medusajs/ui"
 
 type LineItemPriceProps = {
   item: HttpTypes.StoreCartLineItem | HttpTypes.StoreOrderLineItem
   style?: "default" | "tight"
-  currencyCode: string
-  exchangeRate?: number // Optional UZS exchange rate
+  className?: string
+  currencyCode?: string
+  exchangeRate?: number
 }
 
-const LineItemPrice = ({
+export default function LineItemPrice({
   item,
   style = "default",
+  className,
   currencyCode,
   exchangeRate,
-}: LineItemPriceProps) => {
+}: LineItemPriceProps) {
+  const currency = currencyCode || "usd"
   const { total, original_total } = item
-  const originalPrice = original_total
-  const currentPrice = total
-  const hasReducedPrice = currentPrice < originalPrice
+  const hasDiscount = total < original_total
 
-  // Convert to UZS if rate provided and currency is USD
-  const isUsd = currencyCode?.toLowerCase() === "usd"
+  // For UZS conversion: multiply by exchange rate if provided
+  const isUsd = currency?.toLowerCase() === "usd"
   const shouldConvert = isUsd && exchangeRate
 
   const formatPrice = (amount: number) => {
     if (shouldConvert) {
-      // Convert USD cents to UZS and show both
-      const usdDollars = amount
-      const uzsAmount = Math.round(usdDollars * exchangeRate!)
+      const uzsAmount = Math.round(amount * exchangeRate!)
       const uzsFormatted = formatUzsAmount(uzsAmount)
       const usdFormatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-      }).format(usdDollars)
+      }).format(amount)
       return `${uzsFormatted} (${usdFormatted})`
     }
     return convertToLocale({
       amount,
-      currency_code: currencyCode,
+      currency_code: currency,
     })
   }
 
   return (
-    <div className="flex flex-col gap-x-2 text-ui-fg-subtle items-end">
-      <div className="text-left">
-        {hasReducedPrice && (
-          <>
-            <p>
-              {style === "default" && (
-                <span className="text-ui-fg-subtle">Original: </span>
-              )}
-              <span
-                className="line-through text-ui-fg-muted"
-                data-testid="product-original-price"
-              >
-                {formatPrice(originalPrice)}
-              </span>
-            </p>
-            {style === "default" && (
-              <span className="text-ui-fg-interactive">
-                -{getPercentageDiff(originalPrice, currentPrice || 0)}%
-              </span>
-            )}
-          </>
-        )}
-        <span
-          className={clx("text-base-regular", {
-            "text-ui-fg-interactive": hasReducedPrice,
-          })}
-          data-testid="product-price"
-        >
-          {formatPrice(currentPrice)}
-        </span>
-      </div>
+    <div
+      className={clx("flex flex-col text-ui-fg-base txt-medium-plus", className, {
+        "items-end": style === "tight",
+      })}
+    >
+      {hasDiscount && (
+        <Text className="text-ui-fg-subtle line-through txt-small">
+          {formatPrice(original_total)}
+        </Text>
+      )}
+      <Text className="txt-medium-plus" data-testid="product-price">
+        {formatPrice(total)}
+      </Text>
     </div>
   )
 }
-
-export default LineItemPrice

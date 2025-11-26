@@ -12,7 +12,7 @@ import { retrieveCustomer } from "@lib/data/customer"
 
 export const metadata: Metadata = {
   title: "Profile",
-  description: "View and edit your Fly Carpet profile.",
+  description: "View and edit your Premium Carpet profile.",
 }
 
 export default async function Profile() {

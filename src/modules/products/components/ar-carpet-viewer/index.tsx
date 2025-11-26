@@ -131,7 +131,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
       <div className={`ar-carpet-viewer ${className}`}>
         <div className="flex items-center justify-center h-80 bg-gradient-to-b from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#FF6A1A] mx-auto mb-3"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#D9A676] mx-auto mb-3"></div>
             <p className="text-sm text-gray-600 font-medium">
               {isLang ? "AR tayyorlanmoqda..." : "Подготовка AR..."}
             </p>
@@ -166,7 +166,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
       <div className={`ar-carpet-viewer ${className}`}>
         <div className="flex items-center justify-center h-80 bg-gradient-to-b from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#FF6A1A] mx-auto mb-3"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#D9A676] mx-auto mb-3"></div>
             <p className="text-sm text-gray-600 font-medium">
               {isLang ? "3D model tayyorlanmoqda..." : "Подготовка 3D модели..."}
             </p>
@@ -191,7 +191,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
         <div 
           className="px-6 py-4"
           style={{
-            background: 'linear-gradient(135deg, rgba(255, 106, 26, 0.85) 0%, rgba(230, 81, 0, 0.85) 100%)',
+            background: 'linear-gradient(135deg, #f68821ff 0%, #ae5a0bff 100%)',
             backdropFilter: 'blur(40px) saturate(180%)',
             borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
           }}
@@ -243,7 +243,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
             {isARSupported && (
               <button
                 slot="ar-button"
-                className="absolute top-4 right-4 bg-[#FF6A1A] hover:bg-[#e55d17] text-white px-4 py-2 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2 font-medium"
+                className="absolute top-4 right-4 bg-[#D9A676] hover:bg-[#e55d17] text-white px-4 py-2 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2 font-medium"
               >
                 <span>📱</span>
                 <span>{isLang ? "AR ko'rish" : "Просмотр в AR"}</span>
@@ -299,22 +299,22 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
               <span className="text-sm font-medium text-gray-700">
                 {isLang ? "O'lcham:" : "Размер:"} 
               </span>
-              <span className="text-sm text-[#FF6A1A] font-semibold">
+              <span className="text-sm text-[#D9A676] font-semibold">
                 {carpetSize.width}m × {carpetSize.length}m
               </span>
             </div>
             
             <div className="flex items-center gap-4 text-xs text-gray-500">
-              <span className="flex items-center gap-1 transition-colors hover:text-[#FF6A1A]">
+              <span className="flex items-center gap-1 transition-colors hover:text-[#D9A676]">
                 <span>🔄</span>
                 <span className="hidden sm:inline">{isLang ? "Aylantirish" : "Поворот"}</span>
               </span>
-              <span className="flex items-center gap-1 transition-colors hover:text-[#FF6A1A]">
+              <span className="flex items-center gap-1 transition-colors hover:text-[#D9A676]">
                 <span>🔍</span>
                 <span className="hidden sm:inline">{isLang ? "Kattalashtirish" : "Масштаб"}</span>
               </span>
               {isARSupported && (
-                <span className="flex items-center gap-1 transition-colors hover:text-[#FF6A1A]">
+                <span className="flex items-center gap-1 transition-colors hover:text-[#D9A676]">
                   <span>📱</span>
                   <span className="hidden sm:inline">{isLang ? "AR rejim" : "AR режим"}</span>
                 </span>

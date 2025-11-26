@@ -16,10 +16,10 @@ const Login = ({ setCurrentView , countryCode }: Props) => {
 
   return (
     <div
-      className="max-w-sm w-full flex flex-col items-center"
+      className="max-w-sm w-full flex flex-col items-center p-8 rounded-3xl shadow-lg border border-gray-100"
       data-testid="login-page"
     >
-      <h1 className="text-large-semi uppercase mb-6">
+      <h1 className="text-large-semi uppercase mb-6 text-brand-brown">
         {isLang ? "Xush kelibsiz" : "Вас приветствует"}
       </h1>
       <p className="text-center text-base-regular text-ui-fg-base mb-8">
@@ -55,7 +55,7 @@ const Login = ({ setCurrentView , countryCode }: Props) => {
         {" "}
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.REGISTER)}
-          className="underline"
+          className="underline hover:text-brand-peach transition-colors"
           data-testid="register-button"
         >
           { isLang ? "ro'yxatdan o'ting" : "Зарегистрируйтесь" }

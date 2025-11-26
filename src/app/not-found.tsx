@@ -12,7 +12,7 @@ export default function NotFound() {
   return (
     <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)]">
       <Image
-              src="/images/nofound.jpg"
+              src="/nofound.jpg"
               alt="404"
               width={300}
               height={300}

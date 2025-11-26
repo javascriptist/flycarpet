@@ -21,6 +21,15 @@ module.exports = {
         padding: "padding-top padding-right padding-bottom padding-left",
       },
       colors: {
+        // Brand colors matching new logo
+        brand: {
+          black: "#111111",        // Navbar background
+          peach: "#D9A676",        // Rose gold - primary buttons, navbar text
+          sandstone: "#C8B9A6",    // Secondary buttons
+          cream: "#FAF7F3",        // Product card backgrounds
+          brown: "#5A4636",        // Deep brown - headings, text
+          terracotta: "#A65A3A",   // Hover states
+        },
         grey: {
           0: "#FFFFFF",
           5: "#F9FAFB",
@@ -59,7 +68,9 @@ module.exports = {
         "3xl": "2rem",
       },
       fontFamily: {
+        satoshi: ["var(--font-satoshi)", "sans-serif"],
         sans: [
+          "var(--font-satoshi)",
           "Inter",
           "-apple-system",
           "BlinkMacSystemFont",

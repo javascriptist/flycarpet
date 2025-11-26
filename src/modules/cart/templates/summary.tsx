@@ -31,8 +31,8 @@ const Summary = ({ cart, countryCode, exchangeRate }: SummaryProps) => {
 
   return (
     <div className="flex flex-col gap-y-4">
-      <Heading level="h2" className="text-[2rem] leading-[2.75rem]">
-        {isLang ? "Hisob" : "Счет"}
+      <Heading level="h2" className="text-[2rem] leading-[2.75rem] text-brand-brown">
+        {isLang ? "Xaridlar savati" : "Корзина"}
       </Heading>
       <DiscountCode cart={cart} countryCode={countryCode}/>
       <Divider />
@@ -41,7 +41,7 @@ const Summary = ({ cart, countryCode, exchangeRate }: SummaryProps) => {
         href={"/checkout?step=" + step}
         data-testid="checkout-button"
       >
-        <Button className="w-full h-10 liquid-glass rounded-3xl">
+        <Button className="w-full h-10 liquid-glass rounded-3xl bg-brand-peach text-black hover:bg-brand-peach-hover transition-colors outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-peach border-0 ">
           {isLang ? "To'lov" : "Оплата"}
         </Button>
       </LocalizedClientLink>

@@ -26,8 +26,8 @@ const StoreTemplate = ({
     >
       <RefinementList sortBy={sort} />
       <div className="w-full">
-        <div className="mb-8 text-2xl-semi inline-block border-b-4 border-[#FF6A1A]">
-          <h1 data-testid="store-page-title "> {isLang ? "Mahsulotlar" : "Продукты"}</h1>
+        <div className="mb-8 text-2xl-semi inline-block border-b-4 border-brand-peach">
+          <h1 className="text-brand-brown" data-testid="store-page-title "> {isLang ? "Mahsulotlar" : "Продукты"}</h1>
         </div>
         <Suspense fallback={<SkeletonProductGrid />}>
           <PaginatedProducts

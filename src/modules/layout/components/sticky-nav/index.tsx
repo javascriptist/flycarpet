@@ -23,13 +23,13 @@ export default function StickyNavContent({ children }: StickyNavContentProps) {
   return (
     <div className="sticky top-0 inset-x-0 z-50 group">
       <header 
-        className={`relative mx-auto border-b bg-white border-ui-border-base transition-all duration-300 ${
+        className={`relative mx-auto border-b bg-[#191718] border-[#191718] transition-all duration-300 ${
           isScrolled 
             ? 'h-14 shadow-md' 
             : 'h-16'
         }`}
       >
-        <nav className={`content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular transition-all duration-300`}>
+        <nav className={`content-container txt-xsmall-plus text-brand-peach flex items-center justify-between w-full h-full text-small-regular transition-all duration-300`}>
           {children}
         </nav>
       </header>

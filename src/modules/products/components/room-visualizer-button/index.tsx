@@ -37,7 +37,7 @@ export const RoomVisualizerButton: React.FC<RoomVisualizerButtonProps> = ({
     <>
       <Button
         onClick={() => setIsOpen(true)}
-        className="w-full h-10 rounded-3xl bg-white border-2 border-[#FF6A1A] text-[#FF6A1A] hover:bg-[#FF6A1A] hover:text-white transition-all duration-200"
+        className="w-full h-10 rounded-3xl bg-white border-2 border-[#D9A676] text-[#D9A676] hover:bg-[#D9A676] hover:text-white transition-all duration-200"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -57,8 +57,8 @@ export const RoomVisualizerButton: React.FC<RoomVisualizerButtonProps> = ({
       </Button>
 
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] shadow-2xl flex flex-col">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-4">
                 {roomImage && (
@@ -118,7 +118,7 @@ export const RoomVisualizerButton: React.FC<RoomVisualizerButtonProps> = ({
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto flex-1">
+            <div className="p-6 flex-1 min-h-[400px]">
               {!roomImage ? (
                 <ImageUploader
                   onImageUpload={handleImageUpload}

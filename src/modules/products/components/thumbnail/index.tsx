@@ -1,71 +1,55 @@
-import { Container, clx } from "@medusajs/ui"
-import Image from "next/image"
 import React from "react"
 
-import PlaceholderImage from "@modules/common/icons/placeholder-image"
+type Image = {
+  url?: string
+  [key: string]: any
+}
 
-type ThumbnailProps = {
+type Props = {
   thumbnail?: string | null
-  // TODO: Fix image typings
-  images?: any[] | null
-  size?: "small" | "medium" | "large" | "full" | "square"
+  images?: Image[] | string[]
+  size?: "square" | "full" | "small"
   isFeatured?: boolean
   className?: string
-  "data-testid"?: string
 }
 
-const Thumbnail: React.FC<ThumbnailProps> = ({
+const placeholder = "/rug-hero.jpg"
+
+export default function Thumbnail({
   thumbnail,
   images,
-  size = "small",
+  size = "square",
   isFeatured,
-  className,
-  "data-testid": dataTestid,
-}) => {
-  const initialImage = thumbnail || images?.[0]?.url
+  className = "",
+}: Props) {
+  // Resolve image source from props
+  let src = thumbnail || undefined
+
+  if (!src && images && images.length > 0) {
+    const first = images[0]
+    src = typeof first === "string" ? first : (first as Image).url
+  }
+
+  if (!src) {
+    src = placeholder
+  }
+
+  const baseClasses = "object-cover rounded-md bg-ui-surface"
+
+  const sizeClasses =
+    size === "full"
+      ? "w-full h-48"
+      : size === "small"
+      ? "w-10 h-10"
+      : "w-16 h-16 small:w-24 small:h-24"
 
   return (
-    <Container
-      className={clx(
-        "relative w-full overflow-hidden p-4 bg-ui-bg-subtle shadow-elevation-card-rest rounded-large group-hover:shadow-elevation-card-hover transition-shadow ease-in-out duration-150",
-        className,
-        {
-          "aspect-[11/14]": isFeatured,
-          "aspect-[9/16]": !isFeatured && size !== "square",
-          "aspect-[1/1]": size === "square",
-          "w-[180px]": size === "small",
-          "w-[290px]": size === "medium",
-          "w-[440px]": size === "large",
-          "w-full": size === "full",
-        }
-      )}
-      data-testid={dataTestid}
-    >
-      <ImageOrPlaceholder image={initialImage} size={size} />
-    </Container>
-  )
-}
-
-const ImageOrPlaceholder = ({
-  image,
-  size,
-}: Pick<ThumbnailProps, "size"> & { image?: string }) => {
-  return image ? (
-    <Image
-      src={image}
-      alt="Thumbnail"
-      className="absolute inset-0 object-cover object-center hover:scale-105 transition-transform duration-200 ease-in-out"
-      draggable={false}
-      quality={50}
-      sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
-      fill
-      unoptimized
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={"product thumbnail"}
+      className={`${baseClasses} ${sizeClasses} ${isFeatured ? "shadow-lg border" : ""} ${className}`.trim()}
+      loading="lazy"
     />
-  ) : (
-    <div className="w-full h-full absolute inset-0 flex items-center justify-center">
-      <PlaceholderImage size={size === "small" ? 16 : 24} />
-    </div>
   )
 }
-
-export default Thumbnail

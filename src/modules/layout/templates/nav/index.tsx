@@ -25,12 +25,12 @@ export default async function Nav() {
           <div className="flex items-center h-full">
             <LocalizedClientLink
               href="/"
-              className="txt-compact-xlarge-plus hover:text-ui-fg-base uppercase"
+              className="txt-compact-xlarge-plus hover:opacity-80 uppercase"
               data-testid="nav-store-link"
             >
               <Image  
-                src="/flycarpetlogo.png"
-                alt="Fly Carpet Logo"
+                src="/pclogo_tp.png"
+                alt="Premium Carpet Logo"
                 width={150}
                 height={40}
               />
@@ -40,7 +40,7 @@ export default async function Nav() {
           <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
             <div className="hidden small:flex items-center gap-x-6 h-full">
               <LocalizedClientLink
-                className="hover:text-ui-fg-base"
+                className="hover:text-brand-terracotta transition-colors"
                 href="/account"
                 data-testid="nav-account-link"
               >

@@ -246,7 +246,7 @@ export default function EnhancedProductActions({
             !isValidVariant
           }
           variant="secondary"
-          className="w-full h-10 rounded-3xl liquid-glass text-black hover:bg-[#D4682D] hover:text-white transition-all duration-200 border-transparent outline-none focus:outline-none focus:ring-2 focus:ring-[#FF6A1A] focus:ring-offset-2 focus:ring-offset-white"
+          className="w-full h-10 rounded-3xl liquid-glass text-black hover:bg-[#D4682D] hover:text-white transition-all duration-200 border-transparent outline-none focus:outline-none focus:ring-2 focus:ring-brand-peach focus:ring-offset-2 focus:ring-offset-white"
           isLoading={isAdding}
           data-testid="add-product-button"
         >

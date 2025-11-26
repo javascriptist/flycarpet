@@ -27,20 +27,20 @@ const ItemsTemplate = ({
           {isLang ? "Savatchangiz" : "Ваша корзина"}
         </Heading>
       </div>
-      <Table>
-        <Table.Header className="border-t-0">
-          <Table.Row className="text-ui-fg-subtle txt-medium-plus">
-            <Table.HeaderCell className="!pl-0">
+      <Table className="bg-brand-cream">
+        <Table.Header className="border-t-0 bg-brand-cream">
+          <Table.Row className="text-ui-fg-subtle txt-medium-plus bg-brand-cream">
+            <Table.HeaderCell className="!pl-0 bg-brand-cream">
               {isLang ? "Mahsulot(lar)" : "Товар(ы)"}
             </Table.HeaderCell>
-            <Table.HeaderCell></Table.HeaderCell>
-            <Table.HeaderCell>
+            <Table.HeaderCell className="bg-brand-cream"></Table.HeaderCell>
+            <Table.HeaderCell className="bg-brand-cream">
               {isLang ? "Soni" : "Количество"}
             </Table.HeaderCell>
-            <Table.HeaderCell className="hidden small:table-cell">
+            <Table.HeaderCell className="hidden small:table-cell bg-brand-cream">
               {isLang ? "Narxi" : "Цена"}
             </Table.HeaderCell>
-            <Table.HeaderCell className="!pr-0 text-right">
+            <Table.HeaderCell className="!pr-0 text-right bg-brand-cream">
               {isLang ? "Jami" : "Итого"}
             </Table.HeaderCell>
           </Table.Row>

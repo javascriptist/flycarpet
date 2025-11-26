@@ -14,13 +14,13 @@ const Achievements = ({ countryCode }: AchievementsProps) => {
 
   return (
     <div className='cover'>
-      <div className=" mx-14 my-10 px-5 bg-gray-100 flex justify-between max-md:flex-col" style={{ gap: '30px', padding: '20px' }}>
+      <div className=" mx-14 my-10 px-5 bg-[#F4E9DD] flex justify-between rounded-3xl max-md:flex-col" style={{ gap: '30px', padding: '20px' }}>
         {data.map((item, index) => (
           <div
             key={index}
-            className="text-center p-6 flex flex-col w-1/4 max-md:w-full"
+            className="text-center p-6 flex flex-col w-1/4 max-md:w-full border-r border-brand-peach last:border-r-0 max-md:border-r-0 max-md:border-b max-md:last:border-b-0"
           >
-            <h2 className="text-4xl text-[#FF6A1A]">{item.number}</h2>
+            <h2 className="text-4xl text-brand-peach">{item.number}</h2>
             <p className="text-gray-700 mt-2">{item.text}</p>
           </div>
         ))}

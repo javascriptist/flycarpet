@@ -15,7 +15,7 @@ export default function NotFound() {
               alt="404"
               width={400}
               height={300}
-              className="w-[400px] h-[300px] object-cover rounded-xl border border-[#FF6A1A] mb-4"
+              className="w-[400px] h-[300px] object-cover rounded-xl border border-[#D9A676] mb-4"
             />
       <h1 className="text-2xl-semi text-ui-fg-base">Page not found</h1>
       <p className="text-small-regular text-ui-fg-base">

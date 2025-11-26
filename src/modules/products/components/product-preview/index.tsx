@@ -28,14 +28,14 @@ export default async function ProductPreview({
     product,
   })
   return (
-    <LocalizedClientLink href={`/products/${product.handle}`} className="group ">
-      <div data-testid="product-wrapper p-4">
+    <LocalizedClientLink href={`/products/${product.handle}`} className="group">
+      <div data-testid="product-wrapper" className="p-4 rounded-2xl hover:bg-brand-cream/50 transition-all duration-300">
         <Thumbnail
           thumbnail={product.thumbnail}
           images={product.images}
           size="full"
           isFeatured={isFeatured}
-          className="border border-transparent hover:border-[#FF6A1A] hover:shadow-md transition-all duration-200"
+          className="rounded-xl border border-transparent hover:border-brand-peach hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
         />
         <div className="flex txt-compact-medium mt-4 justify-between">
           <Text className="text-ui-fg-subtle" data-testid="product-title">

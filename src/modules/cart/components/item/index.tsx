@@ -63,8 +63,8 @@ const Item = ({ item, type = "full", currencyCode, exchangeRate, countryCode }: 
   const maxQuantity = item.variant?.manage_inventory ? 10 : maxQtyFromInventory
 
   return (
-    <Table.Row className="w-full" data-testid="product-row">
-      <Table.Cell className="!pl-0 p-4 w-24">
+    <Table.Row className="w-full bg-brand-cream" data-testid="product-row">
+      <Table.Cell className="!pl-0 p-4 w-24 bg-brand-cream">
         <LocalizedClientLink
           href={`/products/${item.product_handle}`}
           className={clx("flex", {

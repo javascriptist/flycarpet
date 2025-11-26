@@ -1,123 +1,86 @@
-"use client"
-
 import { convertToLocale, formatUzsAmount } from "@lib/util/money"
-import React from "react"
-import PriceWithTooltip from "@modules/common/components/price-with-tooltip"
+import { HttpTypes } from "@medusajs/types"
+import { Text } from "@medusajs/ui"
 
 type CartTotalsProps = {
-  totals: {
-    total?: number | null
-    subtotal?: number | null
-    tax_total?: number | null
-    shipping_total?: number | null
-    discount_total?: number | null
-    gift_card_total?: number | null
-    currency_code: string
-    shipping_subtotal?: number | null
-  },
+  totals: HttpTypes.StoreCart | HttpTypes.StoreOrder
   countryCode?: string
-  exchangeRate?: number // UZS exchange rate
+  exchangeRate?: number
 }
 
-const CartTotals: React.FC<CartTotalsProps> = ({ totals, countryCode, exchangeRate }) => {
+const CartTotals = ({ totals, countryCode, exchangeRate }: CartTotalsProps) => {
   const isLang = countryCode === "uz"
+  const currencyCode = totals.currency_code?.toUpperCase() || "USD"
+  
   const {
-    currency_code,
-    total,
-    subtotal,
-    tax_total,
-    discount_total,
-    gift_card_total,
-    shipping_subtotal,
+    subtotal = 0,
+    discount_total = 0,
+    gift_card_total = 0,
+    tax_total = 0,
+    shipping_total = 0,
+    total = 0,
   } = totals
 
-  // Convert to UZS if rate provided and currency is USD
-  const isUsd = currency_code?.toLowerCase() === "usd"
+  const isUsd = currencyCode === "USD"
   const shouldConvert = isUsd && exchangeRate
 
   const formatPrice = (amount: number) => {
     if (shouldConvert) {
-      // Convert USD cents to UZS
-      const usdDollars = amount
-      const uzsAmount = Math.round(usdDollars * exchangeRate!)
-      return formatUzsAmount(uzsAmount)
+      const uzsAmount = Math.round(amount * exchangeRate!)
+      const uzsFormatted = formatUzsAmount(uzsAmount)
+      const usdFormatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(amount)
+      return `${uzsFormatted} (${usdFormatted})`
     }
-    return convertToLocale({ amount, currency_code })
+    return convertToLocale({
+      amount,
+      currency_code: currencyCode,
+    })
   }
 
   return (
-    <div>
-      <div className="flex flex-col gap-y-2 txt-medium text-ui-fg-subtle ">
-        <div className="flex items-center justify-between">
-          <span className="flex gap-x-1 items-center">
-            {isLang? 'Oraliq hisob (yetkazib berish va soliqdan tashqari)' : 'Промежуточный итог (без доставки и налогов)'}
-          </span>
-          <span data-testid="cart-subtotal" data-value={subtotal || 0}>
-            {formatPrice(subtotal ?? 0)}
-          </span>
-        </div>
-        {!!discount_total && (
-          <div className="flex items-center justify-between">
-            <span>{isLang ? "Chegirma" : "Скидка"}</span>
-            <span
-              className="text-ui-fg-interactive"
-              data-testid="cart-discount"
-              data-value={discount_total || 0}
-            >
-              - {formatPrice(discount_total ?? 0)}
-            </span>
-          </div>
-        )}
-        <div className="flex items-center justify-between">
-          <span>
-            {isLang ? "Yetkazib berish" : "Доставка"}
-          </span>
-          <span data-testid="cart-shipping" data-value={shipping_subtotal || 0}>
-            {formatPrice(shipping_subtotal ?? 0)}
-          </span>
-        </div>
-        <div className="flex justify-between">
-          <span className="flex gap-x-1 items-center ">
-            {isLang ? "Soliq" : "Налог"}
-          </span>
-          <span data-testid="cart-taxes" data-value={tax_total || 0}>
-            {formatPrice(tax_total ?? 0)}
-          </span>
-        </div>
-        {!!gift_card_total && (
-          <div className="flex items-center justify-between">
-            <span>{isLang ? "Sovg'a kartasi" : "Подарочная карта"}</span>
-            <span
-              className="text-ui-fg-interactive"
-              data-testid="cart-gift-card-amount"
-              data-value={gift_card_total || 0}
-            >
-              - {formatPrice(gift_card_total ?? 0)}
-            </span>
-          </div>
-        )}
+    <div className="flex flex-col gap-y-2 txt-medium text-ui-fg-subtle">
+      <div className="flex items-center justify-between">
+        <Text className="flex gap-x-1 items-center">
+          {isLang ? "Oraliq jami" : "Промежуточный итог"}
+        </Text>
+        <Text data-testid="cart-subtotal">{formatPrice(subtotal)}</Text>
       </div>
-      <div className="h-px w-full border-b border-gray-200 my-4" />
-      <div className="flex items-center justify-between text-ui-fg-base mb-2 txt-medium ">
-        <span>
-          {isLang ? "Jami" : "Итого"}
-        </span>
-        <span
-          className="txt-xlarge-plus"
-          data-testid="cart-total"
-          data-value={total || 0}
-        >
-          {shouldConvert ? (
-            <PriceWithTooltip 
-              uzsAmount={Math.round((total ?? 0) * exchangeRate!)}
-              usdAmount={total ?? 0}
-            />
-          ) : (
-            formatPrice(total ?? 0)
-          )}
-        </span>
+      {!!discount_total && (
+        <div className="flex items-center justify-between">
+          <Text>{isLang ? "Chegirma" : "Скидка"}</Text>
+          <Text className="text-ui-fg-interactive" data-testid="cart-discount">
+            - {formatPrice(discount_total)}
+          </Text>
+        </div>
+      )}
+      {!!gift_card_total && (
+        <div className="flex items-center justify-between">
+          <Text>{isLang ? "Sovg'a kartasi" : "Подарочная карта"}</Text>
+          <Text className="text-ui-fg-interactive" data-testid="cart-gift-card-amount">
+            - {formatPrice(gift_card_total)}
+          </Text>
+        </div>
+      )}
+      <div className="flex items-center justify-between">
+        <Text>{isLang ? "Yetkazib berish" : "Доставка"}</Text>
+        <Text data-testid="cart-shipping">{formatPrice(shipping_total)}</Text>
       </div>
-      <div className="h-px w-full border-b border-gray-200 mt-4" />
+      <div className="flex items-center justify-between">
+        <Text>{isLang ? "Soliqlar" : "Налоги"}</Text>
+        <Text data-testid="cart-taxes">{formatPrice(tax_total)}</Text>
+      </div>
+      <div className="h-px w-full border-b border-gray-200 my-2" />
+      <div className="flex items-center justify-between text-ui-fg-base mb-2 txt-medium-plus">
+        <Text>{isLang ? "Jami" : "Итого"}</Text>
+        <Text className="txt-xlarge-plus" data-testid="cart-total">
+          {formatPrice(total)}
+        </Text>
+      </div>
     </div>
   )
 }

@@ -2,6 +2,12 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@layer base {
+  body {
+    background-color: #FAF7F3;
+  }
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
@@ -37,7 +43,7 @@
   select:-webkit-autofill:focus {
     border: 1px solid #212121;
     -webkit-text-fill-color: #212121;
-    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    -webkit-box-shadow: 0 0 0px 1000px #FAF7F3 inset;
     transition: background-color 5000s ease-in-out 0s;
   }
 
@@ -113,23 +119,23 @@
 
 /* Liquid Glass UI Components */
 @layer components {
-  /* Primary Buttons - Orange Glass Effect */
+  /* Primary Buttons - Rose Gold Glass Effect */
   .liquid-glass-button {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(255, 106, 26, 0.9) 0%, rgba(230, 81, 0, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(217, 166, 118, 0.9) 0%, rgba(200, 150, 100, 0.9) 100%);
     backdrop-filter: blur(10px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 
-      0 4px 16px rgba(255, 106, 26, 0.15),
+      0 4px 16px rgba(217, 166, 118, 0.15),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
   }
 
   .liquid-glass-button:hover {
-    background: linear-gradient(135deg, rgba(255, 106, 26, 1) 0%, rgba(230, 81, 0, 1) 100%);
+    background: linear-gradient(135deg, rgba(166, 90, 58, 0.95) 0%, rgba(150, 75, 45, 0.95) 100%);
     box-shadow: 
-      0 6px 24px rgba(255, 106, 26, 0.25),
+      0 6px 24px rgba(166, 90, 58, 0.25),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
     transform: translateY(-1px);
   }
@@ -137,7 +143,7 @@
   .liquid-glass-button:active {
     transform: translateY(0);
     box-shadow: 
-      0 2px 8px rgba(255, 106, 26, 0.2),
+      0 2px 8px rgba(217, 166, 118, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
@@ -156,49 +162,49 @@
     left: 100%;
   }
 
-  /* Secondary/Neutral Buttons - White Glass */
+  /* Secondary/Neutral Buttons - Sandstone Glass */
   .liquid-glass-button-secondary {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(200, 185, 166, 0.85);
     backdrop-filter: blur(10px) saturate(150%);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(90, 70, 54, 0.15);
     box-shadow: 
-      0 2px 8px rgba(0, 0, 0, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      0 2px 8px rgba(90, 70, 54, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
   }
 
   .liquid-glass-button-secondary:hover {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(200, 185, 166, 0.95);
     box-shadow: 
-      0 4px 12px rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      0 4px 12px rgba(90, 70, 54, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
     transform: translateY(-1px);
   }
 
   /* Popover/Dropdown - Glass Container */
   .liquid-glass-popover {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(250, 247, 243, 0.95);
     backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(90, 70, 54, 0.1);
     box-shadow: 
-      0 12px 48px rgba(0, 0, 0, 0.15),
+      0 12px 48px rgba(90, 70, 54, 0.15),
       0 0 1px rgba(255, 255, 255, 0.5) inset;
   }
 
   /* Card with subtle glass effect */
   .liquid-glass-card {
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(250, 247, 243, 0.92);
     backdrop-filter: blur(15px) saturate(150%);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(90, 70, 54, 0.08);
+    box-shadow: 0 4px 16px rgba(90, 70, 54, 0.1);
   }
 
   /* Header with glass effect */
   .liquid-glass-header {
-    background: rgba(255, 255, 255, 0.90);
+    background: rgba(250, 247, 243, 0.90);
     backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-bottom: 1px solid rgba(90, 70, 54, 0.1);
+    box-shadow: 0 2px 8px rgba(90, 70, 54, 0.06);
   }
 
   /* Delete/Danger button with glass */
@@ -222,30 +228,30 @@
 
   /* Medusa UI Button overrides for liquid glass */
   button[data-ui-button].liquid-glass {
-    background: linear-gradient(135deg, rgba(255, 106, 26, 0.9) 0%, rgba(230, 81, 0, 0.9) 100%) !important;
+    background: linear-gradient(135deg, rgba(217, 166, 118, 0.9) 0%, rgba(200, 150, 100, 0.9) 100%) !important;
     backdrop-filter: blur(10px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     color: white !important;
     box-shadow: 
-      0 4px 16px rgba(255, 106, 26, 0.15),
+      0 4px 16px rgba(217, 166, 118, 0.15),
       inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
   }
 
   button[data-ui-button].liquid-glass:hover {
-    background: linear-gradient(135deg, rgba(255, 106, 26, 1) 0%, rgba(230, 81, 0, 1) 100%) !important;
+    background: linear-gradient(135deg, rgba(166, 90, 58, 0.95) 0%, rgba(150, 75, 45, 0.95) 100%) !important;
     color: white !important;
     box-shadow: 
-      0 6px 24px rgba(255, 106, 26, 0.25),
+      0 6px 24px rgba(166, 90, 58, 0.25),
       inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
     transform: translateY(-1px);
   }
 
   /* Badge/Pill with glass */
   .liquid-glass-badge {
-    background: rgba(255, 106, 26, 0.15);
+    background: rgba(217, 166, 118, 0.15);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 106, 26, 0.3);
-    box-shadow: 0 2px 8px rgba(255, 106, 26, 0.1);
+    border: 1px solid rgba(217, 166, 118, 0.3);
+    box-shadow: 0 2px 8px rgba(217, 166, 118, 0.1);
   }
 
   /* Subtle glass overlay for images/thumbnails */

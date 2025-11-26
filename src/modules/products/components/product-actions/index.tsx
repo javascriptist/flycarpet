@@ -154,7 +154,7 @@ export default function ProductActions({
             !isValidVariant
           }
           variant="secondary"
-          className="w-full h-10 rounded-3xl bg-[#FF6A1A] text-white hover:bg-[#D4682D] transition-all duration-200 border-transparent outline-none focus:outline-none focus:ring-2 focus:ring-[#FF6A1A] focus:ring-offset-2 focus:ring-offset-white"
+          className="w-full h-10 rounded-3xl bg-[#D9A676] text-white hover:bg-[#D4682D] transition-all duration-200 border-transparent outline-none focus:outline-none focus:ring-2 focus:ring-[#D9A676] focus:ring-offset-2 focus:ring-offset-white"
           isLoading={isAdding}
           data-testid="add-product-button"
         >

@@ -73,8 +73,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           transition-all duration-200
           ${
             isDragging
-              ? 'border-[#FF6A1A] bg-orange-50'
-              : 'border-gray-300 hover:border-[#FF6A1A] hover:bg-gray-50'
+              ? 'border-brand-peach bg-orange-50'
+              : 'border-gray-300 hover:border-brand-peach hover:bg-gray-50'
           }
         `}
       >
