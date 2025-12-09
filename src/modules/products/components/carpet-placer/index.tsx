@@ -12,6 +12,7 @@ import {
   type CornerType
 } from "@lib/opencv-floor-detection"
 import { detectFloorAI, type AIFloorDetectionResult } from "@lib/ai-floor-detection"
+import { t } from '@lib/util/translations'
 
 interface Point {
   x: number
@@ -571,20 +572,16 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             <p className="text-sm text-blue-900">
-              <strong>{isLang ? "Tahlil qilmoqda..." : "Анализ изображения..."}</strong>{" "}
-              {isLang
-                ? "Polni aniqlamoqdamiz"
-                : "Определяем пол"}
+              <strong>{t({ uz: 'Tahlil qilmoqda...', ru: 'Анализ изображения...', en: 'Analyzing image...' }, countryCode)}</strong>{" "}
+              {t({ uz: 'Polni aniqlamoqdamiz', ru: 'Определяем пол', en: 'Detecting floor' }, countryCode)}
             </p>
           </div>
         ) : (
           <p className="text-sm text-blue-900">
             <strong>
-              {isLang ? "Yo'riqnoma:" : "Инструкция:"}
+              {t({ uz: 'Yo\u02bcriqnoma:', ru: 'Инструкция:', en: 'Instructions:' }, countryCode)}
             </strong>{" "}
-            {isLang
-              ? "Gilamni sudrab ko'chiring, aylantirib va o'lchamini o'zgartiring."
-              : "Перетащите ковер, поверните и измените размер."}
+            {t({ uz: 'Gilamni sudrab ko\u02bcchiring, aylantirib va o\u02bclchamini o\u02bzgartiring.', ru: 'Перетащите ковер, поверните и измените размер.', en: 'Drag the carpet, rotate and resize it.' }, countryCode)}
           </p>
         )}
       </div>
@@ -608,7 +605,7 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
         {/* Scale Control */}
         <div className="flex items-center gap-4">
           <label className="text-sm font-medium text-gray-700 min-w-[100px]">
-            {isLang ? "O'lcham:" : "Размер:"}
+            {t({ uz: 'O\u02bclcham:', ru: 'Размер:', en: 'Size:' }, countryCode)}
           </label>
           <input
             type="range"
@@ -627,7 +624,7 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
         {/* Rotation Control */}
         <div className="flex items-center gap-4">
           <label className="text-sm font-medium text-gray-700 min-w-[100px]">
-            {isLang ? "Burilish:" : "Поворот:"}
+            {t({ uz: 'Burilish:', ru: 'Поворот:', en: 'Rotation:' }, countryCode)}
           </label>
           <input
             type="range"
@@ -646,7 +643,7 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
         {/* Opacity Control */}
         <div className="flex items-center gap-4">
           <label className="text-sm font-medium text-gray-700 min-w-[100px]">
-            {isLang ? "Shaffoflik:" : "Прозрачность:"}
+            {t({ uz: 'Shaffoflik:', ru: 'Прозрачность:', en: 'Opacity:' }, countryCode)}
           </label>
           <input
             type="range"
@@ -667,9 +664,9 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
           <div className="border-t border-gray-200 pt-4 mt-2">
             <div className="flex items-center justify-between mb-3">
               <label className="text-sm font-medium text-gray-700">
-                {isLang ? "Pol tanlash:" : "Выбор пола:"}{" "}
+                {t({ uz: 'Pol tanlash:', ru: 'Выбор пола:', en: 'Floor selection:' }, countryCode)}{" "}
                 <span className="text-gray-500">
-                  ({floorCandidates.length} {isLang ? "variant" : "вариантов"})
+                  ({floorCandidates.length} {t({ uz: 'variant', ru: 'вариантов', en: 'options' }, countryCode)})
                 </span>
               </label>
               <button
@@ -681,8 +678,8 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
                 }`}
               >
                 {showCandidates 
-                  ? (isLang ? "Yashirish" : "Скрыть")
-                  : (isLang ? "Ko'rsatish" : "Показать")}
+                  ? t({ uz: 'Yashirish', ru: 'Скрыть', en: 'Hide' }, countryCode)
+                  : t({ uz: 'Ko\u02bcrsatish', ru: 'Показать', en: 'Show' }, countryCode)}
               </button>
             </div>
             
@@ -704,10 +701,10 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
                           className="w-3 h-3 rounded-full"
                           style={{ backgroundColor: candidate.color }}
                         />
-                        {isLang ? "Pol" : "Пол"} {index + 1}
+                        {t({ uz: 'Pol', ru: 'Пол', en: 'Floor' }, countryCode)} {index + 1}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {(candidate.confidence * 100).toFixed(0)}% {isLang ? "ishonch" : "уверенность"}
+                        {(candidate.confidence * 100).toFixed(0)}% {t({ uz: 'ishonch', ru: 'уверенность', en: 'confidence' }, countryCode)}
                       </span>
                     </div>
                   </button>
@@ -716,7 +713,7 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
                   onClick={handleConfirmFloor}
                   className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors mt-2"
                 >
-                  ✓ {isLang ? "Tasdiqlash" : "Подтвердить"}
+                  ✓ {t({ uz: 'Tasdiqlash', ru: 'Подтвердить', en: 'Confirm' }, countryCode)}
                 </button>
               </div>
             )}
@@ -728,7 +725,7 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
           <div className="border-t border-gray-200 pt-4 mt-2">
             <div className="flex items-center justify-between mb-3">
               <label className="text-sm font-medium text-gray-700">
-                {isLang ? "Polni sozlash:" : "Настройка пола:"}
+                {t({ uz: 'Polni sozlash:', ru: 'Настройка пола:', en: 'Adjust floor:' }, countryCode)}
               </label>
               <button
                 onClick={handleToggleEditFloor}
@@ -739,17 +736,15 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
                 }`}
               >
                 {isEditingFloor 
-                  ? (isLang ? "Tayyor" : "Готово")
-                  : (isLang ? "Tahrirlash" : "Редактировать")}
+                  ? t({ uz: 'Tayyor', ru: 'Готово', en: 'Done' }, countryCode)
+                  : t({ uz: 'Tahrirlash', ru: 'Редактировать', en: 'Edit' }, countryCode)}
               </button>
             </div>
             
             {isEditingFloor && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p className="text-xs text-blue-900">
-                  💡 {isLang 
-                    ? "Polning burchaklarini sudrab sozlang" 
-                    : "Перетащите углы пола для точной настройки"}
+                  💡 {t({ uz: 'Polning burchaklarini sudrab sozlang', ru: 'Перетащите углы пола для точной настройки', en: 'Drag the floor corners for precise adjustment' }, countryCode)}
                 </p>
               </div>
             )}
@@ -761,19 +756,19 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
             onClick={handleReset}
             className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
           >
-            {isLang ? "Qayta boshlash" : "Сбросить"}
+            {t({ uz: 'Qayta boshlash', ru: 'Сбросить', en: 'Reset' }, countryCode)}
           </button>
           <button
             onClick={handleDownload}
             className="flex-1 px-4 py-2 bg-brand-peach hover:bg-brand-terracotta text-white rounded-lg transition-colors font-semibold"
           >
-            {isLang ? "Yuklab olish" : "Скачать"}
+            {t({ uz: 'Yuklab olish', ru: 'Скачать', en: 'Download' }, countryCode)}
           </button>
           <button
             onClick={onClose}
             className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-semibold"
           >
-            {isLang ? "Tayyor" : "Готово"}
+            {t({ uz: 'Tayyor', ru: 'Готово', en: 'Done' }, countryCode)}
           </button>
         </div>
       </div>

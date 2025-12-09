@@ -1,5 +1,6 @@
 import { HttpTypes } from "@medusajs/types"
 import { Text } from "@medusajs/ui"
+import { t } from "@lib/util/translations"
 
 type OrderDetailsProps = {
   order: HttpTypes.StoreOrder
@@ -8,7 +9,6 @@ type OrderDetailsProps = {
 }
 
 const OrderDetails = ({ order, showStatus, countryCode }: OrderDetailsProps) => {
-  const isLang = countryCode === "uz"
   const formatStatus = (str: string) => {
     const formatted = str.split("_").join(" ")
 
@@ -18,9 +18,7 @@ const OrderDetails = ({ order, showStatus, countryCode }: OrderDetailsProps) => 
   return (
     <div>
       <Text>
-        {isLang 
-          ? "Buyurtma tasdig'i tafsilotlari quyidagi manzilga yuborildi: "
-          : "Мы отправили подтверждение заказа на адрес: "}
+        {t({ uz: "Buyurtma tasdig\u02bci tafsilotlari quyidagi manzilga yuborildi: ", ru: "Мы отправили подтверждение заказа на адрес: ", en: "We have sent the order confirmation details to " }, countryCode)}
         <span
           className="text-ui-fg-medium-plus font-semibold"
           data-testid="order-email"
@@ -30,13 +28,13 @@ const OrderDetails = ({ order, showStatus, countryCode }: OrderDetailsProps) => 
         .
       </Text>
       <Text className="mt-2">
-        {isLang ? "Buyurtma sanasi: " : "Дата заказа: "}
+        {t({ uz: "Buyurtma sanasi: ", ru: "Дата заказа: ", en: "Order Date: " }, countryCode)}
         <span data-testid="order-date">
           {new Date(order.created_at).toDateString()}
         </span>
       </Text>
       <Text className="mt-2 text-ui-fg-interactive">
-        {isLang ? "Buyurtma raqami: " : "Номер заказа: "}
+        {t({ uz: "Buyurtma raqami: ", ru: "Номер заказа: ", en: "Order Number: " }, countryCode)}
         <span data-testid="order-id">{order.display_id}</span>
       </Text>
 
@@ -44,14 +42,14 @@ const OrderDetails = ({ order, showStatus, countryCode }: OrderDetailsProps) => 
         {showStatus && (
           <>
             <Text>
-              {isLang ? "Buyurtma holati: " : "Статус заказа: "}
+              {t({ uz: "Buyurtma holati: ", ru: "Статус заказа: ", en: "Order Status: " }, countryCode)}
               <span className="text-ui-fg-subtle " data-testid="order-status">
                 {/* TODO: Check where the statuses should come from */}
                 {/* {formatStatus(order.fulfillment_status)} */}
               </span>
             </Text>
             <Text>
-              {isLang ? "To'lov holati: " : "Статус оплаты: "}
+              {t({ uz: "To\u02bclov holati: ", ru: "Статус оплаты: ", en: "Payment Status: " }, countryCode)}
               <span
                 className="text-ui-fg-subtle "
                 sata-testid="order-payment-status"

@@ -1,21 +1,45 @@
 import { clx } from "@medusajs/ui"
 
 import { getProductPrice } from "@lib/util/get-product-price"
+import { convertUsdToUzs, formatUzsAmount } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
+import { useMemo } from "react"
 
 export default function ProductPrice({
   product,
   variant,
+  region,
+  exchangeRate,
 }: {
   product: HttpTypes.StoreProduct
   variant?: HttpTypes.StoreProductVariant
+  region?: HttpTypes.StoreRegion
+  exchangeRate?: number
 }) {
   const { cheapestPrice, variantPrice } = getProductPrice({
     product,
     variantId: variant?.id,
   })
 
-  const selectedPrice = variant ? variantPrice : cheapestPrice
+  const selectedPrice = useMemo(() => {
+    const price = variant ? variantPrice : cheapestPrice
+    
+    if (!price || !exchangeRate) {
+      return price
+    }
+    
+    // Convert prices to UZS
+    const calculatedPriceUzs = convertUsdToUzs(price.calculated_price_number, exchangeRate)
+    const originalPriceUzs = price.original_price_number
+      ? convertUsdToUzs(price.original_price_number, exchangeRate)
+      : null
+    
+    return {
+      ...price,
+      calculated_price: formatUzsAmount(calculatedPriceUzs),
+      original_price: originalPriceUzs ? formatUzsAmount(originalPriceUzs) : price.original_price,
+    }
+  }, [variant, variantPrice, cheapestPrice, exchangeRate])
 
   if (!selectedPrice) {
     return <div className="block w-32 h-9 bg-gray-100 animate-pulse" />

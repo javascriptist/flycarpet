@@ -12,6 +12,7 @@ import Divider from "@modules/common/components/divider"
 import MedusaRadio from "@modules/common/components/radio"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { t } from "@lib/util/translations"
 
 type ShippingProps = {
   cart: HttpTypes.StoreCart
@@ -119,7 +120,7 @@ const Shipping: React.FC<ShippingProps> = ({
             }
           )}
         >
-          {isLang ? "Yetkazib berish" : "Доставка"}
+          {t({ uz: "Yetkazib berish", ru: "Доставка", en: "Delivery" }, countryCode)}
           {!isOpen && (cart.shipping_methods?.length ?? 0) > 0 && (
             <CheckCircleSolid />
           )}
@@ -134,7 +135,7 @@ const Shipping: React.FC<ShippingProps> = ({
                 className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
                 data-testid="edit-delivery-button"
               >
-                Edit
+                {t({ uz: "Tahrirlash", ru: "Редактировать", en: "Edit" }, countryCode)}
               </button>
             </Text>
           )}
@@ -208,7 +209,7 @@ const Shipping: React.FC<ShippingProps> = ({
             disabled={!cart.shipping_methods?.[0]}
             data-testid="submit-delivery-option-button"
           >
-            {isLang ? "To'lovga o'tish" : "Перейти к оплате"}
+            {t({ uz: "To\u02bclovga o\u02bctish", ru: "Перейти к оплате", en: "Continue to Payment" }, countryCode)}
           </Button>
         </div>
       ) : (
@@ -217,7 +218,7 @@ const Shipping: React.FC<ShippingProps> = ({
             {cart && (cart.shipping_methods?.length ?? 0) > 0 && (
               <div className="flex flex-col w-1/3">
                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                  {isLang ? "Usul" : "Способ"}
+                  {t({ uz: "Usul", ru: "Способ", en: "Method" }, countryCode)}
                 </Text>
                 <Text className="txt-medium text-ui-fg-subtle">
                   {cart.shipping_methods?.at(-1)?.name}{" "}

@@ -11,6 +11,7 @@ import { useParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
+import { t } from '@lib/util/translations'
 
 type ProductActionsProps = {
   product: HttpTypes.StoreProduct
@@ -46,6 +47,16 @@ export default function ProductActions({
       setOptions(variantOptions ?? {})
     }
   }, [product.variants])
+
+  // Check if all required options are selected
+  const allOptionsSelected = useMemo(() => {
+    const requiredOptionsCount = product.options?.length || 0
+    // If no options are required (simple product), return true
+    if (requiredOptionsCount === 0) return true
+    
+    const selectedOptionsCount = Object.values(options).filter(v => v !== undefined && v !== '').length
+    return requiredOptionsCount === selectedOptionsCount
+  }, [product.options, options])
 
   const selectedVariant = useMemo(() => {
     if (!product.variants || product.variants.length === 0) {
@@ -147,22 +158,22 @@ export default function ProductActions({
         <Button
           onClick={handleAddToCart}
           disabled={
+            !allOptionsSelected ||
             !inStock ||
             !selectedVariant ||
             !!disabled ||
-            isAdding ||
-            !isValidVariant
+            isAdding
           }
           variant="secondary"
           className="w-full h-10 rounded-3xl bg-[#D9A676] text-white hover:bg-[#D4682D] transition-all duration-200 border-transparent outline-none focus:outline-none focus:ring-2 focus:ring-[#D9A676] focus:ring-offset-2 focus:ring-offset-white"
           isLoading={isAdding}
           data-testid="add-product-button"
         >
-          {!selectedVariant && !options
-            ? (isLang ? "Tanlang" : "Выберите")
-            : !inStock || !isValidVariant
-            ? (isLang ? "Mavjud emas" : "Недоступно")
-            : (isLang ? "Savatchaga qo'shish" : "Добавить в корзину")
+          {!allOptionsSelected
+            ? t({ uz: 'Avval tanlang', ru: 'Сначала выберите', en: 'Select options first' }, countryCode)
+            : !inStock
+            ? t({ uz: 'Mavjud emas', ru: 'Недоступно', en: 'Out of stock' }, countryCode)
+            : t({ uz: 'Savatchaga qo\u02bcshish', ru: 'Добавить в корзину', en: 'Add to cart' }, countryCode)
           }
         </Button>
         <MobileActions
@@ -177,6 +188,7 @@ export default function ProductActions({
           optionsDisabled={!!disabled || isAdding}
           isLang={isLang}
           exchangeRate={exchangeRate}
+          allOptionsSelected={allOptionsSelected}
         />
       </div>
     </>

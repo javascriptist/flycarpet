@@ -1,6 +1,7 @@
 import { Heading } from "@medusajs/ui"
 
 import InteractiveLink from "@modules/common/components/interactive-link"
+import { t } from '@lib/util/translations'
 
 const EmptyCartMessage = ({ countryCode }: { countryCode?: string }) => {
   const isLang = countryCode === "uz"
@@ -11,17 +12,14 @@ const EmptyCartMessage = ({ countryCode }: { countryCode?: string }) => {
         level="h2"
         className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
       >
-        {isLang ? "Savatcha" : "Корзина"}
+        {t({ uz: 'Savatcha', ru: 'Корзина', en: 'Cart' }, countryCode)}
       </Heading>
       <p className="text-base-regular mt-4 mb-6 max-w-[32rem]">
-        {isLang 
-          ? "Savatchada hech narsa yo'q. Keling, buni o'zgartiramiz, mahsulotlarni ko'rishni boshlash uchun quyidagi havoladan foydalaning."
-          : "В вашей корзине ничего нет. Давайте это изменим, используйте ссылку ниже, чтобы начать просмотр наших товаров."
-        }
+        {t({ uz: 'Savatchada hech narsa yo\u02bcq. Keling, buni o\u02bzgartiramiz, mahsulotlarni ko\u02bcrishni boshlash uchun quyidagi havoladan foydalaning.', ru: 'В вашей корзине ничего нет. Давайте это изменим, используйте ссылку ниже, чтобы начать просмотр наших товаров.', en: 'Your cart is empty. Let\'s change that, use the link below to start browsing our products.' }, countryCode)}
       </p>
       <div>
         <InteractiveLink href="/store">
-          {isLang ? "Mahsulotlarni ko'rish" : "Посмотреть товары"}
+          {t({ uz: 'Mahsulotlarni ko\u02bcrish', ru: 'Посмотреть товары', en: 'View products' }, countryCode)}
         </InteractiveLink>
       </div>
     </div>

@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import toCyrillic from '@lib/util/latintocrylic';
+import { t } from '@lib/util/translations';
 
 interface CollectionSlideProps {
   listOfCollections: Array<{ id: string; handle: string; title: string }>;
@@ -32,10 +33,10 @@ const CollectionSlide: React.FC<CollectionSlideProps> = ({ listOfCollections, co
       <div className="title-and-button" style={{ display: 'flex', justifyContent: 'space-between'}}>
         <div className="title-text">
           <h2 className="text-4xl font-bold text-left max-md:text-3xl"> 
-            {isLang ? "Eng so'ngi kolleksiyalar" : "Последние коллекции"}
+            {t({ uz: 'Eng soʼngi kolleksiyalar', ru: 'Последние коллекции', en: 'Latest collections' }, countryCode)}
           </h2>
           <div className="w-100 h-[1.9px] bg-brand-peach mb-6 rounded-full"></div>
-            {isLang ? "Bizning eng so'nggi kolleksiyalarimiz bilan tanishing" : "Познакомьтесь с нашими последними коллекциями"}
+            {t({ uz: 'Bizning eng soʼnggi kolleksiyalarimiz bilan tanishing', ru: 'Познакомьтесь с нашими последними коллекциями', en: 'Explore our latest collections' }, countryCode)}
            <p className="text-center text-xl mb-4 mb-4 text-left"> 
           </p>
         </div>
@@ -69,7 +70,7 @@ const CollectionSlide: React.FC<CollectionSlideProps> = ({ listOfCollections, co
                 />
                 <div className="collection-card-text py-5 px-2" style={{ display: 'flex', justifyContent: 'space-between', width: '100%', padding: '4px 15px'} }>
                   <h2 className="text-center text-xl font-bold">{
-                    isLang ? collection.title : toCyrillic(collection.title)
+                    t({ uz: collection.title, ru: toCyrillic(collection.title), en: collection.title }, countryCode)
                   }
                   </h2>
                   <a href={`/collections/${collection.handle}`} className="hover:bg-brand-peach/10 rounded-full transition-all duration-300 hover:scale-110 inline-flex items-center justify-center">

@@ -13,6 +13,7 @@ import BillingAddress from "../billing_address"
 import ErrorMessage from "../error-message"
 import ShippingAddress from "../shipping-address"
 import { SubmitButton } from "../submit-button"
+import { t } from "@lib/util/translations"
 
 const Addresses = ({
   cart,
@@ -23,7 +24,6 @@ const Addresses = ({
   customer: HttpTypes.StoreCustomer | null
   countryCode?: string
 }) => {
-  const isLang = countryCode === "uz"
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -49,7 +49,7 @@ const Addresses = ({
           level="h2"
           className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
         >
-          {isLang ? "Yetkazib berish manzili" : "Адрес доставки"}
+          {t({ uz: "Yetkazib berish manzili", ru: "Адрес доставки", en: "Shipping Address" }, countryCode)}
           {!isOpen && <CheckCircleSolid />}
         </Heading>
         {!isOpen && cart?.shipping_address && (
@@ -59,7 +59,7 @@ const Addresses = ({
               className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
               data-testid="edit-address-button"
             >
-              Edit
+              {t({ uz: "Tahrirlash", ru: "Редактировать", en: "Edit" }, countryCode)}
             </button>
           </Text>
         )}
@@ -80,14 +80,14 @@ const Addresses = ({
                   level="h2"
                   className="text-3xl-regular gap-x-4 pb-6 pt-8"
                 >
-                  Billing address
+                  {t({ uz: "Hisob-kitob manzili", ru: "Адрес для выставления счета", en: "Billing Address" }, countryCode)}
                 </Heading>
 
                 <BillingAddress />
               </div>
             )}
             <SubmitButton className="mt-6" data-testid="submit-address-button">
-              {isLang ? "Yetkazib berishga o'tish" : "Перейти к доставке"}
+              {t({ uz: "Yetkazib berishga o\u02bctish", ru: "Перейти к доставке", en: "Continue to Delivery" }, countryCode)}
             </SubmitButton>
             <ErrorMessage error={message} data-testid="address-error-message" />
           </div>
@@ -103,7 +103,7 @@ const Addresses = ({
                     data-testid="shipping-address-summary"
                   >
                     <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                      {isLang ? "Yetkazib berish manzili" : "Адрес доставки"}
+                      {t({ uz: "Yetkazib berish manzili", ru: "Адрес доставки", en: "Shipping Address" }, countryCode)}
                     </Text>
                     <Text className="txt-medium text-ui-fg-subtle">
                       {cart.shipping_address.first_name}{" "}
@@ -127,7 +127,7 @@ const Addresses = ({
                     data-testid="shipping-contact-summary"
                   >
                     <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                      {isLang ? "Aloqa" : "Контакт"}
+                      {t({ uz: "Aloqa", ru: "Контакт", en: "Contact" }, countryCode)}
                     </Text>
                     <Text className="txt-medium text-ui-fg-subtle">
                       {cart.shipping_address.phone}
@@ -142,12 +142,12 @@ const Addresses = ({
                     data-testid="billing-address-summary"
                   >
                     <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                      {isLang ? "Hisob-kitob manzili" : "Адрес для выставления счета"}
+                      {t({ uz: "Hisob-kitob manzili", ru: "Адрес для выставления счета", en: "Billing Address" }, countryCode)}
                     </Text>
 
                     {sameAsBilling ? (
                       <Text className="txt-medium text-ui-fg-subtle">
-                        {isLang ? "Hisob-kitob va yetkazib berish manzili bir xil." : "Адрес для выставления счета и доставки совпадают."}
+                        {t({ uz: "Hisob-kitob va yetkazib berish manzili bir xil.", ru: "Адрес для выставления счета и доставки совпадают.", en: "Billing and shipping addresses are the same." }, countryCode)}
                       </Text>
                     ) : (
                       <>

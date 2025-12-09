@@ -4,6 +4,7 @@ import ErrorMessage from "@modules/checkout/components/error-message"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
 import Input from "@modules/common/components/input"
 import { useActionState } from "react"
+import { t } from '@lib/util/translations'
 
 type Props = {
   setCurrentView: (view: LOGIN_VIEW) => void,
@@ -20,24 +21,24 @@ const Login = ({ setCurrentView , countryCode }: Props) => {
       data-testid="login-page"
     >
       <h1 className="text-large-semi uppercase mb-6 text-brand-brown">
-        {isLang ? "Xush kelibsiz" : "Вас приветствует"}
+        {t({ uz: 'Xush kelibsiz', ru: 'Вас приветствует', en: 'Welcome' }, countryCode)}
       </h1>
       <p className="text-center text-base-regular text-ui-fg-base mb-8">
-        { isLang ? " Ro'yxatdan o'ting va xarid qilish tajribangizni yaxshilang." : " Зарегистрируйтесь и улучшите свой опыт покупок." }
+        {t({ uz: 'Roʼyxatdan oʼting va xarid qilish tajribangizni yaxshilang.', ru: 'Зарегистрируйтесь и улучшите свой опыт покупок.', en: 'Sign up and improve your shopping experience.' }, countryCode)}
       </p>
       <form className="w-full" action={formAction}>
         <div className="flex flex-col w-full gap-y-2">
           <Input
-            label={ isLang ? "Email" : "Электронная почта" }
+            label={t({ uz: 'Email', ru: 'Электронная почта', en: 'Email' }, countryCode)}
             name="email"
             type="email"
-            title={ isLang ? "Emailingizni kiriting" : "Электронная почта" }
+            title={t({ uz: 'Emailingizni kiriting', ru: 'Электронная почта', en: 'Enter your email' }, countryCode)}
             autoComplete="email"
             required
             data-testid="email-input"
           />
           <Input
-            label={ isLang ? "Parol" : "Пароль" }
+            label={t({ uz: 'Parol', ru: 'Пароль', en: 'Password' }, countryCode)}
             name="password"
             type="password"
             autoComplete="current-password"
@@ -47,18 +48,18 @@ const Login = ({ setCurrentView , countryCode }: Props) => {
         </div>
         <ErrorMessage error={message} data-testid="login-error-message" />
         <SubmitButton data-testid="sign-in-button" className="w-full mt-6 rounded-3xl liquid-glass">
-          { isLang ? "Kirish" : "Войти" }
+          {t({ uz: 'Kirish', ru: 'Войти', en: 'Sign in' }, countryCode)}
         </SubmitButton>
       </form>
       <span className="text-center text-ui-fg-base text-small-regular mt-6">
-        {isLang ? "Yoki" : "Или"}
+        {t({ uz: 'Yoki', ru: 'Или', en: 'Or' }, countryCode)}
         {" "}
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.REGISTER)}
           className="underline hover:text-brand-peach transition-colors"
           data-testid="register-button"
         >
-          { isLang ? "ro'yxatdan o'ting" : "Зарегистрируйтесь" }
+          {t({ uz: 'roʼyxatdan oʼting', ru: 'Зарегистрируйтесь', en: 'register' }, countryCode)}
         </button>
         .
       </span>

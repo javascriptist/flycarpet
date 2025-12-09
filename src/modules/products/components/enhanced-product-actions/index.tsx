@@ -17,6 +17,7 @@ import { ARToggleButton } from "../ar-toggle-button"
 import { RoomVisualizerButton } from "../room-visualizer-button"
 import { isRollCarpet, getCarpetWidth, getStockLength } from "@lib/util/carpet-helpers"
 import { getExchangeRate } from "@lib/data/exchange-rate"
+import { t } from '@lib/util/translations'
 
 type EnhancedProductActionsProps = {
   product: HttpTypes.StoreProduct
@@ -251,10 +252,10 @@ export default function EnhancedProductActions({
           data-testid="add-product-button"
         >
           {!selectedVariant && !options
-            ? (isLang ? "Tanlang" : "Выберите")
+            ? t({ uz: 'Tanlang', ru: 'Выберите', en: 'Select' }, countryCode)
             : !inStock || !isValidVariant
-            ? (isLang ? "Mavjud emas" : "Недоступно")
-            : (isLang ? "Savatchaga qo'shish" : "Добавить в корзину")
+            ? t({ uz: 'Mavjud emas', ru: 'Недоступно', en: 'Out of stock' }, countryCode)
+            : t({ uz: 'Savatchaga qo\u02bcshish', ru: 'Добавить в корзину', en: 'Add to cart' }, countryCode)
           }
         </Button>
         <MobileActions

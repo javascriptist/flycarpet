@@ -3,7 +3,7 @@
 import { Button } from "@medusajs/ui"
 import { useState } from "react"
 import { ImageUploader } from "../image-uploader"
-import { CarpetPlacer } from "../carpet-placer"
+// import { CarpetPlacer } from "../carpet-placer" // DEACTIVATED
 
 interface RoomVisualizerButtonProps {
   productImage: string
@@ -16,6 +16,9 @@ export const RoomVisualizerButton: React.FC<RoomVisualizerButtonProps> = ({
   productTitle,
   countryCode,
 }) => {
+  // COMPONENT DEACTIVATED - Return null to hide button
+  return null
+  
   const [isOpen, setIsOpen] = useState(false)
   const [roomImage, setRoomImage] = useState<string | null>(null)
   const isLang = countryCode === "uz"

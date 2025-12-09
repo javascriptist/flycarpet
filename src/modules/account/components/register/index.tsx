@@ -7,6 +7,7 @@ import ErrorMessage from "@modules/checkout/components/error-message"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { signup } from "@lib/data/customer"
+import { t } from "@lib/util/translations"
 
 type Props = {
   setCurrentView: (view: LOGIN_VIEW) => void,
@@ -14,7 +15,6 @@ type Props = {
 }
 
 const Register = ({ setCurrentView, countryCode }: Props) => {
-  const isLang = countryCode === "uz"
   const [message, formAction] = useActionState(signup, null)
 
   return (
@@ -23,20 +23,20 @@ const Register = ({ setCurrentView, countryCode }: Props) => {
       data-testid="register-page"
     >
       <h1 className="text-large-semi uppercase mb-6 text-brand-brown">
-        {isLang ? "Ro'yxatdan o'tish" : "Регистрация"}
+        {t({ uz: "Ro\u02bcyxatdan o\u02bctish", ru: "Регистрация", en: "Sign Up" }, countryCode)}
       </h1>
       
       <form className="w-full flex flex-col" action={formAction}>
         <div className="flex flex-col w-full gap-y-2">
           <Input
-            label={ isLang ? "Ismingiz" : "Имя" }
+            label={t({ uz: "Ismingiz", ru: "Имя", en: "First Name" }, countryCode)}
             name="first_name"
             required
             autoComplete="given-name"
             data-testid="first-name-input"
           />
           <Input
-            label={ isLang ? "Familiyangiz" : "Фамилия" }
+            label={t({ uz: "Familiyangiz", ru: "Фамилия", en: "Last Name" }, countryCode)}
             name="last_name"
             required
             autoComplete="family-name"
@@ -51,14 +51,14 @@ const Register = ({ setCurrentView, countryCode }: Props) => {
             data-testid="email-input"
           />
           <Input
-            label={ isLang ? "Telefon raqamingiz" : "Телефон" }
+            label={t({ uz: "Telefon raqamingiz", ru: "Телефон", en: "Phone Number" }, countryCode)}
             name="phone"
             type="tel"
             autoComplete="tel"
             data-testid="phone-input"
           />
           <Input
-            label={ isLang ? "Parol" : "Пароль" }
+            label={t({ uz: "Parol", ru: "Пароль", en: "Password" }, countryCode)}
             name="password"
             required
             type="password"
@@ -68,35 +68,35 @@ const Register = ({ setCurrentView, countryCode }: Props) => {
         </div>
         <ErrorMessage error={message} data-testid="register-error" />
         <span className="text-center text-ui-fg-base text-small-regular mt-6">
-          {isLang ? "Ro'yxatdan o'tish orqali" : "Зарегистрировавшись,"}
+          {t({ uz: "Ro\u02bcyxatdan o\u02bctish orqali", ru: "Зарегистрировавшись,", en: "By signing up, you agree to our" }, countryCode)}
           {" "}
           <LocalizedClientLink
             href="/content/privacy-policy"
             className="underline"
           >
-            {isLang ? "Maxfiylik siyosati" : "Политика конфиденциальности"}
+            {t({ uz: "Maxfiylik siyosati", ru: "Политика конфиденциальности", en: "Privacy Policy" }, countryCode)}
           </LocalizedClientLink>{" "}
-            {isLang ? "va" : "и"}{" "}
+          {t({ uz: "va", ru: "и", en: "and" }, countryCode)}{" "}
           <LocalizedClientLink
             href="/content/terms-of-use"
             className="underline"
           >
-            {isLang ? "Foydalanish shartlariga" : "Условия использования"}
+            {t({ uz: "Foydalanish shartlariga", ru: "Условия использования", en: "Terms of Use" }, countryCode)}
           </LocalizedClientLink>
-          { isLang ? " rozi bo'lasiz." : " вы соглашаетесь." }
+          {t({ uz: " rozi bo\u02bcasiz.", ru: " вы соглашаетесь.", en: "." }, countryCode)}
         </span>
         <SubmitButton className="w-full mt-6 rounded-3xl liquid-glass" data-testid="register-button">
-          {isLang ? "Ro'yxatdan o'tish" : "Зарегистрироваться"}
+          {t({ uz: "Ro\u02bcyxatdan o\u02bctish", ru: "Зарегистрироваться", en: "Sign Up" }, countryCode)}
         </SubmitButton>
       </form>
       <span className="text-center text-ui-fg-base text-small-regular mt-6">
-        {isLang ? "Yoki" : "Или"}
+        {t({ uz: "Yoki", ru: "Или", en: "Or" }, countryCode)}
         {" "}
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.SIGN_IN)}
           className="underline hover:text-brand-peach transition-colors"
         >
-          {isLang ? "kiring" : "войдите"}
+          {t({ uz: "kiring", ru: "войдите", en: "sign in" }, countryCode)}
         </button>
         .
       </span>

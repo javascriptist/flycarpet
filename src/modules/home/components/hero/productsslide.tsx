@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { count } from 'console';
+import { t } from '@lib/util/translations';
 
 interface ProductSlideProps {
   listOfProducts: Array<{ id: string; handle: string; title: string, img: string | null }>;
@@ -47,7 +48,7 @@ const ProductSlide: React.FC<ProductSlideProps> = ({ listOfProducts, countryCode
     <div className="relative mx-14 px-9 py-12 bg-[#F4E9DD] rounded-3xl max-md:px-4 max-md:mx-4">
       <div className="title-and-button" style={{ display: 'flex', justifyContent: 'space-between'}}>
         <div className="title-text mb-10">
-          <h2 className="text-4xl font-bold"> {isLang ? "Eng so'ngi mahsulotlar" : "Последние продукты"}</h2>
+          <h2 className="text-4xl font-bold">{t({ uz: 'Eng soʼngi mahsulotlar', ru: 'Последние продукты', en: 'Latest products' }, countryCode)}</h2>
           <div className="w-24 h-1 bg-gradient-to-r from-brand-peach to-brand-terracotta rounded-full my-4"></div>
         </div>
         <div className="title-button flex gap-2">

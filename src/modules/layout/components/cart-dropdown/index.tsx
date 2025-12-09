@@ -16,6 +16,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import Thumbnail from "@modules/products/components/thumbnail"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
+import { t } from "@lib/util/translations"
 
 const CartDropdown = ({
   cart: cartState,
@@ -114,7 +115,7 @@ const CartDropdown = ({
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                 </svg>
-                {isLang ? "Savatcha" : "Корзина"}
+                {t({ uz: "Savatcha", ru: "Корзина", en: "Cart" }, countryCode)}
               </h3>
             </div>
             {cartState && cartState.items?.length ? (
@@ -163,7 +164,7 @@ const CartDropdown = ({
                                   data-testid="cart-item-quantity"
                                   data-value={item.quantity}
                                 >
-                                  {isLang ? "Soni" : "Количество"}{" "}
+                                  {t({ uz: "Soni", ru: "Количество", en: "Quantity" }, countryCode)}{" "}
                                   : {item.quantity}
                                 </span>
                               </div>
@@ -181,7 +182,7 @@ const CartDropdown = ({
                             className="mt-1"
                             data-testid="cart-item-remove-button"
                           >
-                            {isLang ? "Olib tashlash" : "Удалить"}
+                            {t({ uz: "Olib tashlash", ru: "Удалить", en: "Remove" }, countryCode)}
                           </DeleteButton>
                         </div>
                       </div>
@@ -190,7 +191,7 @@ const CartDropdown = ({
                 <div className="p-4 flex flex-col gap-y-4 text-small-regular border-t border-gray-100">
                   <div className="flex items-center justify-between">
                     <span className="text-ui-fg-base font-semibold">
-                      {isLang ? "Subtotal" : "Итого"}
+                      {t({ uz: "Jami", ru: "Итого", en: "Subtotal" }, countryCode)}
             
                     </span>
                     <span
@@ -210,7 +211,7 @@ const CartDropdown = ({
                       size="large"
                       data-testid="go-to-cart-button"
                     >
-                      {isLang ? "Savatchaga o'tish" : "Перейти в корзину"}
+                      {t({ uz: "Savatchaga o\u02bctish", ru: "Перейти в корзину", en: "Go to Cart" }, countryCode)}
                     </Button>
                   </LocalizedClientLink>
                 </div>
@@ -222,17 +223,13 @@ const CartDropdown = ({
                     <span>0</span>
                   </div>
                   <span>
-                    {isLang
-                      ? "Savatchangizda hech narsa yo'q"
-                      : "Ваша корзина пуста"}
+                    {t({ uz: "Savatchangizda hech narsa yo\u02bcq", ru: "Ваша корзина пуста", en: "Your cart is empty" }, countryCode)}
                   </span>
                   <div>
                     <LocalizedClientLink href="/store">
                       <>
                         <Button onClick={close}>
-                          {isLang
-                            ? "Do'konga o'tish"
-                            : "Перейти в магазин"}
+                          {t({ uz: "Do\u02bckonga o\u02bctish", ru: "Перейти в магазин", en: "Go to Store" }, countryCode)}
                         </Button>
                       </>
                     </LocalizedClientLink>

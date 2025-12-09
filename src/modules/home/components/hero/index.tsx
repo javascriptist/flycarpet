@@ -7,6 +7,7 @@ import ProductList from "./products-list"
 import Footer from "@modules/layout/templates/footer"
 import { useTranslation } from "next-i18next"
 import { useState, useEffect } from 'react'
+import { t } from '@lib/util/translations'
 
 
 interface HeroProps {
@@ -14,7 +15,6 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ countryCode }) => {
-  const isLang = countryCode === "uz";
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const images = [
@@ -33,8 +33,8 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
   }, [images.length]);
 
   return (
-    <div className="w-full border-b border-ui-border-base relative bg-ui-bg-subtle justify-content-center items-center bg-black">
-      <div className="img w-[100%] h-[40vh] relative overflow-hidden">
+    <div className="w-full h-screen border-b border-ui-border-base relative flex flex-col bg-[#191718]">
+      <div className="img w-full h-[50vh] md:h-[55vh] relative overflow-hidden flex-shrink-0">
         {images.map((img, index) => (
           <div
             key={img}
@@ -53,20 +53,27 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
           </div>
         ))}
       </div>
-      <div className="txt-and-btn w-[100%]">
-        <div className="flex flex-col small:pr-16 pl-12 pt-12 pb-12 gap-3 bg-black">
+      <div className="txt-and-btn w-full flex-1 flex items-center justify-center bg-[#191718]">
+        <div className="flex flex-col w-full small:pr-16 pl-12 py-8 md:py-12 gap-3">
           <span>
           <Heading
               level="h1"
               className="text-2xl leading-8 text-ui-fg-component text-white font-bold mb-4"
             >
-              {isLang ? (
+              {countryCode === 'uz' ? (
                 <>
                 <span className="border-b-4 border-brand-peach inline-block">
                   Premium Carpet 
                   </span>
                     {' '}gilamlari
                   
+                </>
+              ) : countryCode === 'gb' ? (
+                <>
+                  <span className="border-b-4 border-brand-peach inline-block">
+                    Premium Carpet
+                  </span>
+                  {' '}
                 </>
               ) : (
                 <>
@@ -81,14 +88,14 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
               level="h2"
               className="text-xl leading- text-ui-fg-subtle text-white font-normal mt-2 mb-6"
             >
-              {isLang ? "Uyga Sharq sehrini qo‘shing va bo‘shliq qanday tirik ekanligini his qiling." : "Добавьте магию Востока в свой дом и почувствуйте, как пространство оживает."}
+              {t({ uz: 'Uyga Sharq sehrini qo\u02bcshing va bo\u02bcshliq qanday tirik ekanligini his qiling.', ru: 'Добавьте магию Востока в свой дом и почувствуйте, как пространство оживает.', en: 'Add the magic of the East to your home and feel how the space comes alive.' }, countryCode)}
             </Heading>
           </span>
           <a
             href={`/${countryCode}/store`}
           >
-            <Button variant="secondary" className="bg-ui-fg-component liquid-glass text-white rounded-3xl py-4 px-8 text-md bg-[#D9A676]">
-              {isLang ? "Mahsulotlarni ko'rish" : "Посмотреть продукты"}
+            <Button variant="secondary" className="bg-ui-fg-component liquid-glass text-white rounded-3xl py-4 px-8 text-md bg-[#D9A676] hover:bg-[#A65A3A] hover:text-white transition-all duration-200">
+              {t({ uz: 'Mahsulotlarni ko\u02bcrish', ru: 'Посмотреть продукты', en: 'View products' }, countryCode)}
             </Button>
           </a>
         </div>

@@ -11,6 +11,7 @@ import { convertUsdToUzs, formatUzsAmount } from "@lib/util/money"
 import OptionSelect from "./option-select"
 import { HttpTypes } from "@medusajs/types"
 import { isSimpleProduct } from "@lib/util/product"
+import { t } from '@lib/util/translations'
 
 type MobileActionsProps = {
   product: HttpTypes.StoreProduct
@@ -24,6 +25,7 @@ type MobileActionsProps = {
   optionsDisabled: boolean
   isLang?: boolean
   exchangeRate?: number
+  allOptionsSelected?: boolean
 }
 
 const MobileActions: React.FC<MobileActionsProps> = ({
@@ -38,6 +40,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   optionsDisabled,
   isLang,
   exchangeRate,
+  allOptionsSelected,
 }) => {
   const { state, open, close } = useToggleState()
 
@@ -136,17 +139,15 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                 <div className="flex items-center justify-between w-full">
                   <span>
                     {variant
-                      ? Object.values(options).join(" / ")
-                      : isLang
-                      ? "Tanlang"
-                      : "Выберите"} 
+                      ? Object.values(options).join(" / ")
+                      : t({ uz: 'Tanlang', ru: 'Выберите', en: 'Select' }, isLang ? 'uz' : 'ru')} 
                   </span>
                   <ChevronDown />
                 </div>
               </Button>}
               <Button
                 onClick={handleAddToCart}
-                disabled={!inStock || !variant}
+                disabled={!allOptionsSelected || !inStock || !variant}
                 className="w-full rounded-3xl liquid-glass text-[#D4682D] hover:text-[#D4682D] transition-all duration-200" 
                 // border color orange
                 style={{
@@ -157,11 +158,11 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                 //secondary
                 variant="secondary"
               >
-                {!variant
-                  ? (isLang ? "Tanlang" : "Выберите")
+                {!allOptionsSelected
+                  ? t({ uz: 'Avval tanlang', ru: 'Сначала выберите', en: 'Select options first' }, isLang ? 'uz' : 'ru')
                   : !inStock
-                  ? (isLang ? "Mavjud emas" : "Недоступно")
-                  : (isLang ? "Savatchaga qo'shish" : "Добавить в корзину")}
+                  ? t({ uz: 'Mavjud emas', ru: 'Недоступно', en: 'Out of stock' }, isLang ? 'uz' : 'ru')
+                  : t({ uz: 'Savatchaga qo\u02bcshish', ru: 'Добавить в корзину', en: 'Add to cart' }, isLang ? 'uz' : 'ru')}
               </Button>
             </div>
           </div>

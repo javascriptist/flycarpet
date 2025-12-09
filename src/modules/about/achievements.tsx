@@ -1,15 +1,15 @@
 import React from 'react';
+import { t } from '@lib/util/translations';
 
 interface AchievementsProps {
   countryCode?: string;
 }
 const Achievements = ({ countryCode }: AchievementsProps) => {
-  const isLang = countryCode === "uz";
   const data = [
-    { number: '10k+', text: isLang ? 'Baxtli mijozlar O‘zbekiston bo‘ylab' : 'довольных клиентов по всему Узбекистану' },
-    { number: '99.9%', text: isLang ? 'aniqlik va ishonch ' : 'точность и надёжность сервиса' },
-    { number: '800+', text: isLang ? 'dizayn assortimentda — har bir did uchun' : 'дизайнов в ассортименте — на любой вкус' },
-    { number: '8', text: isLang ? 'yillik tajriba' : 'лет опыта' },
+    { number: '10k+', text: t({ uz: "Baxtli mijozlar O'zbekiston bo'ylab", ru: 'довольных клиентов по всему Узбекистану', en: 'happy customers across Uzbekistan' }, countryCode) },
+    { number: '99.9%', text: t({ uz: 'aniqlik va ishonch', ru: 'точность и надёжность сервиса', en: 'accuracy and reliability' }, countryCode) },
+    { number: '800+', text: t({ uz: 'dizayn assortimentda — har bir did uchun', ru: 'дизайнов в ассортименте — на любой вкус', en: 'designs in assortment — for every taste' }, countryCode) },
+    { number: '8', text: t({ uz: 'yillik tajriba', ru: 'лет опыта', en: 'years of experience' }, countryCode) },
   ]
 
   return (

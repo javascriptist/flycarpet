@@ -6,6 +6,7 @@ import Refresh from "@modules/common/icons/refresh"
 
 import Accordion from "./accordion"
 import { HttpTypes } from "@medusajs/types"
+import { t } from "@lib/util/translations"
 
 type ProductTabsProps = {
   product: HttpTypes.StoreProduct;
@@ -13,14 +14,13 @@ type ProductTabsProps = {
 }
 
 const ProductTabs = ({ product, countryCode }: ProductTabsProps) => {
-  const isLang = countryCode === "uz"
   const tabs = [
     {
-      label: isLang ? "Mahsulot haqida" : "О продукте",
+      label: t({ uz: "Mahsulot haqida", ru: "О продукте", en: "Product Info" }, countryCode),
       component: <ProductInfoTab product={product}  countryCode={countryCode}/>,
     },
     {
-      label: isLang ? "Yetkazib berish" : "Доставка",
+      label: t({ uz: "Yetkazib berish", ru: "Доставка", en: "Shipping" }, countryCode),
       component: <ShippingInfoTab countryCode={countryCode} />,
     },
   ]
@@ -44,26 +44,25 @@ const ProductTabs = ({ product, countryCode }: ProductTabsProps) => {
 }
 
 const ProductInfoTab = ({ product, countryCode }: ProductTabsProps) => {
-  const isLang = countryCode === "uz"
   return (
     <div className="text-small-regular py-8">
       <div className="grid grid-cols-2 gap-x-8">
         <div className="flex flex-col gap-y-4">
           <div>
             <span className="font-semibold">
-              {isLang ? "Material" : "Материал"}
+              {t({ uz: "Material", ru: "Материал", en: "Material" }, countryCode)}
             </span>
             <p>{product.material ? product.material : "-"}</p>
           </div>
           <div>
             <span className="font-semibold">
-            {isLang ? "Mamlakat" : "Страна"}
+            {t({ uz: "Mamlakat", ru: "Страна", en: "Country" }, countryCode)}
             </span>
             <p>{product.origin_country ? product.origin_country : "-"}</p>
           </div>
           <div>
             <span className="font-semibold">
-              {isLang ? "Turi" : "Тип"}
+              {t({ uz: "Turi", ru: "Тип", en: "Type" }, countryCode)}
             </span>
             <p>{product.type ? product.type.value : "-"}</p>
           </div>
@@ -71,13 +70,13 @@ const ProductInfoTab = ({ product, countryCode }: ProductTabsProps) => {
         <div className="flex flex-col gap-y-4">
           <div>
             <span className="font-semibold">
-              {isLang ? "Og'irligi" : "Вес"}
+              {t({ uz: "Og\u02bcirligi", ru: "Вес", en: "Weight" }, countryCode)}
             </span>
             <p>{product.weight ? `${product.weight} g` : "-"}</p>
           </div>
           <div>
             <span className="font-semibold">
-              {isLang ? "O'lchovlar" : "Размеры"}
+              {t({ uz: "O\u02bclchovlar", ru: "Размеры", en: "Dimensions" }, countryCode)}
             </span>
             <p>
               {product.length && product.width && product.height
@@ -92,44 +91,45 @@ const ProductInfoTab = ({ product, countryCode }: ProductTabsProps) => {
 }
 
 const ShippingInfoTab = ({ countryCode }: ProductTabsProps) => {
-  const isLang = countryCode === "uz"
   return (
     <div className="text-small-regular py-8">
       <div className="grid grid-cols-1 gap-y-8">
         <div className="flex items-start gap-x-2">
           <FastDelivery />
           <div>
-            <span className="font-semibold"> {isLang ? "Tez yetkazib berish" : "Быстрая доставка"}</span>
+            <span className="font-semibold"> {t({ uz: "Tez yetkazib berish", ru: "Быстрая доставка", en: "Fast Delivery" }, countryCode)}</span>
             <p className="max-w-sm">
-              {isLang
-                ? " Sizning buyurtmangiz 3-5 ish kuni ichida sizning tanlangan manzilingizga yetkaziladi."
-                : " Ваша посылка будет доставлена в течение 3-5 рабочих дней в ваше место получения или в удобство вашего дома."}
+              {t({ 
+                uz: "Sizning buyurtmangiz 3-5 ish kuni ichida sizning tanlangan manzilingizga yetkaziladi.",
+                ru: "Ваша посылка будет доставлена в течение 3-5 рабочих дней в ваше место получения или в удобство вашего дома.",
+                en: "Your package will be delivered within 3-5 business days to your chosen delivery location or the convenience of your home."
+              }, countryCode)}
             </p>
           </div>
         </div>
         <div className="flex items-start gap-x-2">
           <Refresh />
           <div>
-            <span className="font-semibold"> {isLang ? "Oson almashtirish" : "Легкий обмен"}</span>
+            <span className="font-semibold"> {t({ uz: "Oson almashtirish", ru: "Легкий обмен", en: "Easy Exchange" }, countryCode)}</span>
             <p className="max-w-sm">
-              {
-                isLang
-                  ? " Sizga kerak bo'lgan o'lchamni tanlang va biz sizga yangi mahsulotni yuboramiz."
-                  : " Просто выберите нужный вам размер, и мы отправим вам новый товар."
-              }
+              {t({ 
+                uz: "Sizga kerak bo\u02bclgan o\u02bclchamni tanlang va biz sizga yangi mahsulotni yuboramiz.",
+                ru: "Просто выберите нужный вам размер, и мы отправим вам новый товар.",
+                en: "Simply select the size you need and we will send you a new product."
+              }, countryCode)}
             </p>
           </div>
         </div>
         <div className="flex items-start gap-x-2">
           <Back />
           <div>
-            <span className="font-semibold"> {isLang ? "Oson qaytarish" : "Легкий возврат"}</span>
+            <span className="font-semibold"> {t({ uz: "Oson qaytarish", ru: "Легкий возврат", en: "Easy Return" }, countryCode)}</span>
             <p className="max-w-sm">
-              {
-                isLang
-                  ? " Sizga kerak bo'lgan o'lchamni tanlang va biz sizga yangi mahsulotni yuboramiz."
-                  : " Просто выберите нужный вам размер, и мы отправим вам новый товар."
-              }
+              {t({ 
+                uz: "Sizga kerak bo\u02bclgan o\u02bclchamni tanlang va biz sizga yangi mahsulotni yuboramiz.",
+                ru: "Просто выберите нужный вам размер, и мы отправим вам новый товар.",
+                en: "Simply select the size you need and we will send you a new product."
+              }, countryCode)}
             </p>
           </div>
         </div>

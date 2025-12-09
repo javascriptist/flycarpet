@@ -11,6 +11,7 @@ import Package from "@modules/common/icons/package"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 import { signout } from "@lib/data/customer"
+import { t } from '@lib/util/translations'
 
 const AccountNav = ({
   customer,
@@ -36,18 +37,14 @@ const AccountNav = ({
             <>
               <ChevronDown className="transform rotate-90" />
               <span>  
-                {isLang
-                  ? "Akkount"
-                  : "Аккаунт"}
+                {t({ uz: 'Akkount', ru: 'Аккаунт', en: 'Account' }, countryCode)}
               </span>
             </>
           </LocalizedClientLink>
         ) : (
           <>
             <div className="text-xl-semi mb-4 px-8">
-                {isLang
-                  ? "Salom, "
-                  : "Здравствуйте, "}
+                {t({ uz: 'Salom, ', ru: 'Здравствуйте, ', en: 'Hello, ' }, countryCode)}
                {customer?.first_name}
             </div>
             <div className="text-base-regular">
@@ -62,9 +59,7 @@ const AccountNav = ({
                       <div className="flex items-center gap-x-2">
                         <User size={20} />
                         <span>
-                          {isLang
-                            ? "Profil"
-                            : "Профиль"}
+                          {t({ uz: 'Profil', ru: 'Профиль', en: 'Profile' }, countryCode)}
                         </span>
                       </div>
                       <ChevronDown className="transform -rotate-90" />
@@ -81,9 +76,7 @@ const AccountNav = ({
                       <div className="flex items-center gap-x-2">
                         <MapPin size={20} />
                         <span>
-                          {isLang
-                            ? "Manzillar"
-                            : "Адреса"}
+                          {t({ uz: 'Manzillar', ru: 'Адреса', en: 'Addresses' }, countryCode)}
                         </span>
                       </div>
                       <ChevronDown className="transform -rotate-90" />
@@ -99,9 +92,7 @@ const AccountNav = ({
                     <div className="flex items-center gap-x-2">
                       <Package size={20} />
                       <span>
-                        {isLang
-                          ? "Buyurtmalar"
-                          : "Заказы"}
+                        {t({ uz: 'Buyurtmalar', ru: 'Заказы', en: 'Orders' }, countryCode)}
                       </span>
                     </div>
                     <ChevronDown className="transform -rotate-90" />
@@ -117,9 +108,7 @@ const AccountNav = ({
                     <div className="flex items-center gap-x-2">
                       <ArrowRightOnRectangle />
                       <span>
-                        {isLang
-                          ? "Chiqish"
-                          : "Выход"}
+                        {t({ uz: 'Chiqish', ru: 'Выход', en: 'Logout' }, countryCode)}
                       </span>
                     </div>
                     <ChevronDown className="transform -rotate-90" />
@@ -133,7 +122,7 @@ const AccountNav = ({
       <div className="hidden small:block" data-testid="account-nav">
         <div>
           <div className="pb-4">
-            <h3 className="text-base-semi">Akkount</h3>
+            <h3 className="text-base-semi">{t({ uz: 'Akkount', ru: 'Аккаунт', en: 'Account' }, countryCode)}</h3>
           </div>
           <div className="text-base-regular">
             <ul className="flex mb-0 justify-start items-start flex-col gap-y-4">
@@ -143,7 +132,7 @@ const AccountNav = ({
                   route={route!}
                   data-testid="overview-link"
                 >
-                  Umumiy
+                  {t({ uz: 'Umumiy', ru: 'Обзор', en: 'Overview' }, countryCode)}
                 </AccountNavLink>
               </li>
               <li>
@@ -152,7 +141,7 @@ const AccountNav = ({
                   route={route!}
                   data-testid="profile-link"
                 >
-                  Profil
+                  {t({ uz: 'Profil', ru: 'Профиль', en: 'Profile' }, countryCode)}
                 </AccountNavLink>
               </li>
               <li>
@@ -161,7 +150,7 @@ const AccountNav = ({
                   route={route!}
                   data-testid="addresses-link"
                 >
-                  Manzillar
+                  {t({ uz: 'Manzillar', ru: 'Адреса', en: 'Addresses' }, countryCode)}
                 </AccountNavLink>
               </li>
               <li>
@@ -170,7 +159,7 @@ const AccountNav = ({
                   route={route!}
                   data-testid="orders-link"
                 >
-                  Buyurtmalar
+                  {t({ uz: 'Buyurtmalar', ru: 'Заказы', en: 'Orders' }, countryCode)}
                 </AccountNavLink>
               </li>
               <li className="text-grey-700">
@@ -179,7 +168,7 @@ const AccountNav = ({
                   onClick={handleLogout}
                   data-testid="logout-button"
                 >
-                  Chiqish
+                  {t({ uz: 'Chiqish', ru: 'Выход', en: 'Logout' }, countryCode)}
                 </button>
               </li>
             </ul>

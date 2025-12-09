@@ -9,6 +9,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import CountrySelect from "../country-select"
 import { HttpTypes } from "@medusajs/types"
 import { usePathname } from "next/navigation"
+import { t } from "@lib/util/translations"
 
 const SideMenuItems = {
   Bosh: "/",
@@ -18,17 +19,17 @@ const SideMenuItems = {
 }
 
 const SideMenuItems2 = {
-  home: ["/", "Bosh sahifa", "Главная страница"],
-  about : ["/about", "Biz haqimizda", "О нас"],
-  products: ["/store", "Mahsulotlar", "Товары"],
-  account: ["/account", "Akkount", "Аккаунт"],
-  cart: ["/cart", "Savatcha", "Корзина"],
+  home: ["/", "Bosh sahifa", "Главная страница", "Home"],
+  about : ["/about", "Biz haqimizda", "О нас", "About Us"],
+  products: ["/store", "Mahsulotlar", "Товары", "Products"],
+  account: ["/account", "Akkount", "Аккаунт", "Account"],
+  cart: ["/cart", "Savatcha", "Корзина", "Cart"],
 }
 
 const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
   const toggleState = useToggleState()
   const pathname = usePathname()
-  const isLang = pathname.split("/")[1] === "uz"
+  const countryCode = pathname.split("/")[1]
   return (
     <div className="h-full">
       <div className="flex items-center h-full">
@@ -77,7 +78,7 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                               className="hover:text-gray-200 flex gap-2"
                               onClick={close}
                             >
-                              { isLang ? value[1] : value[2]}
+                              {t({ uz: value[1], ru: value[2], en: value[3] }, countryCode)}
                             </LocalizedClientLink>
                           </li>
                         )

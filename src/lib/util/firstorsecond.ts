@@ -1,13 +1,21 @@
-export function firstOrSecond(text: string, getFirst: boolean): string {
+export function firstOrSecond(text: string, countryCode: string): string {
   const delimiter = '###';
-  const index = text.indexOf(delimiter);
-
-  if (index === -1) {
+  
+  if (!text.includes(delimiter)) {
     return text;
   }
 
-  const firstPart = text.substring(0, index);
-  const secondPart = text.substring(index + delimiter.length);
-
-  return getFirst ? firstPart : secondPart;
+  const parts = text.split(delimiter);
+  
+  // parts[0] = uz, parts[1] = ru, parts[2] = en
+  if (countryCode === 'uz') {
+    return parts[0] || text;
+  } else if (countryCode === 'ru') {
+    return parts[1] || parts[0] || text;
+  } else if (countryCode === 'en') {
+    return parts[2] || parts[0] || text;
+  }
+  
+  // Default to first part (uz)
+  return parts[0] || text;
 }
