@@ -4,6 +4,9 @@ import { listProducts } from "@lib/data/products"
 import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 type Props = {
   params: Promise<{ countryCode: string; handle: string }>
 }

@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   description: "Explore all of our products.",
 }
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 type Params = {
   searchParams: Promise<{
     sortBy?: SortOptions
@@ -27,8 +30,14 @@ export default async function StorePage(props: Params) {
   const searchParams = await props.searchParams;
   const { sortBy, page, collection, carpetType, size } = searchParams
 
-  // Fetch collections for filter
-  const { collections } = await listCollections()
+  // Fetch collections for filter with error handling
+  let collections = []
+  try {
+    const result = await listCollections()
+    collections = result.collections || []
+  } catch (error) {
+    console.error('Error fetching collections:', error)
+  }
 
   return (
     <StoreTemplate
