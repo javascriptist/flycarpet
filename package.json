@@ -24,7 +24,7 @@
     "@stripe/stripe-js": "^1.29.0",
     "embla-carousel-react": "^8.5.2",
     "lodash": "^4.17.21",
-    "next": "15.0.3",
+    "next": "^15.1.3",
     "next-i18next": "^15.4.2",
     "next-intl": "^4.0.2",
     "opencv.js": "^1.2.1",
