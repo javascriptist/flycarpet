@@ -73,7 +73,7 @@ const AccountInfo = ({
         <Disclosure.Panel
           static
           className={clx(
-            "transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden",
+            "transition-[max-height,opacity] duration-200 ease-in-out overflow-hidden",
             {
               "max-h-[1000px] opacity-100": isSuccess,
               "max-h-0 opacity-0": !isSuccess,
@@ -92,7 +92,7 @@ const AccountInfo = ({
         <Disclosure.Panel
           static
           className={clx(
-            "transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden",
+            "transition-[max-height,opacity] duration-200 ease-in-out overflow-hidden",
             {
               "max-h-[1000px] opacity-100": isError,
               "max-h-0 opacity-0": !isError,
@@ -110,7 +110,7 @@ const AccountInfo = ({
         <Disclosure.Panel
           static
           className={clx(
-            "transition-[max-height,opacity] duration-300 ease-in-out overflow-visible",
+            "transition-[max-height,opacity] duration-200 ease-in-out overflow-visible",
             {
               "max-h-[1000px] opacity-100": state,
               "max-h-0 opacity-0": !state,

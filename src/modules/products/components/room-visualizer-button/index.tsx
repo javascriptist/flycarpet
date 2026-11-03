@@ -40,7 +40,7 @@ export const RoomVisualizerButton: React.FC<RoomVisualizerButtonProps> = ({
     <>
       <Button
         onClick={() => setIsOpen(true)}
-        className="w-full h-10 rounded-3xl bg-white border-2 border-[#D9A676] text-[#D9A676] hover:bg-[#D9A676] hover:text-white transition-all duration-200"
+        className="w-full h-10 rounded-3xl bg-white border-2 border-brand-peach text-brand-peach hover:bg-brand-peach hover:text-white transition duration-200"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

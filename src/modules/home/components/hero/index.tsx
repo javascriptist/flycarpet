@@ -32,12 +32,12 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
   }, [images.length]);
 
   return (
-    <div className="w-full h-screen border-b border-ui-border-base relative flex flex-col bg-[#191718]">
+    <div className="w-full h-svh border-b border-ui-border-base relative flex flex-col bg-[#191718]">
       <div className="img w-full h-[50vh] md:h-[55vh] relative overflow-hidden flex-shrink-0">
         {images.map((img, index) => (
           <div
             key={img}
-            className="absolute inset-0 transition-opacity duration-1000"
+            className="absolute inset-0 transition-opacity duration-200"
             style={{ opacity: currentSlide === index ? 1 : 0 }}
           >
             <Image
@@ -93,7 +93,7 @@ const Hero: React.FC<HeroProps> = ({ countryCode }) => {
           <a
             href={`/${countryCode}/store`}
           >
-            <Button variant="secondary" className="bg-ui-fg-component liquid-glass text-white rounded-3xl py-4 px-8 text-md bg-[#D9A676] hover:bg-[#A65A3A] hover:text-white transition-all duration-200">
+            <Button variant="secondary" className="bg-ui-fg-component liquid-glass text-white rounded-3xl py-4 px-8 text-md bg-brand-peach hover:bg-brand-terracotta hover:text-white transition duration-200">
               {t({ uz: 'Mahsulotlarni ko\u02bcrish', ru: 'Посмотреть продукты', en: 'View products' }, countryCode)}
             </Button>
           </a>

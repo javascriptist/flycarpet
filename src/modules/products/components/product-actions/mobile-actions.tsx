@@ -86,10 +86,10 @@ const MobileActions: React.FC<MobileActionsProps> = ({
         <Transition
           as={Fragment}
           show={show}
-          enter="ease-in-out duration-300"
+          enter="ease-in-out duration-200"
           enterFrom="opacity-0"
           enterTo="opacity-100"
-          leave="ease-in duration-300"
+          leave="ease-out duration-200"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
@@ -149,7 +149,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               <Button
                 onClick={handleAddToCart}
                 disabled={!allOptionsSelected || !inStock || !variant}
-                className="w-full rounded-3xl liquid-glass text-[#D4682D] hover:text-[#D4682D] transition-all duration-200" 
+                className="w-full rounded-3xl liquid-glass text-brand-accent hover:text-brand-accent transition duration-200" 
                 // border color orange
                 style={{
                   border: '1px solid #D9A676',
@@ -173,10 +173,10 @@ const MobileActions: React.FC<MobileActionsProps> = ({
         <Dialog as="div" className="relative z-[75]" onClose={close}>
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-300"
+            enter="ease-out duration-200"
             enterFrom="opacity-0"
             enterTo="opacity-100"
-            leave="ease-in duration-200"
+            leave="ease-out duration-200"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
@@ -187,10 +187,10 @@ const MobileActions: React.FC<MobileActionsProps> = ({
             <div className="flex min-h-full h-full items-center justify-center text-center">
               <Transition.Child
                 as={Fragment}
-                enter="ease-out duration-300"
+                enter="ease-out duration-200"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
-                leave="ease-in duration-200"
+                leave="ease-out duration-200"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >

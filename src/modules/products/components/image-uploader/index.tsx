@@ -70,7 +70,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         onClick={() => fileInputRef.current?.click()}
         className={`
           border-2 border-dashed rounded-xl p-12 text-center cursor-pointer
-          transition-all duration-200
+          transition duration-200
           ${
             isDragging
               ? 'border-brand-peach bg-orange-50'

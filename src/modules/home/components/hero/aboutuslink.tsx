@@ -11,7 +11,7 @@ const AboutUsLink: React.FC<AboutusLinkProps> = ({ countryCode }) => {
   return (
     <div className="mx-14 px-9 max-md:px-4 max-md:mx-4">
       <div
-        className="relative w-full h-screen bg-cover bg-center h-30vh md:h-50vh flex items-center justify-center rounded-3xl overflow-hidden"
+        className="relative w-full h-svh bg-cover bg-center h-30vh md:h-50vh flex items-center justify-center rounded-3xl overflow-hidden"
         style={{ backgroundImage: 'url(/aboutuslink.jpg)', height: '280px' }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50 rounded-3xl"></div>
@@ -23,7 +23,7 @@ const AboutUsLink: React.FC<AboutusLinkProps> = ({ countryCode }) => {
             {t({ uz: 'Nafis gilamlar yasash boʼyicha sayohatimiz hamda sifat va innovatsiyalarga boʼlgan sadoqatimiz bilan tanishing.', ru: 'Познакомьтесь с нашим путешествием по созданию изысканных ковров и нашей преданностью качеству и инновациям.', en: 'Discover our journey in creating exquisite carpets and our commitment to quality and innovation.' }, countryCode)}
           </p>
           <Link href="/about">
-            <Button variant="secondary" className="bg-ui-fg-component bg-[#A65A3A] text-white rounded-3xl py-3 px-6 text-md shadow-lg">
+            <Button variant="secondary" className="bg-ui-fg-component bg-brand-terracotta text-white rounded-3xl py-3 px-6 text-md shadow-lg">
               {t({ uz: 'Biz haqimizda', ru: 'О нас', en: 'About us' }, countryCode)}
             </Button> 
           </Link>

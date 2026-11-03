@@ -16,7 +16,7 @@ const AboutPage = () => {
       <AboutHero/>
       <Story 
       title={
-            <span className="border-b-4 border-[#D9A676] inline-block">
+            <span className="border-b-4 border-brand-peach inline-block">
               {t({ uz: "Biz haqimizda", ru: "О нас", en: "About Us" }, countryCode)}
             </span>
         }
@@ -28,7 +28,7 @@ const AboutPage = () => {
          imageUrl="/aboutpage1.jpg"/>
       <WhyUs countryCode={countryCode}/>
       <Story title={
-            <span className="border-b-4 border-[#D9A676] inline-block">
+            <span className="border-b-4 border-brand-peach inline-block">
               {t({ uz: "Bizning vazifamiz", ru: "Наша миссия", en: "Our Mission" }, countryCode)}
             </span>
         }

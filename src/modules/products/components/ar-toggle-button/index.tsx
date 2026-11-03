@@ -37,7 +37,7 @@ export const ARToggleButton: React.FC<ARToggleButtonProps> = ({
         }}
       >
         {/* Shine effect on hover */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           style={{
             background: 'linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%)',
           }}

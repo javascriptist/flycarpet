@@ -128,7 +128,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
       <div className={`ar-carpet-viewer ${className}`}>
         <div className="flex items-center justify-center h-80 bg-gradient-to-b from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#D9A676] mx-auto mb-3"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-brand-peach mx-auto mb-3"></div>
             <p className="text-sm text-gray-600 font-medium">
               {t({ uz: "AR tayyorlanmoqda...", ru: "Подготовка AR...", en: "Preparing AR..." }, countryCode)}
             </p>
@@ -161,7 +161,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
       <div className={`ar-carpet-viewer ${className}`}>
         <div className="flex items-center justify-center h-80 bg-gradient-to-b from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#D9A676] mx-auto mb-3"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-brand-peach mx-auto mb-3"></div>
             <p className="text-sm text-gray-600 font-medium">
               {t({ uz: "3D model tayyorlanmoqda...", ru: "Подготовка 3D модели...", en: "Preparing 3D model..." }, countryCode)}
             </p>
@@ -238,7 +238,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
             {isARSupported && (
               <button
                 slot="ar-button"
-                className="absolute top-4 right-4 bg-[#D9A676] hover:bg-[#e55d17] text-white px-4 py-2 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2 font-medium"
+                className="absolute top-4 right-4 bg-brand-peach hover:bg-[#e55d17] text-white px-4 py-2 rounded-full shadow-lg transition duration-200 flex items-center gap-2 font-medium"
               >
                 <span>📱</span>
                 <span>{t({ uz: "AR ko'rish", ru: "Просмотр в AR", en: "View in AR" }, countryCode)}</span>
@@ -290,22 +290,22 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
               <span className="text-sm font-medium text-gray-700">
                 {t({ uz: "O'lcham:", ru: "Размер:", en: "Size:" }, countryCode)} 
               </span>
-              <span className="text-sm text-[#D9A676] font-semibold">
+              <span className="text-sm text-brand-peach font-semibold">
                 {carpetSize.width}m × {carpetSize.length}m
               </span>
             </div>
             
             <div className="flex items-center gap-4 text-xs text-gray-500">
-              <span className="flex items-center gap-1 transition-colors hover:text-[#D9A676]">
+              <span className="flex items-center gap-1 transition-colors hover:text-brand-peach">
                 <span>🔄</span>
                 <span className="hidden sm:inline">{t({ uz: "Aylantirish", ru: "Поворот", en: "Rotate" }, countryCode)}</span>
               </span>
-              <span className="flex items-center gap-1 transition-colors hover:text-[#D9A676]">
+              <span className="flex items-center gap-1 transition-colors hover:text-brand-peach">
                 <span>🔍</span>
                 <span className="hidden sm:inline">{t({ uz: "Kattalashtirish", ru: "Масштаб", en: "Zoom" }, countryCode)}</span>
               </span>
               {isARSupported && (
-                <span className="flex items-center gap-1 transition-colors hover:text-[#D9A676]">
+                <span className="flex items-center gap-1 transition-colors hover:text-brand-peach">
                   <span>📱</span>
                   <span className="hidden sm:inline">{t({ uz: "AR rejim", ru: "AR режим", en: "AR mode" }, countryCode)}</span>
                 </span>

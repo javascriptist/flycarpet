@@ -30,7 +30,7 @@ export default async function OrderCompletedTemplate({
   const isOnboarding = cookies.get("_medusa_onboarding")?.value === "true"
 
   return (
-    <div className="py-6 min-h-[calc(100vh-64px)]">
+    <div className="py-6 min-h-[calc(100dvh-64px)]">
       <div className="content-container flex flex-col justify-center items-center gap-y-10 max-w-4xl h-full w-full">
         {isOnboarding && <OnboardingCta orderId={order.id} />}
         <div
@@ -61,7 +61,7 @@ export default async function OrderCompletedTemplate({
                 <input type="hidden" name="account[order_id]" value={order.id} />
                 <button 
                   type="submit" 
-                  className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg px-8 py-4 font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-3"
+                  className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg px-8 py-4 font-bold text-lg shadow-lg hover:shadow-xl transition duration-200 flex items-center justify-center gap-3"
                 >
                   <Image 
                     src="/payme_white.png" 

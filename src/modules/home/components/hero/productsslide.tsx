@@ -45,19 +45,19 @@ const ProductSlide: React.FC<ProductSlideProps> = ({ listOfProducts, countryCode
   }, [emblaApi, onSelect]);
   // create a function that gives true if countryCode is kg else false
   return (
-    <div className="relative mx-14 px-9 py-12 bg-[#F4E9DD] rounded-3xl max-md:px-4 max-md:mx-4">
+    <div className="relative mx-14 px-9 py-12 bg-brand-linen rounded-3xl max-md:px-4 max-md:mx-4">
       <div className="title-and-button" style={{ display: 'flex', justifyContent: 'space-between'}}>
         <div className="title-text mb-10">
           <h2 className="text-4xl font-bold">{t({ uz: 'Eng soʼngi mahsulotlar', ru: 'Последние продукты', en: 'Latest products' }, countryCode)}</h2>
           <div className="w-24 h-1 bg-gradient-to-r from-brand-peach to-brand-terracotta rounded-full my-4"></div>
         </div>
         <div className="title-button flex gap-2">
-          <button onClick={() => emblaApi?.scrollPrev()} className="hover:bg-brand-peach/10 rounded-full p-2 transition-all duration-300 hover:scale-110">
+          <button onClick={() => emblaApi?.scrollPrev()} className="hover:bg-brand-peach/10 rounded-full p-2 transition duration-200 hover:scale-110">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="#D9A676" className="size-10">
               <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
           </button>
-          <button onClick={() => emblaApi?.scrollNext()} className="hover:bg-brand-peach/10 rounded-full p-2 transition-all duration-300 hover:scale-110">
+          <button onClick={() => emblaApi?.scrollNext()} className="hover:bg-brand-peach/10 rounded-full p-2 transition duration-200 hover:scale-110">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="#D9A676" className="size-10">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
               </svg>
@@ -82,7 +82,7 @@ const ProductSlide: React.FC<ProductSlideProps> = ({ listOfProducts, countryCode
                 />
                 <div className="product-card-text py-5 px-2 text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%'} }>
                   <h2 className="text-lg text-center">{firstOrSecond(product.title, countryCode)}</h2>
-                  <div className="text-center text-blue-500 underline opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out absolute left-[42%] top-[300px] text-black bg-white rounded-full p-2">
+                  <div className="text-center text-blue-500 underline opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out absolute left-[42%] top-[300px] text-black bg-white rounded-full p-2">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" className="size-6">
                     <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
                     <path fillRule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 0 1 0-1.113ZM17.25 12a5.25 5.25 0 1 1-10.5 0 5.25 5.25 0 0 1 10.5 0Z" clipRule="evenodd" />
@@ -129,7 +129,7 @@ const styles = {
   viewport: 'overflow-hidden',
   container: 'flex',
   slide: 'flex-shrink-0 w-full h-100 mx-2 group relative flex basis-[25%] max-w-[25%] items-center flex-col max-sm:basis-[65%] max-w-[35%] rounded-2xl overflow-hidden',
-  image: 'object-cover rounded-2xl h-[350px] max-sm:h-[250px] min-h-[250px] w-full border border-transparent hover:border-brand-peach hover:shadow-lg hover:-translate-y-1 transition-all duration-300', 
+  image: 'object-cover rounded-2xl h-[350px] max-sm:h-[250px] min-h-[250px] w-full border border-transparent hover:border-brand-peach hover:shadow-lg hover:-translate-y-1 transition duration-200', 
   dots: 'absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2',
   dot: 'w-3 h-3 bg-gray-300 rounded-full cursor-pointer',
   active: 'bg-blue-500',

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default async function NotFound() {
   return (
-    <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)]">
+    <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100dvh-64px)]">
       <Image
         src="/nofound.jpg"
         alt="404"

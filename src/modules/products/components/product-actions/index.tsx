@@ -164,7 +164,7 @@ export default function ProductActions({
             isAdding
           }
           variant="secondary"
-          className="w-full h-10 rounded-3xl bg-[#D9A676] text-white hover:bg-[#D4682D] transition-all duration-200 border-transparent outline-none focus:outline-none focus:ring-2 focus:ring-[#D9A676] focus:ring-offset-2 focus:ring-offset-white"
+          className="w-full h-10 rounded-3xl bg-brand-peach text-white hover:bg-brand-accent transition duration-200 border-transparent outline-none focus:outline-none focus:ring-2 focus:ring-brand-peach focus:ring-offset-2 focus:ring-offset-white"
           isLoading={isAdding}
           data-testid="add-product-button"
         >
