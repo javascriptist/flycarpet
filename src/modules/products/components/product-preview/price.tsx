@@ -1,47 +1,44 @@
-import { Text, clx } from "@medusajs/ui"
 import { VariantPrice } from "types/global"
 import { getExchangeRate } from "@lib/data/exchange-rate"
-import { convertUsdToUzs } from "@lib/util/money"
-import PriceWithTooltip from "@modules/common/components/price-with-tooltip"
+import { formatStorePrice } from "@lib/util/money"
+import { t } from "@lib/util/translations"
 
-export default async function PreviewPrice({ price }: { price: VariantPrice }) {
+export default async function PreviewPrice({
+  price,
+  countryCode,
+  perMetre = false,
+}: {
+  price: VariantPrice
+  countryCode?: string
+  perMetre?: boolean
+}) {
   if (!price) {
     return null
   }
 
-  // Get exchange rate and convert to UZS
   const exchangeRate = await getExchangeRate()
-  const rate = exchangeRate?.rate || 12750 // Fallback rate
-
-  const calculatedPriceUzs = convertUsdToUzs(price.calculated_price_number, rate)
-  const originalPriceUzs = price.original_price_number 
-    ? convertUsdToUzs(price.original_price_number, rate)
-    : null
+  const rate = exchangeRate?.rate
+  const isSale = price.price_type === "sale"
 
   return (
-    <>
-      {price.price_type === "sale" && originalPriceUzs && price.original_price_number && (
-        <Text
-          className="line-through text-ui-fg-muted"
-          data-testid="original-price"
-        >
-          <PriceWithTooltip 
-            uzsAmount={originalPriceUzs}
-            usdAmount={price.original_price_number}
-          />
-        </Text>
-      )}
-      <Text
-        className={clx("text-ui-fg-muted", {
-          "text-ui-fg-interactive": price.price_type === "sale",
-        })}
+    <p className="flex flex-wrap items-baseline gap-x-2 text-callout num">
+      <span
+        className={isSale ? "font-medium text-brand-accent-strong" : "font-medium text-ink"}
         data-testid="price"
       >
-        <PriceWithTooltip 
-          uzsAmount={calculatedPriceUzs}
-          usdAmount={price.calculated_price_number}
-        />
-      </Text>
-    </>
+        {formatStorePrice(price.calculated_price_number, rate, countryCode)}
+        {perMetre && (
+          <span className="font-normal text-ink-muted">
+            {" "}
+            {t({ uz: "/ m", ru: "/ м", en: "/ m" }, countryCode)}
+          </span>
+        )}
+      </span>
+      {isSale && price.original_price_number && (
+        <span className="text-footnote text-ink-subtle line-through" data-testid="original-price">
+          {formatStorePrice(price.original_price_number, rate, countryCode)}
+        </span>
+      )}
+    </p>
   )
 }

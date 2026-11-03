@@ -24,7 +24,7 @@ const Review = ({ cart, countryCode }: { cart: any; countryCode?: string }) => {
         <Heading
           level="h2"
           className={clx(
-            "flex flex-row text-3xl-regular gap-x-2 items-baseline",
+            "flex flex-row items-center gap-x-2 text-title-3 text-ink",
             {
               "opacity-50 pointer-events-none select-none": !isOpen,
             }

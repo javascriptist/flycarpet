@@ -47,7 +47,7 @@ const Addresses = ({
       <div className="flex flex-row items-center justify-between mb-6">
         <Heading
           level="h2"
-          className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
+          className="flex flex-row items-center gap-x-2 text-title-3 text-ink"
         >
           {t({ uz: "Yetkazib berish manzili", ru: "Адрес доставки", en: "Shipping Address" }, countryCode)}
           {!isOpen && <CheckCircleSolid />}
@@ -56,7 +56,7 @@ const Addresses = ({
           <Text>
             <button
               onClick={handleEdit}
-              className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+              className="no-press text-callout font-medium text-brand-accent-strong hover:underline"
               data-testid="edit-address-button"
             >
               {t({ uz: "Tahrirlash", ru: "Редактировать", en: "Edit" }, countryCode)}
@@ -78,7 +78,7 @@ const Addresses = ({
               <div>
                 <Heading
                   level="h2"
-                  className="text-3xl-regular gap-x-4 pb-6 pt-8"
+                  className="text-headline text-ink pb-4 pt-8"
                 >
                   {t({ uz: "Hisob-kitob manzili", ru: "Адрес для выставления счета", en: "Billing Address" }, countryCode)}
                 </Heading>
@@ -179,7 +179,6 @@ const Addresses = ({
           </div>
         </div>
       )}
-      <Divider className="mt-8" />
     </div>
   )
 }

@@ -160,7 +160,7 @@ export default function EnhancedProductActions({
   }, [needsSelection, canBuy, selectedVariant, isRoll, rollLength, rollSpec.width, rollTotal.area, note, countryCode, router])
 
   const priceLabel = isRoll
-    ? formatStorePrice(rollTotal.total, exchangeRate)
+    ? formatStorePrice(rollTotal.total, exchangeRate, countryCode)
     : null
 
   const buttonLabel = (compact = false) => {
@@ -208,7 +208,7 @@ export default function EnhancedProductActions({
               {priceLabel}
             </span>
             <span className="text-footnote text-ink-muted num">
-              {formatStorePrice(rollSpec.pricePerMeter, exchangeRate)} {tr({ uz: "/ metr", ru: "/ метр", en: "per metre" })}
+              {formatStorePrice(rollSpec.pricePerMeter, exchangeRate, countryCode)} {tr({ uz: "/ metr", ru: "/ метр", en: "per metre" })}
             </span>
           </div>
         ) : (

@@ -8,6 +8,8 @@ import CartMismatchBanner from "@modules/layout/components/cart-mismatch-banner"
 import Footer from "@modules/layout/templates/footer"
 import Nav from "@modules/layout/templates/nav"
 import FreeShippingPriceNudge from "@modules/shipping/components/free-shipping-price-nudge"
+import { getExchangeRate } from "@lib/data/exchange-rate"
+import { ExchangeRateProvider } from "@lib/context/currency-context"
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
@@ -16,6 +18,7 @@ export const metadata: Metadata = {
 export default async function PageLayout(props: { children: React.ReactNode }) {
   const customer = await retrieveCustomer()
   const cart = await retrieveCart()
+  const exchangeRate = await getExchangeRate()
   let shippingOptions: StoreCartShippingOption[] = []
   if (cart) {
     const { shipping_options } = await listCartOptions()
@@ -24,7 +27,7 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
   }
 
   return (
-    <>
+    <ExchangeRateProvider rate={exchangeRate?.rate}>
       <Nav />
       {customer && cart && (
         <CartMismatchBanner customer={customer} cart={cart} />
@@ -39,6 +42,6 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
       )}
       {props.children}
       <Footer />
-    </>
+    </ExchangeRateProvider>
   )
 }

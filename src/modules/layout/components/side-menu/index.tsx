@@ -1,120 +1,120 @@
 "use client"
 
-import { Popover, PopoverPanel, Transition } from "@headlessui/react"
-import { ArrowRightMini, XMark } from "@medusajs/icons"
-import { Text, clx, useToggleState } from "@medusajs/ui"
-import { Fragment } from "react"
+import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react"
+import { HttpTypes } from "@medusajs/types"
+import { Fragment, useState } from "react"
+import { usePathname } from "next/navigation"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import CountrySelect from "../country-select"
-import { HttpTypes } from "@medusajs/types"
-import { usePathname } from "next/navigation"
+import LanguageSwitch from "../language-switch"
 import { t } from "@lib/util/translations"
 
-const SideMenuItems = {
-  Bosh: "/",
-  Mahsulotlar: "/store",
-  Akkount: "/account",
-  Savatcha: "/cart",
-}
+const ITEMS = [
+  { href: "/", uz: "Bosh sahifa", ru: "Главная", en: "Home" },
+  { href: "/store", uz: "Katalog", ru: "Каталог", en: "Shop" },
+  { href: "/about", uz: "Biz haqimizda", ru: "О нас", en: "About us" },
+  { href: "/account", uz: "Hisob", ru: "Аккаунт", en: "Account" },
+  { href: "/cart", uz: "Savatcha", ru: "Корзина", en: "Cart" },
+]
 
-const SideMenuItems2 = {
-  home: ["/", "Bosh sahifa", "Главная страница", "Home"],
-  about : ["/about", "Biz haqimizda", "О нас", "About Us"],
-  products: ["/store", "Mahsulotlar", "Товары", "Products"],
-  account: ["/account", "Akkount", "Аккаунт", "Account"],
-  cart: ["/cart", "Savatcha", "Корзина", "Cart"],
-}
-
+/**
+ * Menu panel that slides in from the left edge (where its button is) and
+ * leaves the same way. Focus is trapped while open; Escape or the scrim closes.
+ */
 const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
-  const toggleState = useToggleState()
+  const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const countryCode = pathname.split("/")[1]
+  const current = "/" + pathname.split("/").slice(2).join("/")
+
   return (
-    <div className="h-full">
-      <div className="flex items-center h-full">
-        <Popover className="h-full flex">
-          {({ open, close }) => (
-            <>
-              <div className="relative flex h-full">
-                <Popover.Button
-                  data-testid="nav-menu-button"
-                  className="relative h-full flex items-center transition ease-out duration-200 focus:outline-none hover:text-ui-fg-base"
+    <div className="flex h-full items-center">
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        data-testid="nav-menu-button"
+        aria-label={t({ uz: "Menyu", ru: "Меню", en: "Menu" }, countryCode)}
+        className="-ml-2.5 grid h-11 w-11 place-items-center rounded-full hover:bg-white/10"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 7.5h16.5M3.75 12h16.5m-16.5 4.5h16.5" />
+        </svg>
+      </button>
+
+      <Transition show={open} as={Fragment}>
+        <Dialog onClose={setOpen} className="relative z-[90]">
+          <TransitionChild
+            as={Fragment}
+            enter="transition-opacity duration-200 ease-out"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition-opacity duration-200 ease-out"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/40" aria-hidden />
+          </TransitionChild>
+
+          <TransitionChild
+            as={Fragment}
+            enter="transition-transform duration-[400ms] ease-drawer"
+            enterFrom="-translate-x-full"
+            enterTo="translate-x-0"
+            leave="transition-transform duration-300 ease-drawer"
+            leaveFrom="translate-x-0"
+            leaveTo="-translate-x-full"
+          >
+            <DialogPanel
+              className="fixed inset-y-0 left-0 flex w-[min(22rem,88vw)] flex-col bg-surface pt-safe shadow-float"
+              data-testid="nav-menu-popup"
+            >
+              <div className="flex h-16 items-center justify-between px-5">
+                <DialogTitle className="text-headline text-ink">Premium Carpet</DialogTitle>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  data-testid="close-menu-button"
+                  aria-label={t({ uz: "Yopish", ru: "Закрыть", en: "Close" }, countryCode)}
+                  className="-mr-2 grid h-11 w-11 place-items-center rounded-full text-ink-muted hover:bg-brand-linen hover:text-ink"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+                    <path d="M6 6l12 12M18 6L6 18" />
                   </svg>
-
-
-                </Popover.Button>
+                </button>
               </div>
 
-              <Transition
-                show={open}
-                as={Fragment}
-                enter="transition ease-out duration-150"
-                enterFrom="opacity-0"
-                enterTo="opacity-100 backdrop-blur-2xl"
-                leave="transition ease-out duration-150"
-                leaveFrom="opacity-100 backdrop-blur-2xl"
-                leaveTo="opacity-0"
-              >
-                <PopoverPanel className="flex flex-col absolute w-full pr-4 sm:pr-0 sm:w-1/3 2xl:w-1/4 sm:min-w-min h-[calc(100dvh-1rem)] z-30 inset-x-0 text-sm text-ui-fg-on-color m-2 backdrop-blur-2xl">
-                  <div
-                    data-testid="nav-menu-popup"
-                    className="flex flex-col h-full bg-[rgba(3,7,18,0.5)] rounded-rounded justify-between p-6"
-                  >
-                    <div className="flex justify-end" id="xmark">
-                      <button data-testid="close-menu-button" onClick={close}>
-                        <XMark />
-                      </button>
-                    </div>
-                    <ul className="flex flex-col gap-6 items-start justify-start">
-                      {Object.entries(SideMenuItems2).map(([key, value]) => {
-                        return (
-                          <li key={key} className="w-full text-xl">
-                            <LocalizedClientLink
-                              href={value[0]}
-                              className="hover:text-gray-200 flex gap-2"
-                              onClick={close}
-                            >
-                              {t({ uz: value[1], ru: value[2], en: value[3] }, countryCode)}
-                            </LocalizedClientLink>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                    <div className="flex flex-col gap-y-6">
-                      <div
-                        className="flex justify-between"
-                        onMouseEnter={toggleState.open}
-                        onMouseLeave={toggleState.close}
-                      >
-                        {regions && (
-                          <CountrySelect
-                            toggleState={toggleState}
-                            regions={regions}
-                          />
-                        )}
-                        <ArrowRightMini
-                          className={clx(
-                            "transition-transform duration-150",
-                            toggleState.state ? "-rotate-90" : ""
-                          )}
-                        />
-                      </div>
-                      <Text className="flex justify-between txt-compact-small">
-                        © {new Date().getFullYear()} Premium Carpet. All rights
-                        reserved.
-                      </Text>
-                    </div>
-                  </div>
-                </PopoverPanel>
-              </Transition>
-            </>
-          )}
-        </Popover>
-      </div>
+              <nav className="flex-1 overflow-y-auto px-3">
+                <ul className="flex flex-col">
+                  {ITEMS.map((item) => {
+                    const active = item.href === "/" ? current === "/" : current.startsWith(item.href)
+                    return (
+                      <li key={item.href}>
+                        <LocalizedClientLink
+                          href={item.href}
+                          onClick={() => setOpen(false)}
+                          aria-current={active ? "page" : undefined}
+                          className={`flex h-12 items-center rounded-control px-3 text-title-3 transition ${
+                            active ? "bg-brand-linen text-ink" : "text-ink hover:bg-brand-linen/60"
+                          }`}
+                        >
+                          {t(item, countryCode)}
+                        </LocalizedClientLink>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </nav>
+
+              <div className="flex flex-col gap-4 border-t border-line px-5 pt-5 pb-safe">
+                <LanguageSwitch regions={regions} />
+                <p className="text-caption text-ink-subtle">
+                  © {new Date().getFullYear()} Premium Carpet
+                </p>
+              </div>
+            </DialogPanel>
+          </TransitionChild>
+        </Dialog>
+      </Transition>
     </div>
   )
 }

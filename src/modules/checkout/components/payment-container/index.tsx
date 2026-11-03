@@ -36,11 +36,10 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
       value={paymentProviderId}
       disabled={disabled}
       className={clx(
-        "flex flex-col gap-y-2 text-small-regular cursor-pointer py-4 border rounded-rounded px-8 mb-2 hover:shadow-borders-interactive-with-active",
-        {
-          "border-ui-border-interactive":
-            selectedPaymentOptionId === paymentProviderId,
-        }
+        "mb-2 flex cursor-pointer flex-col gap-y-2 rounded-control px-5 py-4 text-callout transition",
+        selectedPaymentOptionId === paymentProviderId
+          ? "bg-surface-raised ring-2 ring-brand-accent-strong"
+          : "bg-surface-raised shadow-hairline hover:bg-brand-linen/50"
       )}
     >
       <div className="flex items-center justify-between ">

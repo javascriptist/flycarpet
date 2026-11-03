@@ -136,7 +136,7 @@ const Payment = ({
         <Heading
           level="h2"
           className={clx(
-            "flex flex-row text-3xl-regular gap-x-2 items-baseline",
+            "flex flex-row items-center gap-x-2 text-title-3 text-ink",
             {
               "opacity-50 pointer-events-none select-none":
                 !isOpen && !paymentReady,
@@ -150,7 +150,7 @@ const Payment = ({
           <Text>
             <button
               onClick={handleEdit}
-              className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+              className="no-press text-callout font-medium text-brand-accent-strong hover:underline"
               data-testid="edit-payment-button"
             >
               {t({ uz: "Tahrirlash", ru: "Редактировать", en: "Edit" }, countryCode)}
@@ -212,7 +212,7 @@ const Payment = ({
 
           <Button
             size="large"
-            className="mt-6"
+            className="mt-6 h-12 w-full rounded-full liquid-glass small:w-auto small:px-10"
             onClick={handleSubmit}
             isLoading={isLoading}
             disabled={
@@ -280,7 +280,6 @@ const Payment = ({
           ) : null}
         </div>
       </div>
-      <Divider className="mt-8" />
     </div>
   )
 }

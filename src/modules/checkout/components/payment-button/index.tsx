@@ -35,6 +35,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
         <StripePaymentButton
           notReady={notReady}
           cart={cart}
+          countryCode={countryCode}
           data-testid={dataTestId}
         />
       )
@@ -48,17 +49,19 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
         <ManualTestPaymentButton notReady={notReady} countryCode={countryCode} />
       )
     default:
-      return <Button disabled>{t({ uz: "To'lov usulini tanlang", ru: "Выберите способ оплаты", en: "Choose a payment method" }, countryCode)}</Button>
+      return <Button disabled className="h-12 w-full rounded-full">{t({ uz: "To'lov usulini tanlang", ru: "Выберите способ оплаты", en: "Choose a payment method" }, countryCode)}</Button>
   }
 }
 
 const StripePaymentButton = ({
   cart,
   notReady,
+  countryCode,
   "data-testid": dataTestId,
 }: {
   cart: HttpTypes.StoreCart
   notReady: boolean
+  countryCode?: string
   "data-testid"?: string
 }) => {
   const [submitting, setSubmitting] = useState(false)
@@ -148,8 +151,9 @@ const StripePaymentButton = ({
         size="large"
         isLoading={submitting}
         data-testid={dataTestId}
+        className="h-12 w-full rounded-full liquid-glass"
       >
-        Place order
+        {t({ uz: "Buyurtma berish", ru: "Оформить заказ", en: "Place order" }, countryCode)}
       </Button>
       <ErrorMessage
         error={errorMessage}
@@ -187,6 +191,7 @@ const ManualTestPaymentButton = ({ notReady, countryCode }: { notReady: boolean;
         onClick={handlePayment}
         size="large"
         data-testid="submit-order-button"
+        className="h-12 w-full rounded-full liquid-glass"
       >
         {t({ uz: "Buyurtma berish", ru: "Оформить заказ", en: "Place order" }, countryCode)}
       </Button>

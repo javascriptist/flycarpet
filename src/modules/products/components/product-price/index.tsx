@@ -44,10 +44,10 @@ export default function ProductPrice({
     
     return {
       ...price,
-      calculated_price: formatUzsAmount(calculatedPriceUzs),
-      original_price: originalPriceUzs ? formatUzsAmount(originalPriceUzs) : price.original_price,
+      calculated_price: formatUzsAmount(calculatedPriceUzs, countryCode),
+      original_price: originalPriceUzs ? formatUzsAmount(originalPriceUzs, countryCode) : price.original_price,
     }
-  }, [variant, variantPrice, cheapestPrice, exchangeRate])
+  }, [variant, variantPrice, cheapestPrice, exchangeRate, countryCode])
 
   if (!selectedPrice) {
     return compact ? null : <div className="h-8 w-40 rounded-control bg-brand-linen animate-pulse" />

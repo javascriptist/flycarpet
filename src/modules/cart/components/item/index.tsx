@@ -1,164 +1,179 @@
 "use client"
 
-import { Table, Text, clx } from "@medusajs/ui"
-import { updateLineItem } from "@lib/data/cart"
+import { updateLineItem, deleteLineItem } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
-import CartItemSelect from "@modules/cart/components/cart-item-select"
-import ErrorMessage from "@modules/checkout/components/error-message"
-import DeleteButton from "@modules/common/components/delete-button"
-import LineItemOptions from "@modules/common/components/line-item-options"
 import LineItemPrice from "@modules/common/components/line-item-price"
-import LineItemUnitPrice from "@modules/common/components/line-item-unit-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import Spinner from "@modules/common/icons/spinner"
-import Thumbnail from "@modules/products/components/thumbnail"
-import { RollCarpetItem } from "@modules/cart/components/roll-carpet-item"
+import { firstOrSecond } from "@lib/util/firstorsecond"
+import { formatMetres } from "@lib/util/carpet-helpers"
+import { t } from "@lib/util/translations"
 import { useState } from "react"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem
   type?: "full" | "preview"
   currencyCode: string
-  exchangeRate?: number // UZS exchange rate for cart items
+  exchangeRate?: number
   countryCode?: string
 }
 
+const MAX_QTY = 10
+
+/**
+ * One cart line, for both regular rugs and cut-to-length rolls.
+ * "full" (cart page): thumbnail, title, details, −/+ quantity, Remove.
+ * "preview" (checkout summary): compact, read-only.
+ */
 const Item = ({ item, type = "full", currencyCode, exchangeRate, countryCode }: ItemProps) => {
   const [updating, setUpdating] = useState(false)
+  const [removing, setRemoving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  
-  // Check if this is a custom roll carpet
-  const isCustomCarpet = item.metadata?.carpet_type === "roll_custom"
-  
-  // If it's a custom carpet, use the special component
-  if (isCustomCarpet) {
-    return (
-      <RollCarpetItem 
-        item={item} 
-        countryCode={countryCode} 
-        exchangeRate={exchangeRate}
-        type={type}
-      />
-    )
-  }
+
+  const isRoll = item.metadata?.carpet_type === "roll_custom"
+  const length = Number(item.metadata?.custom_length ?? item.quantity)
+  const width = Number(item.metadata?.width)
+  const note = item.metadata?.customer_specifications as string | undefined
+  const title = firstOrSecond(item.product_title ?? item.title, countryCode)
+  const href = `/products/${item.product_handle}`
+  const image = item.thumbnail || (item.variant?.product?.images?.[0] as any)?.url
+
+  const details = isRoll
+    ? [
+        t({ uz: "Kesib beriladi", ru: "На отрез", en: "Cut to length" }, countryCode),
+        width ? `${formatMetres(width, countryCode)} × ${formatMetres(length, countryCode)}` : formatMetres(length, countryCode),
+      ].join(" · ")
+    : (item.variant?.options ?? [])
+        .map((o) => o.value)
+        .filter(Boolean)
+        .join(" · ") ||
+      (item.variant?.title && item.variant.title !== "Default" ? item.variant.title : "")
 
   const changeQuantity = async (quantity: number) => {
     setError(null)
     setUpdating(true)
-
-    await updateLineItem({
-      lineId: item.id,
-      quantity,
-    })
-      .catch((err) => {
-        setError(err.message)
-      })
-      .finally(() => {
-        setUpdating(false)
-      })
+    try {
+      await updateLineItem({ lineId: item.id, quantity })
+    } catch (e: any) {
+      setError(e?.message ?? "Error")
+    } finally {
+      setUpdating(false)
+    }
   }
 
-  // TODO: Update this to grab the actual max inventory
-  const maxQtyFromInventory = 10
-  const maxQuantity = item.variant?.manage_inventory ? 10 : maxQtyFromInventory
+  const remove = async () => {
+    setRemoving(true)
+    try {
+      await deleteLineItem(item.id)
+    } catch {
+      setRemoving(false)
+    }
+  }
+
+  const thumb = (size: string) => (
+    <LocalizedClientLink href={href} className={`${size} shrink-0 overflow-hidden rounded-control bg-brand-linen`} tabIndex={-1} aria-hidden>
+      {image && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={image} alt="" className="h-full w-full object-cover" loading="lazy" />
+      )}
+    </LocalizedClientLink>
+  )
+
+  if (type === "preview") {
+    return (
+      <li className="flex items-center gap-3 py-3" data-testid="product-row">
+        {thumb("h-16 w-14")}
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-callout text-ink" data-testid="product-title">{title}</p>
+          <p className="text-footnote text-ink-muted num">
+            {isRoll
+              ? formatMetres(length, countryCode)
+              : [details, item.quantity > 1 ? `${t({ uz: "Soni", ru: "Кол-во", en: "Qty" }, countryCode)} ${item.quantity}` : ""]
+                  .filter(Boolean)
+                  .join(" · ")}
+          </p>
+        </div>
+        <LineItemPrice
+          item={item}
+          style="tight"
+          currencyCode={currencyCode}
+          exchangeRate={exchangeRate}
+          countryCode={countryCode}
+        />
+      </li>
+    )
+  }
 
   return (
-    <Table.Row className="w-full bg-brand-cream" data-testid="product-row">
-      <Table.Cell className="!pl-0 p-4 w-24 bg-brand-cream">
-        <LocalizedClientLink
-          href={`/products/${item.product_handle}`}
-          className={clx("flex", {
-            "w-16": type === "preview",
-            "small:w-24 w-12": type === "full",
-          })}
-        >
-          <Thumbnail
-            thumbnail={item.thumbnail}
-            images={item.variant?.product?.images}
-            size="square"
-          />
-        </LocalizedClientLink>
-      </Table.Cell>
+    <li
+      className={`flex gap-4 border-b border-line py-5 transition-opacity ${removing ? "opacity-40" : ""}`}
+      data-testid={isRoll ? "custom-carpet-row" : "product-row"}
+    >
+      {thumb("h-28 w-[5.5rem] small:h-32 small:w-24")}
 
-      <Table.Cell className="text-left">
-        <Text
-          className="txt-medium-plus text-ui-fg-base"
-          data-testid="product-title"
-        >
-          {item.product_title}
-        </Text>
-        <LineItemOptions variant={item.variant} data-testid="product-variant" />
-      </Table.Cell>
-
-      {type === "full" && (
-        <Table.Cell>
-          <div className="flex gap-2 items-center w-28">
-            <DeleteButton id={item.id} data-testid="product-delete-button" />
-            <CartItemSelect
-              value={item.quantity}
-              onChange={(value) => changeQuantity(parseInt(value.target.value))}
-              className="w-14 h-10 p-4"
-              data-testid="product-select-button"
-            >
-              {/* TODO: Update this with the v2 way of managing inventory */}
-              {Array.from(
-                {
-                  length: Math.min(maxQuantity, 10),
-                },
-                (_, i) => (
-                  <option value={i + 1} key={i}>
-                    {i + 1}
-                  </option>
-                )
-              )}
-
-              <option value={1} key={1}>
-                1
-              </option>
-            </CartItemSelect>
-            {updating && <Spinner />}
-          </div>
-          <ErrorMessage error={error} data-testid="product-error-message" />
-        </Table.Cell>
-      )}
-
-      {type === "full" && (
-        <Table.Cell className="hidden small:table-cell">
-          <LineItemUnitPrice
-            item={item}
-            style="tight"
-            currencyCode={currencyCode}
-            exchangeRate={exchangeRate}
-          />
-        </Table.Cell>
-      )}
-
-      <Table.Cell className="!pr-0">
-        <span
-          className={clx("!pr-0", {
-            "flex flex-col items-end h-full justify-center": type === "preview",
-          })}
-        >
-          {type === "preview" && (
-            <span className="flex gap-x-1 ">
-              <Text className="text-ui-fg-muted">{item.quantity}x </Text>
-              <LineItemUnitPrice
-                item={item}
-                style="tight"
-                currencyCode={currencyCode}
-                exchangeRate={exchangeRate}
-              />
-            </span>
-          )}
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <div className="flex items-start justify-between gap-3">
+          <LocalizedClientLink href={href} className="line-clamp-2 text-callout text-ink hover:underline" data-testid="product-title">
+            {title}
+          </LocalizedClientLink>
           <LineItemPrice
             item={item}
             style="tight"
             currencyCode={currencyCode}
             exchangeRate={exchangeRate}
+            countryCode={countryCode}
           />
-        </span>
-      </Table.Cell>
-    </Table.Row>
+        </div>
+        {details && <p className="text-footnote text-ink-muted num" data-testid="product-variant">{details}</p>}
+        {note && <p className="text-footnote italic text-ink-subtle">“{note}”</p>}
+
+        <div className="mt-auto flex items-center justify-between pt-2">
+          {isRoll ? (
+            <span className="text-footnote text-ink-muted">
+              {t({ uz: "Oʼlchamga koʼra tayyorlanadi", ru: "Изготавливается по размеру", en: "Made to your size" }, countryCode)}
+            </span>
+          ) : (
+            <div
+              className="flex h-9 items-center rounded-full bg-surface-raised shadow-hairline"
+              role="group"
+              aria-label={t({ uz: "Soni", ru: "Количество", en: "Quantity" }, countryCode)}
+            >
+              <button
+                type="button"
+                onClick={() => changeQuantity(item.quantity - 1)}
+                disabled={updating || item.quantity <= 1}
+                aria-label={t({ uz: "Kamaytirish", ru: "Уменьшить", en: "Decrease" }, countryCode)}
+                className="grid h-9 w-9 place-items-center text-ink disabled:text-ink-subtle/40"
+                data-testid="product-select-button"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden><path d="M5 12h14" /></svg>
+              </button>
+              <span className={`w-6 text-center text-callout num ${updating ? "text-ink-subtle" : "text-ink"}`} aria-live="polite">
+                {item.quantity}
+              </span>
+              <button
+                type="button"
+                onClick={() => changeQuantity(item.quantity + 1)}
+                disabled={updating || item.quantity >= MAX_QTY}
+                aria-label={t({ uz: "Koʼpaytirish", ru: "Увеличить", en: "Increase" }, countryCode)}
+                className="grid h-9 w-9 place-items-center text-ink disabled:text-ink-subtle/40"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden><path d="M12 5v14M5 12h14" /></svg>
+              </button>
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={remove}
+            disabled={removing}
+            className="no-press -mr-2 rounded-full px-2 py-1 text-footnote text-ink-muted hover:text-ink hover:underline"
+            data-testid="product-delete-button"
+          >
+            {t({ uz: "Olib tashlash", ru: "Удалить", en: "Remove" }, countryCode)}
+          </button>
+        </div>
+        {error && <p role="alert" className="text-footnote text-red-700" data-testid="product-error-message">{error}</p>}
+      </div>
+    </li>
   )
 }
 

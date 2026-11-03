@@ -41,8 +41,8 @@ const StoreTemplate = ({
         selectedSize={selectedSize}
       />
       <div className="w-full">
-        <div className="mb-8 text-2xl-semi inline-block border-b-4 border-brand-peach">
-          <h1 className="text-brand-brown" data-testid="store-page-title ">{t({ uz: 'Mahsulotlar', ru: 'Продукты', en: 'Products' }, countryCode)}</h1>
+        <div className="mb-6">
+          <h1 className="text-title-1 text-ink" data-testid="store-page-title">{t({ uz: 'Katalog', ru: 'Каталог', en: 'Shop' }, countryCode)}</h1>
         </div>
         <Suspense fallback={<SkeletonProductGrid />}>
           <PaginatedProducts

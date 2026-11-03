@@ -1,6 +1,5 @@
-import { convertToLocale, formatUzsAmount } from "@lib/util/money"
+import { formatMoney } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
-import { Text } from "@medusajs/ui"
 import { t } from '@lib/util/translations'
 
 type CartTotalsProps = {
@@ -21,67 +20,77 @@ const CartTotals = ({ totals, countryCode, exchangeRate }: CartTotalsProps) => {
     total = 0,
   } = totals
 
-  const isUsd = currencyCode === "USD"
-  const shouldConvert = isUsd && exchangeRate
+  const formatPrice = (amount: number) =>
+    formatMoney(amount, currencyCode, exchangeRate, countryCode)
 
-  const formatPrice = (amount: number) => {
-    if (shouldConvert) {
-      const uzsAmount = Math.round(amount * exchangeRate!)
-      const uzsFormatted = formatUzsAmount(uzsAmount)
-      const usdFormatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(amount)
-      return `${uzsFormatted} (${usdFormatted})`
-    }
-    return convertToLocale({
-      amount,
-      currency_code: currencyCode,
-    })
-  }
+
+  const Row = ({
+    label,
+    value,
+    testId,
+    accent,
+  }: {
+    label: string
+    value: string
+    testId: string
+    accent?: boolean
+  }) => (
+    <div className="flex items-baseline justify-between gap-4">
+      <dt className="text-ink-muted">{label}</dt>
+      <dd className={accent ? "text-brand-accent-strong num" : "text-ink num"} data-testid={testId}>
+        {value}
+      </dd>
+    </div>
+  )
 
   return (
-    <div className="flex flex-col gap-y-2 txt-medium text-ui-fg-subtle">
-      <div className="flex items-center justify-between">
-        <Text className="flex gap-x-1 items-center">
-          {t({ uz: 'Oraliq jami', ru: 'Промежуточный итог', en: 'Subtotal' }, countryCode)}
-        </Text>
-        <Text data-testid="cart-subtotal">{formatPrice(subtotal)}</Text>
-      </div>
+    <dl className="flex flex-col gap-2 text-callout">
+      <Row
+        label={t({ uz: "Mahsulotlar", ru: "Товары", en: "Subtotal" }, countryCode)}
+        value={formatPrice(subtotal)}
+        testId="cart-subtotal"
+      />
       {!!discount_total && (
-        <div className="flex items-center justify-between">
-          <Text>{t({ uz: 'Chegirma', ru: 'Скидка', en: 'Discount' }, countryCode)}</Text>
-          <Text className="text-ui-fg-interactive" data-testid="cart-discount">
-            - {formatPrice(discount_total)}
-          </Text>
-        </div>
+        <Row
+          label={t({ uz: "Chegirma", ru: "Скидка", en: "Discount" }, countryCode)}
+          value={`− ${formatPrice(discount_total)}`}
+          testId="cart-discount"
+          accent
+        />
       )}
       {!!gift_card_total && (
-        <div className="flex items-center justify-between">
-          <Text>{t({ uz: 'Sovgʼa kartasi', ru: 'Подарочная карта', en: 'Gift card' }, countryCode)}</Text>
-          <Text className="text-ui-fg-interactive" data-testid="cart-gift-card-amount">
-            - {formatPrice(gift_card_total)}
-          </Text>
-        </div>
+        <Row
+          label={t({ uz: "Sovg\u02bca kartasi", ru: "Подарочная карта", en: "Gift card" }, countryCode)}
+          value={`− ${formatPrice(gift_card_total)}`}
+          testId="cart-gift-card-amount"
+          accent
+        />
       )}
-      <div className="flex items-center justify-between">
-        <Text>{t({ uz: 'Yetkazib berish', ru: 'Доставка', en: 'Shipping' }, countryCode)}</Text>
-        <Text data-testid="cart-shipping">{formatPrice(shipping_total)}</Text>
-      </div>
-      <div className="flex items-center justify-between">
-        <Text>{t({ uz: 'Soliqlar', ru: 'Налоги', en: 'Taxes' }, countryCode)}</Text>
-        <Text data-testid="cart-taxes">{formatPrice(tax_total)}</Text>
-      </div>
-      <div className="h-px w-full border-b border-gray-200 my-2" />
-      <div className="flex items-center justify-between text-ui-fg-base mb-2 txt-medium-plus">
-        <Text>{t({ uz: 'Jami', ru: 'Итого', en: 'Total' }, countryCode)}</Text>
-        <Text className="txt-xlarge-plus" data-testid="cart-total">
+      <Row
+        label={t({ uz: "Yetkazib berish", ru: "Доставка", en: "Delivery" }, countryCode)}
+        value={
+          shipping_total
+            ? formatPrice(shipping_total)
+            : (totals as any).shipping_methods?.length
+            ? t({ uz: "Bepul", ru: "Бесплатно", en: "Free" }, countryCode)
+            : t({ uz: "Keyingi bosqichda", ru: "На следующем шаге", en: "Calculated next" }, countryCode)
+        }
+        testId="cart-shipping"
+      />
+      {!!tax_total && (
+        <Row
+          label={t({ uz: "Soliqlar", ru: "Налоги", en: "Taxes" }, countryCode)}
+          value={formatPrice(tax_total)}
+          testId="cart-taxes"
+        />
+      )}
+      <div className="mt-2 flex items-baseline justify-between gap-4 border-t border-line pt-3">
+        <dt className="text-headline text-ink">{t({ uz: "Jami", ru: "Итого", en: "Total" }, countryCode)}</dt>
+        <dd className="text-title-3 font-medium text-ink num" data-testid="cart-total">
           {formatPrice(total)}
-        </Text>
+        </dd>
       </div>
-    </div>
+    </dl>
   )
 }
 

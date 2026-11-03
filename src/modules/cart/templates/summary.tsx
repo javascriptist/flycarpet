@@ -1,22 +1,20 @@
 "use client"
 
-import { Button, Heading } from "@medusajs/ui"
-
 import CartTotals from "@modules/common/components/cart-totals"
-import Divider from "@modules/common/components/divider"
 import DiscountCode from "@modules/checkout/components/discount-code"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
-import { t } from '@lib/util/translations'
+import { t } from "@lib/util/translations"
 
 type SummaryProps = {
   cart: HttpTypes.StoreCart & {
     promotions: HttpTypes.StorePromotion[]
-  },
+  }
   countryCode: string
   exchangeRate?: number
 }
-function getCheckoutStep(cart: HttpTypes.StoreCart) {
+
+export function getCheckoutStep(cart: HttpTypes.StoreCart) {
   if (!cart?.shipping_address?.address_1 || !cart.email) {
     return "address"
   } else if (cart?.shipping_methods?.length === 0) {
@@ -30,21 +28,19 @@ const Summary = ({ cart, countryCode, exchangeRate }: SummaryProps) => {
   const step = getCheckoutStep(cart)
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <Heading level="h2" className="text-[2rem] leading-[2.75rem] text-brand-brown">
-        {t({ uz: 'Xaridlar savati', ru: 'Корзина', en: 'Shopping cart' }, countryCode)}
-      </Heading>
-      <DiscountCode cart={cart} countryCode={countryCode}/>
-      <Divider />
+    <div className="flex flex-col gap-5 rounded-card bg-surface-raised p-5 shadow-card small:p-6">
+      <h2 className="text-headline text-ink">
+        {t({ uz: "Buyurtma", ru: "Ваш заказ", en: "Order summary" }, countryCode)}
+      </h2>
       <CartTotals totals={cart} countryCode={countryCode} exchangeRate={exchangeRate} />
       <LocalizedClientLink
         href={"/checkout?step=" + step}
+        className="btn-primary w-full"
         data-testid="checkout-button"
       >
-        <Button className="w-full h-10 liquid-glass rounded-3xl bg-brand-peach text-black hover:bg-brand-peach-hover transition-colors outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-peach border-0 ">
-          {t({ uz: 'To\u02bclov', ru: 'Оплата', en: 'Checkout' }, countryCode)}
-        </Button>
+        {t({ uz: "Rasmiylashtirish", ru: "Оформить заказ", en: "Checkout" }, countryCode)}
       </LocalizedClientLink>
+      <DiscountCode cart={cart} countryCode={countryCode} />
     </div>
   )
 }

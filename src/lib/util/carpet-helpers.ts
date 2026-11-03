@@ -76,3 +76,10 @@ export const metreUnit = (countryCode?: string): string =>
 
 export const formatMetres = (value: number, countryCode?: string): string =>
   `${Number.isInteger(value) ? value : value.toFixed(1)} ${metreUnit(countryCode)}`
+
+/** Items in a cart: a cut-to-length roll counts once, others by quantity. */
+export const cartItemCount = (items?: { quantity: number; metadata?: Record<string, unknown> | null }[] | null) =>
+  (items ?? []).reduce(
+    (acc, item) => acc + (item.metadata?.carpet_type === "roll_custom" ? 1 : item.quantity),
+    0
+  )
