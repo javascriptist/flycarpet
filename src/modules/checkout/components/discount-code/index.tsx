@@ -10,6 +10,7 @@ import { HttpTypes } from "@medusajs/types"
 import Trash from "@modules/common/icons/trash"
 import ErrorMessage from "../error-message"
 import { SubmitButton } from "../submit-button"
+import { t } from "@lib/util/translations"
 
 type DiscountCodeProps = {
   cart: HttpTypes.StoreCart & {
@@ -19,7 +20,6 @@ type DiscountCodeProps = {
 }
 
 const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
-  const isLang = countryCode === "uz"
   const [isOpen, setIsOpen] = React.useState(false)
 
   const { items = [], promotions = [] } = cart
@@ -65,12 +65,8 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
               data-testid="add-discount-button"
             >
               {isOpen
-                ? isLang
-                  ? "Yopish"
-                  : "Закрыть"
-                : isLang
-                ? "Promo kod qo'shish"
-                : "Добавить промокод"}
+                ? t({ uz: "Yopish", ru: "Закрыть", en: "Close" }, countryCode)
+                : t({ uz: "Promo kod qo'shish", ru: "Добавить промокод", en: "Add promo code" }, countryCode)}
             </button>
 
             {/* <Tooltip content="You can add multiple promotion codes">
@@ -93,7 +89,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
                   variant="secondary"
                   data-testid="discount-apply-button"
                 >
-                  {isLang ? "Qo'shish" : "Добавить"}
+                  {t({ uz: "Qo'shish", ru: "Добавить", en: "Add" }, countryCode)}
                 </SubmitButton>
               </div>
 
@@ -165,9 +161,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
                       >
                         <Trash size={14} />
                         <span className="sr-only">
-                          {isLang
-                            ? "Promo kodni olib tashlash"
-                            : "Удалить промокод"}
+                          {t({ uz: "Promo kodni olib tashlash", ru: "Удалить промокод", en: "Remove promo code" }, countryCode)}
                         </span>
                       </button>
                     )}

@@ -7,6 +7,7 @@ import { Button } from "@medusajs/ui"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
 import React, { useState } from "react"
 import ErrorMessage from "../error-message"
+import { t } from "@lib/util/translations"
 
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
@@ -19,7 +20,6 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
   "data-testid": dataTestId,
   countryCode,
 }) => {
-  const isLang = countryCode === "uz"
   const notReady =
     !cart ||
     !cart.shipping_address ||
@@ -48,7 +48,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
         <ManualTestPaymentButton notReady={notReady} countryCode={countryCode} />
       )
     default:
-      return <Button disabled>{isLang ? "To'lov usulini tanlang" : "Выберите способ оплаты"}</Button>
+      return <Button disabled>{t({ uz: "To'lov usulini tanlang", ru: "Выберите способ оплаты", en: "Choose a payment method" }, countryCode)}</Button>
   }
 }
 
@@ -160,7 +160,6 @@ const StripePaymentButton = ({
 }
 
 const ManualTestPaymentButton = ({ notReady, countryCode }: { notReady: boolean; countryCode?: string }) => {
-  const isLang = countryCode === "uz"
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -189,7 +188,7 @@ const ManualTestPaymentButton = ({ notReady, countryCode }: { notReady: boolean;
         size="large"
         data-testid="submit-order-button"
       >
-        {isLang ? "Buyurtma berish" : "Оформить заказ"}
+        {t({ uz: "Buyurtma berish", ru: "Оформить заказ", en: "Place order" }, countryCode)}
       </Button>
       <ErrorMessage
         error={errorMessage}

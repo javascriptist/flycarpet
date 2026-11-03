@@ -67,7 +67,6 @@ const CartDropdown = ({
   const pathname = usePathname()
 
   const countryCode = pathname.split("/")[1]
-  const isLang = countryCode === "uz"
   // open cart dropdown when modifying the cart items, but only if we're not on the cart page
   useEffect(() => {
     if (itemRef.current !== totalItems && !pathname.includes("/cart")) {

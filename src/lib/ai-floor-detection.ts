@@ -37,7 +37,6 @@ export async function detectFloorAI(
   canvasHeight: number
 ): Promise<AIFloorDetectionResult> {
   try {
-    console.log('🤖 Attempting AI floor detection...')
     
     // Call our backend API
     const response = await fetch('/api/detect-floor', {
@@ -56,7 +55,6 @@ export async function detectFloorAI(
       
       // Check if model is loading
       if (error.loading) {
-        console.log('⏳ AI model is loading...')
         return {
           success: false,
           method: 'ai',
@@ -68,7 +66,6 @@ export async function detectFloorAI(
 
       // If API suggests fallback, use OpenCV
       if (error.fallback) {
-        console.log('⚠️ AI detection unavailable, using OpenCV fallback')
         return detectFloorOpenCV(imageSource, canvasWidth, canvasHeight)
       }
 
@@ -78,12 +75,9 @@ export async function detectFloorAI(
     const result = await response.json()
 
     if (!result.success || !result.floor) {
-      console.log('⚠️ No floor detected by AI, using OpenCV fallback')
       return detectFloorOpenCV(imageSource, canvasWidth, canvasHeight)
     }
 
-    console.log('✅ AI floor detection successful!')
-    console.log('  Confidence:', (result.floor.confidence * 100).toFixed(1) + '%')
 
     // Convert polygon to FloorCorners format
     const corners: FloorCorners = {
@@ -118,7 +112,6 @@ export async function detectFloorAI(
 
   } catch (error) {
     console.error('❌ AI floor detection error:', error)
-    console.log('🔄 Falling back to OpenCV detection')
     return detectFloorOpenCV(imageSource, canvasWidth, canvasHeight)
   }
 }
@@ -135,11 +128,9 @@ async function detectFloorOpenCV(
     // Import OpenCV detection function
     const { detectFloorCandidates } = await import('./opencv-floor-detection')
     
-    console.log('🔍 Using OpenCV edge detection...')
     const candidates = await detectFloorCandidates(imageSource, canvasWidth, canvasHeight)
 
     if (candidates.length > 0) {
-      console.log('✅ OpenCV detected', candidates.length, 'floor candidates')
       
       return {
         success: true,
@@ -155,7 +146,6 @@ async function detectFloorOpenCV(
       }
     }
 
-    console.log('⚠️ OpenCV found no floor candidates')
     return {
       success: false,
       method: 'opencv',
@@ -184,8 +174,6 @@ export function startManualFloorSelection(
   const ctx = canvas.getContext('2d')
   if (!ctx) return () => {}
 
-  console.log('✋ Manual floor selection mode activated')
-  console.log('  Click 4 corners: Top-Left → Top-Right → Bottom-Right → Bottom-Left')
 
   const drawPoints = () => {
     // Draw existing points
@@ -231,7 +219,6 @@ export function startManualFloorSelection(
     drawPoints()
 
     if (points.length === 4) {
-      console.log('✅ Manual floor selection complete')
       
       const corners: FloorCorners = {
         topLeft: points[0],
@@ -243,7 +230,6 @@ export function startManualFloorSelection(
       onComplete(corners)
       cleanup()
     } else {
-      console.log(`  Point ${points.length}/4 recorded`)
     }
   }
 

@@ -8,7 +8,6 @@ interface AboutusLinkProps {
   countryCode: string;
 }
 const AboutUsLink: React.FC<AboutusLinkProps> = ({ countryCode }) => {
-  const isLang = countryCode === "uz";
   return (
     <div className="mx-14 px-9 max-md:px-4 max-md:mx-4">
       <div

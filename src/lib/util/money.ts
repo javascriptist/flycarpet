@@ -48,3 +48,18 @@ export const formatUzsAmount = (amount: number): string => {
     maximumFractionDigits: 0,
   }).format(amount) + " so'm"
 }
+
+/**
+ * Format a store price (USD, major units) for display.
+ * When an exchange rate is known, prices are shown in UZS — matching
+ * ProductPrice and the cart — otherwise in USD.
+ */
+export const formatStorePrice = (usdAmount: number, exchangeRate?: number): string => {
+  if (exchangeRate) {
+    return formatUzsAmount(convertUsdToUzs(usdAmount, exchangeRate))
+  }
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(usdAmount)
+}

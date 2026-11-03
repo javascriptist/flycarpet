@@ -18,7 +18,6 @@ const ItemsTemplate = ({
   countryCode,
   exchangeRate,
 }: ItemsTemplateProps) => {
-  const isLang = countryCode === "uz"
   const items = cart?.items
 
   return (

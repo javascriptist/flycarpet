@@ -12,10 +12,10 @@ import PaymentContainer, {
 import Divider from "@modules/common/components/divider"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
+import { t } from "@lib/util/translations"
 
 // Helper function to get translated payment method titles
 const getTranslatedPaymentInfoMap = (countryCode: string): typeof paymentInfoMap => {
-  const isLang = countryCode === "uz"
   
   return {
     ...paymentInfoMap,
@@ -25,7 +25,7 @@ const getTranslatedPaymentInfoMap = (countryCode: string): typeof paymentInfoMap
     },
     pp_stripe_stripe: {
       ...paymentInfoMap.pp_stripe_stripe,
-      title: isLang ? "Kredit karta" : "Кредитная карта"
+      title: t({ uz: "Kredit karta", ru: "Кредитная карта", en: "Credit card" }, countryCode)
     }
   }
 }
@@ -39,7 +39,6 @@ const Payment = ({
   availablePaymentMethods: any[]
   countryCode: string
 }) => {
-  const isLang = countryCode === "uz"
   const translatedPaymentInfoMap = getTranslatedPaymentInfoMap(countryCode)
   const activeSession = cart.payment_collection?.payment_sessions?.find(
     (paymentSession: any) => paymentSession.status === "pending"
@@ -144,7 +143,7 @@ const Payment = ({
             }
           )}
         >
-          {isLang ? "To'lov usuli" : "Способ оплаты"}
+          {t({ uz: "To'lov usuli", ru: "Способ оплаты", en: "Payment method" }, countryCode)}
           {!isOpen && paymentReady && <CheckCircleSolid />}
         </Heading>
         {!isOpen && paymentReady && (
@@ -154,7 +153,7 @@ const Payment = ({
               className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
               data-testid="edit-payment-button"
             >
-              {isLang ? "Tahrirlash" : "Редактировать"}
+              {t({ uz: "Tahrirlash", ru: "Редактировать", en: "Edit" }, countryCode)}
             </button>
           </Text>
         )}
@@ -195,13 +194,13 @@ const Payment = ({
           {paidByGiftcard && (
             <div className="flex flex-col w-1/3">
               <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                {isLang ? "To'lov usuli" : "Способ оплаты"}
+                {t({ uz: "To'lov usuli", ru: "Способ оплаты", en: "Payment method" }, countryCode)}
               </Text>
               <Text
                 className="txt-medium text-ui-fg-subtle"
                 data-testid="payment-method-summary"
               >
-                {isLang ? "Sovg'a kartasi" : "Подарочная карта"}
+                {t({ uz: "Sovg'a kartasi", ru: "Подарочная карта", en: "Gift card" }, countryCode)}
               </Text>
             </div>
           )}
@@ -223,8 +222,8 @@ const Payment = ({
             data-testid="submit-payment-button"
           >
             {!activeSession && isStripeFunc(selectedPaymentMethod)
-              ? (isLang ? "Karta ma'lumotlarini kiriting" : "Введите данные карты")
-              : (isLang ? "Ko'rib chiqishga o'tish" : "Перейти к обзору")}
+              ? (t({ uz: "Karta ma'lumotlarini kiriting", ru: "Введите данные карты", en: "Enter your card details" }, countryCode))
+              : (t({ uz: "Ko'rib chiqishga o'tish", ru: "Перейти к обзору", en: "Continue to review" }, countryCode))}
           </Button>
         </div>
 
@@ -233,7 +232,7 @@ const Payment = ({
             <div className="flex items-start gap-x-1 w-full">
               <div className="flex flex-col w-1/3">
                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                  {isLang ? "To'lov usuli" : "Способ оплаты"}
+                  {t({ uz: "To'lov usuli", ru: "Способ оплаты", en: "Payment method" }, countryCode)}
                 </Text>
                 <Text
                   className="txt-medium text-ui-fg-subtle"
@@ -245,7 +244,7 @@ const Payment = ({
               </div>
               <div className="flex flex-col w-1/3">
                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                  {isLang ? "To'lov tafsilotlari" : "Детали оплаты"}
+                  {t({ uz: "To'lov tafsilotlari", ru: "Детали оплаты", en: "Payment details" }, countryCode)}
                 </Text>
                 <div
                   className="flex gap-2 txt-medium text-ui-fg-subtle items-center"
@@ -261,7 +260,7 @@ const Payment = ({
                       ? cardBrand
                       : selectedPaymentMethod === "pp_system_default"
                       ? "Payme"
-                      : (isLang ? "Boshqa qadam paydo bo'ladi" : "Появится другой шаг")}
+                      : (t({ uz: "Boshqa qadam paydo bo'ladi", ru: "Появится другой шаг", en: "Another step will appear" }, countryCode))}
                   </Text>
                 </div>
               </div>
@@ -269,13 +268,13 @@ const Payment = ({
           ) : paidByGiftcard ? (
             <div className="flex flex-col w-1/3">
               <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                {isLang ? "To'lov usuli" : "Способ оплаты"}
+                {t({ uz: "To'lov usuli", ru: "Способ оплаты", en: "Payment method" }, countryCode)}
               </Text>
               <Text
                 className="txt-medium text-ui-fg-subtle"
                 data-testid="payment-method-summary"
               >
-                {isLang ? "Sovg'a kartasi" : "Подарочная карта"}
+                {t({ uz: "Sovg'a kartasi", ru: "Подарочная карта", en: "Gift card" }, countryCode)}
               </Text>
             </div>
           ) : null}

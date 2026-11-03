@@ -1,163 +1,133 @@
-import React, { useState } from 'react';
-import { Button } from "@medusajs/ui";
-import { convertUsdToUzs, formatUzsAmount } from "@lib/util/money";
+"use client"
+
+import React, { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Button } from "@medusajs/ui"
+import { addToCart } from "@lib/data/cart"
+import { formatStorePrice } from "@lib/util/money"
+import {
+  RollCarpetSpec,
+  calculateRollCarpet,
+  clampRollLength,
+  formatMetres,
+} from "@lib/util/carpet-helpers"
+import { t } from "@lib/util/translations"
 
 interface RollCarpetAddToCartProps {
-  product: any;
-  customLength: number;
-  totalPrice: number;
-  countryCode?: string;
-  exchangeRate?: number;
-  cartId?: string;
-  onSuccess?: () => void;
+  spec: RollCarpetSpec
+  length: number
+  countryCode: string
+  exchangeRate?: number
+  disabled?: boolean
 }
 
+/**
+ * Adds a cut-to-length roll carpet to the Medusa cart.
+ *
+ * The variant price is the price per metre, so the line item quantity is the
+ * length in metres (Medusa v2 quantities are decimal) — cart totals then come
+ * out right without any custom backend pricing. The exact length is also kept
+ * in metadata for the cart, the order and the warehouse.
+ */
 export const RollCarpetAddToCart: React.FC<RollCarpetAddToCartProps> = ({
-  product,
-  customLength,
-  totalPrice,
+  spec,
+  length,
   countryCode,
   exchangeRate,
-  cartId,
-  onSuccess
+  disabled,
 }) => {
-  const [isAdding, setIsAdding] = useState(false);
-  const [customerNote, setCustomerNote] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
+  const [isAdding, setIsAdding] = useState(false)
+  const [customerNote, setCustomerNote] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [added, setAdded] = useState(false)
 
-  const isLang = countryCode === "uz";
-
-  const formatPrice = (price: number) => {
-    if (exchangeRate && countryCode === "uz") {
-      const uzsAmount = convertUsdToUzs(price, exchangeRate);
-      return formatUzsAmount(uzsAmount);
-    }
-    return `$${price.toFixed(2)}`;
-  };
+  const finalLength = clampRollLength(length, spec)
+  const { total } = calculateRollCarpet(spec, finalLength)
+  const isDisabled = disabled || isAdding || !spec.variantId || !spec.pricePerMeter
 
   const handleAddToCart = async () => {
-    if (!customLength || customLength <= 0) {
-      setError(isLang ? "Iltimos, to'g'ri uzunlik kiriting" : "Пожалуйста, введите правильную длину");
-      return;
-    }
+    if (!spec.variantId) return
 
-    if (!cartId) {
-      setError(isLang ? "Savatcha mavjud emas" : "Корзина недоступна");
-      return;
-    }
+    setIsAdding(true)
+    setError(null)
+    setAdded(false)
 
-    setIsAdding(true);
-    setError(null);
-    
     try {
-      console.log('Attempting to add carpet to cart:', {
-        cartId,
-        productId: product.id,
-        length: customLength,
-        customerNote
-      });
-
-      const response = await fetch('/api/store/cart/custom-carpet', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-publishable-api-key': process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ''
+      await addToCart({
+        variantId: spec.variantId,
+        quantity: finalLength,
+        countryCode,
+        metadata: {
+          carpet_type: "roll_custom",
+          custom_length: finalLength,
+          width: spec.width,
+          area: calculateRollCarpet(spec, finalLength).area,
+          ...(customerNote.trim() ? { customer_specifications: customerNote.trim() } : {}),
         },
-        body: JSON.stringify({
-          cartId: cartId,
-          productId: product.id,
-          length: customLength,
-          quantity: 1,
-          customerNote: customerNote,
-          metadata: {
-            carpet_type: "roll_custom",
-            custom_length: customLength,
-            customer_specifications: customerNote
-          }
-        })
-      });
-
-      console.log('API Response status:', response.status);
-      console.log('API Response ok:', response.ok);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add to cart');
-      }
-      
-      const data = await response.json();
-      if (data.success) {
-        onSuccess?.();
-        
-        // Reset form
-        setCustomerNote("");
-        
-        // Show success in a better way
-        setError(null);
-        
-        // Reload the page to refresh cart
-        window.location.reload();
-      } else {
-        throw new Error(data.message || 'Failed to add to cart');
-      }
-    } catch (error) {
-      console.error('Add to cart error:', error);
-      setError(isLang 
-        ? "Gilamni savatchaga qo'shishda xatolik" 
-        : "Ошибка при добавлении ковра в корзину"
-      );
+      })
+      setCustomerNote("")
+      setAdded(true)
+      router.refresh()
+    } catch (e) {
+      setError(
+        t(
+          {
+            uz: "Gilamni savatchaga qoʼshishda xatolik. Qayta urinib koʼring.",
+            ru: "Не удалось добавить ковер в корзину. Попробуйте ещё раз.",
+            en: "Couldn't add the carpet to your cart. Please try again.",
+          },
+          countryCode
+        )
+      )
     } finally {
-      setIsAdding(false);
+      setIsAdding(false)
     }
-  };
-
-  const isDisabled = isAdding || !customLength || customLength <= 0;
+  }
 
   return (
     <div className="roll-carpet-add-to-cart">
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">
-          {isLang 
-            ? "Maxsus talablar (ixtiyoriy):" 
-            : "Особые требования (необязательно):"
-          }
+        <label htmlFor="roll-note" className="block text-sm font-medium mb-2">
+          {t({ uz: "Maxsus talablar (ixtiyoriy):", ru: "Особые требования (необязательно):", en: "Special requests (optional):" }, countryCode)}
         </label>
         <textarea
+          id="roll-note"
           value={customerNote}
           onChange={(e) => setCustomerNote(e.target.value)}
-          placeholder={isLang 
-            ? "Har qanday maxsus talablar yoki izohlar..." 
-            : "Любые особые требования или примечания..."
-          }
-          className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder={t({ uz: "Har qanday maxsus talablar yoki izohlar...", ru: "Любые особые требования или примечания...", en: "Any special requests or notes..." }, countryCode)}
+          className="w-full p-3 text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           rows={3}
         />
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div role="alert" className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {error}
         </div>
       )}
-      
+
       <Button
         onClick={handleAddToCart}
         disabled={isDisabled}
+        isLoading={isAdding}
         size="large"
-        className={`w-full ${
-          isDisabled
-            ? 'opacity-50 cursor-not-allowed'
-            : 'bg-blue-600 hover:bg-blue-700'
-        }`}
+        className="w-full"
+        data-testid="add-roll-carpet-button"
       >
-        {isAdding 
-          ? (isLang ? "Savatchaga qo'shilmoqda..." : "Добавляется в корзину...")
-          : (isLang 
-              ? `${customLength}m gilam qo'shish - ${formatPrice(totalPrice)}`
-              : `Добавить ковер ${customLength}м - ${formatPrice(totalPrice)}`
-            )
-        }
+        {t(
+          {
+            uz: `${formatMetres(finalLength)} qoʼshish — ${formatStorePrice(total, exchangeRate)}`,
+            ru: `Добавить ${formatMetres(finalLength)} — ${formatStorePrice(total, exchangeRate)}`,
+            en: `Add ${formatMetres(finalLength)} — ${formatStorePrice(total, exchangeRate)}`,
+          },
+          countryCode
+        )}
       </Button>
+
+      <p aria-live="polite" className="mt-2 text-sm text-ui-fg-subtle min-h-[1.25rem]">
+        {added && t({ uz: "Savatchaga qoʼshildi", ru: "Добавлено в корзину", en: "Added to cart" }, countryCode)}
+      </p>
     </div>
-  );
-};
+  )
+}

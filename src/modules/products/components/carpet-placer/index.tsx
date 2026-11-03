@@ -155,7 +155,6 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
   const [showCandidates, setShowCandidates] = useState(false)
   const [isEditingFloor, setIsEditingFloor] = useState(false)
   const [draggingCorner, setDraggingCorner] = useState<CornerType | null>(null)
-  const isLang = countryCode === "uz"
 
   // Load images and detect floor
   useEffect(() => {
@@ -183,9 +182,6 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
         const canvas = canvasRef.current
         
         try {
-          console.log('🤖 Starting AI-powered floor detection...')
-          console.log('📷 Room image:', roomImage.substring(0, 50) + '...')
-          console.log('📐 Canvas size:', canvas.width, 'x', canvas.height)
           
           // Try AI detection first (Hugging Face Grounded-SAM)
           const aiResult = await detectFloorAI(
@@ -194,11 +190,9 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
             canvas.height
           )
 
-          console.log(`🎯 Detection method: ${aiResult.method.toUpperCase()}`)
           
           // Handle loading state
           if (aiResult.loading) {
-            console.log(`⏳ AI model loading... estimated ${aiResult.estimatedTime}s`)
             // Show loading message to user
             // You could add a state here to display "AI model warming up..."
           }
@@ -225,7 +219,6 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
             }
           }
 
-          console.log(`✅ Found ${candidates.length} floor candidates`)
           setFloorCandidates(candidates)
           
           if (candidates.length > 0) {
@@ -246,15 +239,6 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
             )
             const initialScale = (floorWidth * 0.5) / 300 // 50% of floor width
             
-            console.log('✅ FLOOR DETECTED!')
-            console.log('  Confidence:', (bestCandidate.confidence * 100).toFixed(0) + '%')
-            console.log('  Top Left:', detectedCorners.topLeft)
-            console.log('  Top Right:', detectedCorners.topRight)
-            console.log('  Bottom Right:', detectedCorners.bottomRight)
-            console.log('  Bottom Left:', detectedCorners.bottomLeft)
-            console.log('  Center:', { x: centerX, y: centerY })
-            console.log('  Floor Width:', floorWidth)
-            console.log('  Initial Scale:', initialScale)
             
             setCarpetPosition({ x: centerX, y: centerY })
             setCarpetScale(initialScale)
@@ -264,12 +248,9 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
             // Show candidates if multiple options
             if (candidates.length > 1) {
               setShowCandidates(true)
-              console.log(`💡 Multiple floor options detected. Click "Select Floor" to choose.`)
             }
           } else {
             // Use fallback positioning
-            console.log('⚠️ FLOOR NOT DETECTED - Using fallback positioning')
-            console.log('  Fallback position:', { x: canvas.width / 2, y: canvas.height * 0.7 })
             setCarpetPosition({ x: canvas.width / 2, y: canvas.height * 0.7 })
             setCarpetScale(1.0)
             setFloorCorners(null)
@@ -308,11 +289,6 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
     ctx.globalAlpha = opacity
     
     if (floorCorners) {
-      console.log('🎨 Drawing with PERSPECTIVE TRANSFORM')
-      console.log('  Floor corners:', floorCorners)
-      console.log('  Carpet position:', carpetPosition)
-      console.log('  Carpet scale:', carpetScale)
-      console.log('  Carpet rotation:', carpetRotation)
       
       // Calculate carpet dimensions
       const carpetAspectRatio = carpetImg.width / carpetImg.height
@@ -385,17 +361,11 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
       }
       
       // Draw carpet using perspective transform via triangle decomposition
-      console.log('  Carpet corners for perspective:')
-      console.log('    Back Left:', backLeft)
-      console.log('    Back Right:', backRight)
-      console.log('    Front Right:', frontRight)
-      console.log('    Front Left:', frontLeft)
       
       drawPerspectiveImage(ctx, carpetImg, [
         backLeft, backRight, frontRight, frontLeft
       ])
     } else {
-      console.log('🎨 Drawing with SIMPLE 2D TRANSFORM (no floor detected)')
       // Fallback: simple transform without perspective
       ctx.translate(carpetPosition.x, carpetPosition.y)
       ctx.rotate((carpetRotation * Math.PI) / 180)
@@ -541,12 +511,10 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
     
     setCarpetPosition({ x: centerX, y: centerY })
     
-    console.log(`✓ Selected floor candidate ${index + 1}`, selectedFloor)
   }
 
   const handleConfirmFloor = () => {
     setShowCandidates(false)
-    console.log('✅ Floor selection confirmed')
   }
 
   const handleToggleEditFloor = () => {
@@ -558,7 +526,6 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
       setShowCandidates(false)
     }
     
-    console.log(newEditingState ? '✏️ Entering floor edit mode' : '✅ Exiting floor edit mode')
   }
 
   return (
@@ -581,7 +548,7 @@ export const CarpetPlacer: React.FC<CarpetPlacerProps> = ({
             <strong>
               {t({ uz: 'Yo\u02bcriqnoma:', ru: 'Инструкция:', en: 'Instructions:' }, countryCode)}
             </strong>{" "}
-            {t({ uz: 'Gilamni sudrab ko\u02bcchiring, aylantirib va o\u02bclchamini o\u02bzgartiring.', ru: 'Перетащите ковер, поверните и измените размер.', en: 'Drag the carpet, rotate and resize it.' }, countryCode)}
+            {t({ uz: 'Gilamni sudrab ko\u02bcchiring, aylantirib va o\u02bclchamini o\u02bczgartiring.', ru: 'Перетащите ковер, поверните и измените размер.', en: 'Drag the carpet, rotate and resize it.' }, countryCode)}
           </p>
         )}
       </div>

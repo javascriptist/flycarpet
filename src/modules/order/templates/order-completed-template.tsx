@@ -12,6 +12,7 @@ import OrderDetails from "@modules/order/components/order-details"
 import ShippingDetails from "@modules/order/components/shipping-details"
 import PaymentDetails from "@modules/order/components/payment-details"
 import { HttpTypes } from "@medusajs/types"
+import { t } from "@lib/util/translations"
 
 type OrderCompletedTemplateProps = {
   order: HttpTypes.StoreOrder
@@ -24,7 +25,6 @@ export default async function OrderCompletedTemplate({
 }: OrderCompletedTemplateProps) {
   const exchangeRateObj = await getExchangeRate()
   const exchangeRate = exchangeRateObj?.rate || 12750
-  const isLang = countryCode === "uz"
   const cookies = await nextCookies()
 
   const isOnboarding = cookies.get("_medusa_onboarding")?.value === "true"
@@ -41,8 +41,8 @@ export default async function OrderCompletedTemplate({
             level="h1"
             className="flex flex-col gap-y-3 text-ui-fg-base text-3xl mb-4"
           >
-            <span>{isLang ? "Buyurtma qabul qilindi!" : "Заказ принят!"}</span>
-            <span>{isLang ? "Davom etish uchun to'lovni amalga oshiring" : "Оплатите заказ для продолжения"}</span>
+            <span>{t({ uz: "Buyurtma qabul qilindi!", ru: "Заказ принят!", en: "Order received!" }, countryCode)}</span>
+            <span>{t({ uz: "Davom etish uchun to'lovni amalga oshiring", ru: "Оплатите заказ для продолжения", en: "Complete payment to continue" }, countryCode)}</span>
           </Heading>
           
           {/* Direct Payme Form Button */}
@@ -70,7 +70,7 @@ export default async function OrderCompletedTemplate({
                     height={24}
                     className="h-6 w-auto"
                   />
-                  <span>{isLang ? "bilan to'lash" : "оплатить с"}</span>
+                  <span>{t({ uz: "bilan to'lash", ru: "оплатить с", en: "Pay with" }, countryCode)}</span>
                 </button>
               </form>
             )
@@ -78,7 +78,7 @@ export default async function OrderCompletedTemplate({
           
           <OrderDetails order={order} countryCode={countryCode} />
           <Heading level="h2" className="flex flex-row text-3xl-regular">
-            {isLang ? "Xulosa" : "Резюме"}
+            {t({ uz: "Xulosa", ru: "Резюме", en: "Summary" }, countryCode)}
           </Heading>
           <Items order={order} />
           <CartTotals totals={order} countryCode={countryCode} />

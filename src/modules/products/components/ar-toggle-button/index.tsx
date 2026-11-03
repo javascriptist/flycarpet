@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { Button } from "@medusajs/ui"
 import { useParams } from "next/navigation"
 import { ARCarpetViewer } from '../ar-carpet-viewer'
+import { t } from "@lib/util/translations"
 
 interface ARToggleButtonProps {
   product: any
@@ -20,7 +21,6 @@ export const ARToggleButton: React.FC<ARToggleButtonProps> = ({
 }) => {
   const [showAR, setShowAR] = useState(false)
   const countryCode = useParams().countryCode as string
-  const isLang = countryCode === "uz"
 
   return (
     <div className={className}>
@@ -47,12 +47,12 @@ export const ARToggleButton: React.FC<ARToggleButtonProps> = ({
           <span className="text-lg">🏠</span>
           <span className="font-semibold">
             {showAR 
-              ? (isLang ? "AR yopish" : "Закрыть AR")
-              : (isLang ? "Xonada ko'rish" : "Просмотр в комнате")
+              ? (t({ uz: "AR yopish", ru: "Закрыть AR", en: "Close AR" }, countryCode))
+              : (t({ uz: "Xonada ko'rish", ru: "Просмотр в комнате", en: "View in your room" }, countryCode))
             }
           </span>
           <span className="text-sm opacity-90 font-medium">
-            {!showAR && (isLang ? "(AR)" : "(AR)")}
+            {!showAR && (t({ uz: "(AR)", ru: "(AR)", en: "(AR)" }, countryCode))}
           </span>
         </span>
       </Button>

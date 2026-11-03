@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Table, Text, clx } from "@medusajs/ui";
-import { convertUsdToUzs, formatUzsAmount } from "@lib/util/money";
+import { formatStorePrice } from "@lib/util/money";
 import DeleteButton from "@modules/common/components/delete-button";
 import LocalizedClientLink from "@modules/common/components/localized-client-link";
 import Thumbnail from "@modules/products/components/thumbnail";
+import { t } from "@lib/util/translations"
 
 interface RollCarpetItemProps {
   item: any;
@@ -18,24 +19,11 @@ export const RollCarpetItem: React.FC<RollCarpetItemProps> = ({
   exchangeRate,
   type = "full"
 }) => {
-  const isLang = countryCode === "uz";
   const isCustomCarpet = item.metadata?.carpet_type === "roll_custom";
   
-  const formatPrice = (price: number) => {
-    if (exchangeRate && countryCode === "uz") {
-      const uzsAmount = convertUsdToUzs(price / 100, exchangeRate); // price is in cents
-      return formatUzsAmount(uzsAmount);
-    }
-    return `$${(price / 100).toFixed(2)}`;
-  };
-
-  const formatUnitPrice = (price: number) => {
-    if (exchangeRate && countryCode === "uz") {
-      const uzsAmount = convertUsdToUzs(price / 100, exchangeRate);
-      return formatUzsAmount(uzsAmount);
-    }
-    return `$${(price / 100).toFixed(2)}`;
-  };
+  // Medusa v2 amounts are in major units (not cents)
+  const formatPrice = (price: number) => formatStorePrice(price, exchangeRate);
+  const formatUnitPrice = formatPrice;
 
   if (!isCustomCarpet) {
     return null; // Use regular cart item component
@@ -68,28 +56,26 @@ export const RollCarpetItem: React.FC<RollCarpetItemProps> = ({
             {item.product_title}
           </Text>
           <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-medium">
-            {isLang ? "Maxsus" : "Заказной"}
+            {t({ uz: "Maxsus", ru: "Заказной", en: "Custom" }, countryCode)}
           </span>
         </div>
         
         <div className="text-sm text-ui-fg-subtle space-y-1">
           <div className="font-medium">
-            {isLang ? "Uzunlik:" : "Длина:"} <span className="text-blue-600">{customLength}m</span>
+            {t({ uz: "Uzunlik:", ru: "Длина:", en: "Length:" }, countryCode)} <span className="text-blue-600">{customLength}m</span>
           </div>
           
           {customerSpecs && (
             <div>
               <span className="font-medium">
-                {isLang ? "Izohlar:" : "Примечания:"}
+                {t({ uz: "Izohlar:", ru: "Примечания:", en: "Notes:" }, countryCode)}
               </span>
               <div className="text-xs text-ui-fg-muted mt-1 italic">"{customerSpecs}"</div>
             </div>
           )}
           
           <div className="text-xs text-ui-fg-muted">
-            {isLang 
-              ? "Maxsus o'lcham bo'yicha tayyorlanadi" 
-              : "Изготавливается по индивидуальному размеру"
+            {t({ uz: "Maxsus o'lcham bo'yicha tayyorlanadi", ru: "Изготавливается по индивидуальному размеру", en: "Made to your custom size" }, countryCode)
             }
           </div>
         </div>
@@ -104,7 +90,7 @@ export const RollCarpetItem: React.FC<RollCarpetItemProps> = ({
             </div>
           </div>
           <div className="text-xs text-ui-fg-muted mt-1">
-            {isLang ? "Soni o'zgartirib bo'lmaydi" : "Кол-во не изменяется"}
+            {t({ uz: "Soni o'zgartirib bo'lmaydi", ru: "Кол-во не изменяется", en: "Quantity can't be changed" }, countryCode)}
           </div>
         </Table.Cell>
       )}
@@ -116,7 +102,7 @@ export const RollCarpetItem: React.FC<RollCarpetItemProps> = ({
               {formatUnitPrice(item.unit_price || (item.total / item.quantity))}
             </div>
             <div className="text-xs text-ui-fg-muted">
-              {isLang ? "har metr" : "за метр"}
+              {t({ uz: "har metr", ru: "за метр", en: "per metre" }, countryCode)}
             </div>
           </div>
         </Table.Cell>

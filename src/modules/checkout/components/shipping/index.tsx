@@ -25,7 +25,6 @@ const Shipping: React.FC<ShippingProps> = ({
   availableShippingMethods,
   countryCode,
 }) => {
-  const isLang = countryCode === "uz"
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingPrices, setIsLoadingPrices] = useState(true)
   const [calculatedPricesMap, setCalculatedPricesMap] = useState<

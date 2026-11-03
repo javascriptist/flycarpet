@@ -5,7 +5,6 @@ import { Button, Heading } from "@medusajs/ui"
 import Image from 'next/image'
 import ProductList from "./products-list"
 import Footer from "@modules/layout/templates/footer"
-import { useTranslation } from "next-i18next"
 import { useState, useEffect } from 'react'
 import { t } from '@lib/util/translations'
 

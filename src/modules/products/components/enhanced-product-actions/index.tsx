@@ -15,8 +15,12 @@ import { RollCarpetSelector } from "../roll-carpet-selector"
 import { RollCarpetAddToCart } from "../roll-carpet-add-to-cart"
 import { ARToggleButton } from "../ar-toggle-button"
 import { RoomVisualizerButton } from "../room-visualizer-button"
-import { isRollCarpet, getCarpetWidth, getStockLength } from "@lib/util/carpet-helpers"
-import { getExchangeRate } from "@lib/data/exchange-rate"
+import {
+  isRollCarpet,
+  getCarpetSize,
+  getRollCarpetSpec,
+  clampRollLength,
+} from "@lib/util/carpet-helpers"
 import { t } from '@lib/util/translations'
 
 type EnhancedProductActionsProps = {
@@ -24,7 +28,6 @@ type EnhancedProductActionsProps = {
   region: HttpTypes.StoreRegion
   disabled?: boolean
   exchangeRate?: number
-  cartId?: string
 }
 
 const optionsAsKeymap = (
@@ -41,21 +44,16 @@ export default function EnhancedProductActions({
   region,
   disabled,
   exchangeRate,
-  cartId,
 }: EnhancedProductActionsProps) {
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
-  const [customLength, setCustomLength] = useState<number>(1)
-  const [customPrice, setCustomPrice] = useState<number>(0)
-  
   const countryCode = useParams().countryCode as string
-  const isLang = countryCode === "uz"
   const isRoll = isRollCarpet(product)
-
-  // Debug logging
-  console.log('EnhancedProductActions - cartId:', cartId)
-  console.log('EnhancedProductActions - isRoll:', isRoll)
-  console.log('EnhancedProductActions - product.metadata:', product.metadata)
+  const rollSpec = useMemo(() => getRollCarpetSpec(product), [product])
+  const [customLength, setCustomLength] = useState<number>(() =>
+    clampRollLength(1, rollSpec)
+  )
+  const carpetImage = product.thumbnail || product.images?.[0]?.url || ""
 
   // If there is only 1 variant, preselect the options
   useEffect(() => {
@@ -125,31 +123,22 @@ export default function EnhancedProductActions({
 
     setIsAdding(true)
 
-    await addToCart({
-      variantId: selectedVariant.id,
-      quantity: 1,
-      countryCode,
-    })
-
-    setIsAdding(false)
-  }
-
-  // handle success for roll carpet
-  const handleRollCarpetSuccess = () => {
-    // Optionally redirect or show success message
-    window.location.reload() // Simple approach to refresh cart
+    try {
+      await addToCart({
+        variantId: selectedVariant.id,
+        quantity: 1,
+        countryCode,
+      })
+    } finally {
+      setIsAdding(false)
+    }
   }
 
   if (isRoll) {
-    // Roll Carpet Product - Custom Interface with AR
-    const carpetWidth = parseFloat(getCarpetWidth(product)) || 3
-    const stockLength = getStockLength(product)
-    const carpetLength = customLength || stockLength || 2
-    const carpetSize = { 
-      width: carpetWidth, 
-      length: carpetLength 
+    const carpetSize = {
+      width: rollSpec.width,
+      length: clampRollLength(customLength, rollSpec),
     }
-    const carpetImage = product.thumbnail || product.images?.[0]?.url || ''
 
     return (
       <div className="flex flex-col gap-y-6" ref={actionsRef}>
@@ -168,32 +157,26 @@ export default function EnhancedProductActions({
         />
         
         <RollCarpetSelector
-          product={product}
+          spec={rollSpec}
+          length={customLength}
+          onLengthChange={setCustomLength}
           countryCode={countryCode}
           exchangeRate={exchangeRate}
-          onPriceChange={(price) => setCustomPrice(price)}
-          onLengthChange={(length) => setCustomLength(length)}
         />
-        
+
         <RollCarpetAddToCart
-          product={product}
-          customLength={customLength}
-          totalPrice={customPrice}
+          spec={rollSpec}
+          length={customLength}
           countryCode={countryCode}
           exchangeRate={exchangeRate}
-          cartId={cartId}
-          onSuccess={handleRollCarpetSuccess}
+          disabled={disabled}
         />
       </div>
     )
   }
 
-  // Regular Product - Standard Interface with AR
-  const regularCarpetSize = { 
-    width: parseFloat(getCarpetWidth(product)) || 3, 
-    length: getStockLength(product) || 2 
-  }
-  const regularCarpetImage = product.thumbnail || product.images?.[0]?.url || ''
+  // Regular product
+  const regularCarpetSize = getCarpetSize(product)
 
   return (
     <>
@@ -201,14 +184,14 @@ export default function EnhancedProductActions({
         {/* AR Viewer for Regular Products */}
         <ARToggleButton
           product={product}
-          carpetImage={regularCarpetImage}
+          carpetImage={carpetImage}
           carpetSize={regularCarpetSize}
           className="mb-4"
         />
         
         {/* Room Visualizer for Regular Products */}
         <RoomVisualizerButton
-          productImage={regularCarpetImage}
+          productImage={carpetImage}
           productTitle={product.title || ''}
           countryCode={countryCode}
         />
@@ -251,7 +234,7 @@ export default function EnhancedProductActions({
           isLoading={isAdding}
           data-testid="add-product-button"
         >
-          {!selectedVariant && !options
+          {!selectedVariant
             ? t({ uz: 'Tanlang', ru: 'Выберите', en: 'Select' }, countryCode)
             : !inStock || !isValidVariant
             ? t({ uz: 'Mavjud emas', ru: 'Недоступно', en: 'Out of stock' }, countryCode)
@@ -268,7 +251,7 @@ export default function EnhancedProductActions({
           isAdding={isAdding}
           show={!inView}
           optionsDisabled={!!disabled || isAdding}
-          isLang={isLang}
+          countryCode={countryCode}
           exchangeRate={exchangeRate}
         />
       </div>

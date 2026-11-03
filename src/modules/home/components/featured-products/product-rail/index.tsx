@@ -20,7 +20,6 @@ export default async function ProductRail({
       fields: "*variants.calculated_price",
     },
   })
-  console.log(pricedProducts)
   if (!pricedProducts) {
     return null
   }

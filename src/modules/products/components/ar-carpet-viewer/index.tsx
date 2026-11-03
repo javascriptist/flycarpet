@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button } from "@medusajs/ui"
 import { useParams } from "next/navigation"
+import { t } from "@lib/util/translations"
 
 // Import model-viewer types
 declare global {
@@ -48,7 +49,6 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
   const modelViewerRef = useRef<HTMLElement>(null)
   
   const countryCode = useParams().countryCode as string
-  const isLang = countryCode === "uz"
 
   // Check AR support and generate carpet model
   useEffect(() => {
@@ -64,7 +64,6 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
           setIsARSupported(isMobile)
         }
       } catch (err) {
-        console.log('AR support check failed:', err)
         // Assume mobile devices support AR
         const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
         setIsARSupported(isMobile)
@@ -89,7 +88,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
         setModelUrl(data.model_url)
       } catch (err) {
         console.error('Carpet model generation error:', err)
-        setError(isLang ? "Gilam modeli yaratilmadi" : "Не удалось создать модель ковра")
+        setError(t({ uz: "Gilam modeli yaratilmadi", ru: "Не удалось создать модель ковра", en: "Couldn't create the carpet model" }, countryCode))
       } finally {
         setIsLoading(false)
       }
@@ -105,7 +104,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
         generateCarpetModel()
       }
       script.onerror = () => {
-        setError(isLang ? "AR kutubxonasi yuklanmadi" : "AR библиотека не загрузилась")
+        setError(t({ uz: "AR kutubxonasi yuklanmadi", ru: "AR библиотека не загрузилась", en: "The AR library didn't load" }, countryCode))
         setIsLoading(false)
       }
       document.head.appendChild(script)
@@ -113,17 +112,15 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
       checkARSupport()
       generateCarpetModel()
     }
-  }, [isLang, carpetImage, carpetSize.width, carpetSize.length])
+  }, [countryCode, carpetImage, carpetSize.width, carpetSize.length])
 
   const handleModelLoad = () => {
-    console.log('✅ Carpet 3D model loaded successfully')
-    console.log('Model URL:', modelUrl?.substring(0, 100) + '...')
   }
 
   const handleModelError = (event: any) => {
     console.error('❌ Model loading error:', event)
     console.error('Model URL:', modelUrl)
-    setError(isLang ? "3D model yuklanmadi" : "3D модель не загрузилась")
+    setError(t({ uz: "3D model yuklanmadi", ru: "3D модель не загрузилась", en: "The 3D model didn't load" }, countryCode))
   }
 
   if (isLoading) {
@@ -133,7 +130,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#D9A676] mx-auto mb-3"></div>
             <p className="text-sm text-gray-600 font-medium">
-              {isLang ? "AR tayyorlanmoqda..." : "Подготовка AR..."}
+              {t({ uz: "AR tayyorlanmoqda...", ru: "Подготовка AR...", en: "Preparing AR..." }, countryCode)}
             </p>
           </div>
         </div>
@@ -149,9 +146,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
             <p className="text-red-600 mb-2 text-2xl">⚠️</p>
             <p className="text-red-600 font-medium mb-1">{error}</p>
             <p className="text-sm text-gray-500">
-              {isLang 
-                ? "AR funksiyasi hozircha mavjud emas" 
-                : "AR функция временно недоступна"
+              {t({ uz: "AR funksiyasi hozircha mavjud emas", ru: "AR функция временно недоступна", en: "AR isn't available right now" }, countryCode)
               }
             </p>
           </div>
@@ -168,7 +163,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#D9A676] mx-auto mb-3"></div>
             <p className="text-sm text-gray-600 font-medium">
-              {isLang ? "3D model tayyorlanmoqda..." : "Подготовка 3D модели..."}
+              {t({ uz: "3D model tayyorlanmoqda...", ru: "Подготовка 3D модели...", en: "Preparing 3D model..." }, countryCode)}
             </p>
           </div>
         </div>
@@ -199,7 +194,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
           <div className="flex items-center justify-between">
             <h3 className="text-white font-semibold flex items-center gap-2 text-lg">
               <span className="text-xl">🏠</span>
-              {isLang ? "Xonada ko'rish" : "Просмотр в комнате"}
+              {t({ uz: "Xonada ko'rish", ru: "Просмотр в комнате", en: "View in your room" }, countryCode)}
             </h3>
             {isARSupported && (
               <span 
@@ -210,7 +205,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
                   border: '1px solid rgba(255, 255, 255, 0.3)',
                 }}
               >
-                AR {isLang ? "qo'llab-quvvatlanadi" : "поддерживается"}
+                AR {t({ uz: "qo'llab-quvvatlanadi", ru: "поддерживается", en: "supported" }, countryCode)}
               </span>
             )}
           </div>
@@ -246,7 +241,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
                 className="absolute top-4 right-4 bg-[#D9A676] hover:bg-[#e55d17] text-white px-4 py-2 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2 font-medium"
               >
                 <span>📱</span>
-                <span>{isLang ? "AR ko'rish" : "Просмотр в AR"}</span>
+                <span>{t({ uz: "AR ko'rish", ru: "Просмотр в AR", en: "View in AR" }, countryCode)}</span>
               </button>
             )}
           </model-viewer>
@@ -265,9 +260,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
               <p className="flex items-start gap-2">
                 <span className="text-base flex-shrink-0">📱</span>
                 <span>
-                  {isLang 
-                    ? "AR tugmasini bosing va gilamni xonangizda joylashtiring"
-                    : "Нажмите AR и разместите ковер в вашей комнате"
+                  {t({ uz: "AR tugmasini bosing va gilamni xonangizda joylashtiring", ru: "Нажмите AR и разместите ковер в вашей комнате", en: "Tap AR and place the carpet in your room" }, countryCode)
                   }
                 </span>
               </p>
@@ -275,9 +268,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
               <p className="flex items-start gap-2">
                 <span className="text-base flex-shrink-0">🖱️</span>
                 <span>
-                  {isLang 
-                    ? "Sichqoncha bilan gilamni aylantirib ko'ring"
-                    : "Поворачивайте ковер мышкой для просмотра"
+                  {t({ uz: "Sichqoncha bilan gilamni aylantirib ko'ring", ru: "Поворачивайте ковер мышкой для просмотра", en: "Drag to rotate the carpet" }, countryCode)
                   }
                 </span>
               </p>
@@ -297,7 +288,7 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-gray-700">
-                {isLang ? "O'lcham:" : "Размер:"} 
+                {t({ uz: "O'lcham:", ru: "Размер:", en: "Size:" }, countryCode)} 
               </span>
               <span className="text-sm text-[#D9A676] font-semibold">
                 {carpetSize.width}m × {carpetSize.length}m
@@ -307,16 +298,16 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
             <div className="flex items-center gap-4 text-xs text-gray-500">
               <span className="flex items-center gap-1 transition-colors hover:text-[#D9A676]">
                 <span>🔄</span>
-                <span className="hidden sm:inline">{isLang ? "Aylantirish" : "Поворот"}</span>
+                <span className="hidden sm:inline">{t({ uz: "Aylantirish", ru: "Поворот", en: "Rotate" }, countryCode)}</span>
               </span>
               <span className="flex items-center gap-1 transition-colors hover:text-[#D9A676]">
                 <span>🔍</span>
-                <span className="hidden sm:inline">{isLang ? "Kattalashtirish" : "Масштаб"}</span>
+                <span className="hidden sm:inline">{t({ uz: "Kattalashtirish", ru: "Масштаб", en: "Zoom" }, countryCode)}</span>
               </span>
               {isARSupported && (
                 <span className="flex items-center gap-1 transition-colors hover:text-[#D9A676]">
                   <span>📱</span>
-                  <span className="hidden sm:inline">{isLang ? "AR rejim" : "AR режим"}</span>
+                  <span className="hidden sm:inline">{t({ uz: "AR rejim", ru: "AR режим", en: "AR mode" }, countryCode)}</span>
                 </span>
               )}
             </div>

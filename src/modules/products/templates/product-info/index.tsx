@@ -1,6 +1,7 @@
 import { HttpTypes } from "@medusajs/types"
 import { Heading, Text } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { firstOrSecond } from "@lib/util/firstorsecond"
 
 type ProductInfoProps = {
   product: HttpTypes.StoreProduct,
@@ -8,7 +9,6 @@ type ProductInfoProps = {
 }
 
 const ProductInfo = ({ product, countryCode }: ProductInfoProps) => {
-  const isLang = countryCode === "uz"
 
   return (
     <div id="product-info">
@@ -26,7 +26,7 @@ const ProductInfo = ({ product, countryCode }: ProductInfoProps) => {
           className="text-3xl leading-10 text-ui-fg-base"
           data-testid="product-title"
         >
-          {product.title.includes("###") ? (isLang ? product.title.split("###")[0] : product.title.split("###")[1]) : product.title}
+          {firstOrSecond(product.title, countryCode)}
         </Heading>
 
         <Text
@@ -34,7 +34,7 @@ const ProductInfo = ({ product, countryCode }: ProductInfoProps) => {
           data-testid="product-description"
         >
           {
-            product.description?.includes("###") ? (isLang ? product.description.split("###")[0] : product.description.split("###")[1]) : product.description
+            firstOrSecond(product.description, countryCode)
           }
         </Text>
       </div>

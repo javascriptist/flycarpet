@@ -2,12 +2,8 @@ import { HttpTypes } from "@medusajs/types"
 import { NextRequest, NextResponse } from "next/server"
 
 const BACKEND_URL = process.env.MEDUSA_BACKEND_URL
-const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "pk_ed03577674ea4255ed6016f9034c9a8b741dca24e9bf1289fee7905ea2547d2e"
+const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "us"
-console.log("Default region", DEFAULT_REGION)
-console.log("Backend URL", BACKEND_URL)
-console.log("Publishable API Key", PUBLISHABLE_API_KEY)
- 
 
 const regionMapCache = {
   regionMap: new Map<string, HttpTypes.StoreRegion>(),

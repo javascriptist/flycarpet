@@ -39,7 +39,6 @@ export default function ProductActions({
   const [isAdding, setIsAdding] = useState(false)
   const countryCode = useParams().countryCode as string
 
-  const isLang = countryCode === "uz"
   // If there is only 1 variant, preselect the options
   useEffect(() => {
     if (product.variants?.length === 1) {
@@ -186,7 +185,7 @@ export default function ProductActions({
           isAdding={isAdding}
           show={!inView}
           optionsDisabled={!!disabled || isAdding}
-          isLang={isLang}
+          countryCode={countryCode}
           exchangeRate={exchangeRate}
           allOptionsSelected={allOptionsSelected}
         />

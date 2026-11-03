@@ -27,7 +27,6 @@ function getCheckoutStep(cart: HttpTypes.StoreCart) {
 }
 
 const Summary = ({ cart, countryCode, exchangeRate }: SummaryProps) => {
-  const isLang = countryCode === "uz"
   const step = getCheckoutStep(cart)
 
   return (

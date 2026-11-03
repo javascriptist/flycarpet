@@ -27,7 +27,6 @@ const CollectionSlide: React.FC<CollectionSlideProps> = ({ listOfCollections, co
     emblaApi.on('select', onSelect);
     onSelect();
   }, [emblaApi, onSelect]);
-  const isLang = countryCode === "uz";
   return (
     <div className="relative mx-14 px-9 py-12 bg-[#F4E9DD] rounded-3xl max-md:px-4 max-md:mx-4">
       <div className="title-and-button" style={{ display: 'flex', justifyContent: 'space-between'}}>

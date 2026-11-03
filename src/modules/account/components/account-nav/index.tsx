@@ -23,7 +23,6 @@ const AccountNav = ({
   const handleLogout = async () => {
     await signout(countryCode)
   }
-  const isLang = countryCode === "uz"
 
   return (
     <div>

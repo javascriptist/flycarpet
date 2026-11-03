@@ -8,7 +8,6 @@ const SignInPrompt = (
   }
 ) => {
   const { countryCode } = props
-  const isLang = countryCode === "uz"
   return (
     <div className="flex items-center justify-between">
       <div>

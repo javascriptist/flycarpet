@@ -10,7 +10,6 @@ type CartTotalsProps = {
 }
 
 const CartTotals = ({ totals, countryCode, exchangeRate }: CartTotalsProps) => {
-  const isLang = countryCode === "uz"
   const currencyCode = totals.currency_code?.toUpperCase() || "USD"
   
   const {

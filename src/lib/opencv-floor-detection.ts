@@ -50,7 +50,6 @@ export async function loadOpenCV(): Promise<void> {
   if (cvLoadingPromise) return cvLoadingPromise
 
   cvLoadingPromise = new Promise((resolve, reject) => {
-    console.log('📦 Loading OpenCV.js from CDN...')
     
     const script = document.createElement('script')
     script.src = 'https://docs.opencv.org/4.8.0/opencv.js'
@@ -59,14 +58,12 @@ export async function loadOpenCV(): Promise<void> {
     script.onload = () => {
       // OpenCV.js needs a moment to initialize
       if (window.cv && window.cv.Mat) {
-        console.log('✅ OpenCV.js loaded successfully!')
         cvLoaded = true
         resolve()
       } else {
         // Wait for cv to be ready
         const checkInterval = setInterval(() => {
           if (window.cv && window.cv.Mat) {
-            console.log('✅ OpenCV.js ready!')
             cvLoaded = true
             clearInterval(checkInterval)
             resolve()
@@ -133,7 +130,6 @@ function isFloorCandidate(
   
   // Floor should be at least 5% of image (reduced from 10%)
   if (area < imageArea * 0.05) {
-    console.log('  ✗ Rejected: area too small', Math.round(area), '<', Math.round(imageArea * 0.05))
     return false
   }
   
@@ -143,27 +139,23 @@ function isFloorCandidate(
   // Floor should be in bottom 70% of image (more flexible - was 60%)
   const centerY = rect.y + rect.height / 2
   if (centerY < imageHeight * 0.3) {
-    console.log('  ✗ Rejected: too high in image', centerY, '<', imageHeight * 0.3)
     return false
   }
   
   // Floor should be reasonably wide (at least 20% of image width - reduced from 30%)
   if (rect.width < imageWidth * 0.2) {
-    console.log('  ✗ Rejected: too narrow', rect.width, '<', imageWidth * 0.2)
     return false
   }
   
   // Floor should have reasonable aspect ratio (more permissive range)
   const aspectRatio = rect.width / rect.height
   if (aspectRatio < 0.3 || aspectRatio > 20) {
-    console.log('  ✗ Rejected: bad aspect ratio', aspectRatio)
     return false
   }
   
   // Floor bottom should be in lower portion (more flexible - was 60%)
   const bottomY = rect.y + rect.height
   if (bottomY < imageHeight * 0.5) {
-    console.log('  ✗ Rejected: doesn\'t extend to lower portion', bottomY, '<', imageHeight * 0.5)
     return false
   }
   
@@ -201,14 +193,12 @@ function approximateToQuad(contour: any): Point[] | null {
         })
       }
       approx.delete()
-      console.log('  ✓ Approximated to quad with epsilon:', epsilon.toFixed(3))
       return points
     }
   }
   
   // If we can't get exactly 4 points, use bounding rect as fallback
   if (approx.rows > 4) {
-    console.log('  ⚠️ Could not simplify to 4 points (got', approx.rows, '), using bounding rect')
     const rect = window.cv.boundingRect(contour)
     const points: Point[] = [
       { x: rect.x, y: rect.y },
@@ -221,7 +211,6 @@ function approximateToQuad(contour: any): Point[] | null {
   }
   
   approx.delete()
-  console.log('  ✗ Failed to approximate to polygon')
   return null
 }
 
@@ -257,7 +246,6 @@ export async function detectFloorCandidates(
   canvasWidth: number,
   canvasHeight: number
 ): Promise<FloorCandidate[]> {
-  console.log('🔍 Starting OpenCV floor detection...')
   
   try {
     // Ensure OpenCV is loaded
@@ -266,9 +254,7 @@ export async function detectFloorCandidates(
     const cv = window.cv
     
     // Load image
-    console.log('📸 Loading image...')
     const src = await loadImageToMat(imageUrl)
-    console.log(`✓ Image loaded: ${src.cols}x${src.rows}`)
     
     // Resize to canvas dimensions for consistency
     const resized = new cv.Mat()
@@ -300,7 +286,6 @@ export async function detectFloorCandidates(
     cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0)
     
     // Canny edge detection with tuned parameters
-    console.log('🔬 Running Canny edge detection...')
     const edges = new cv.Mat()
     cv.Canny(blurred, edges, 30, 100) // Lower threshold for more edges
     
@@ -318,7 +303,6 @@ export async function detectFloorCandidates(
     cv.dilate(closed, dilated, kernel, new cv.Point(-1, -1), 2)
     
     // Find contours
-    console.log('🔍 Finding contours...')
     const contours = new cv.MatVector()
     const hierarchy = new cv.Mat()
     cv.findContours(
@@ -329,18 +313,15 @@ export async function detectFloorCandidates(
       cv.CHAIN_APPROX_SIMPLE
     )
     
-    console.log(`✓ Found ${contours.size()} contours`)
     
     // Filter and convert to floor candidates
     const candidates: FloorCandidate[] = []
     const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8']
     
-    console.log('🔍 Evaluating contours for floor candidates...')
     
     for (let i = 0; i < contours.size(); i++) {
       const contour = contours.get(i)
       
-      console.log(`\n📐 Contour ${i + 1}/${contours.size()}:`)
       
       if (isFloorCandidate(contour, canvasWidth, canvasHeight)) {
         const points = approximateToQuad(contour)
@@ -366,11 +347,9 @@ export async function detectFloorCandidates(
       }
     }
     
-    console.log(`\n📊 Total candidates found: ${candidates.length}`)
     
     // If no candidates found, try a more lenient approach
     if (candidates.length === 0) {
-      console.log('⚠️ No quadrilateral candidates found. Trying lenient mode...')
       
       // Find the largest contour in the bottom half of image
       let largestArea = 0
@@ -391,7 +370,6 @@ export async function detectFloorCandidates(
       }
       
       if (largestContour) {
-        console.log('  ✓ Found large contour in bottom half:', Math.round(largestArea))
         
         // Use bounding rectangle as floor
         const rect = cv.boundingRect(largestContour)
@@ -409,7 +387,6 @@ export async function detectFloorCandidates(
           color: colors[0]
         })
         
-        console.log('  ✓ Added lenient candidate with bounding rect')
       }
     }
     
@@ -430,7 +407,6 @@ export async function detectFloorCandidates(
     // Sort by confidence (area)
     candidates.sort((a, b) => b.confidence - a.confidence)
     
-    console.log(`✅ Found ${candidates.length} floor candidates`)
     
     return candidates
     
@@ -438,7 +414,6 @@ export async function detectFloorCandidates(
     console.error('❌ OpenCV floor detection failed:', error)
     
     // Return fallback candidate
-    console.log('⚠️ Using fallback floor detection')
     return [{
       corners: getFallbackFloorCorners(canvasWidth, canvasHeight),
       area: canvasWidth * canvasHeight * 0.4,

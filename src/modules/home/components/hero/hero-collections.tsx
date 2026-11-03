@@ -7,7 +7,6 @@ interface HeroCollectionsProps {
   countryCode: string;
 }
 const HeroCollections: React.FC<HeroCollectionsProps> = ({ countryCode }) => {
-  const isLang = countryCode === "uz";
   return (
     <section className="mx-14 px-9 max-md:px-4 max-md:mx-4">
       <div className="container mx-auto">

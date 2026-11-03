@@ -1,21 +1,18 @@
-export function firstOrSecond(text: string, countryCode: string): string {
-  const delimiter = '###';
-  
-  if (!text.includes(delimiter)) {
-    return text;
-  }
+import { getLang } from "./translations"
 
-  const parts = text.split(delimiter);
-  
-  // parts[0] = uz, parts[1] = ru, parts[2] = en
-  if (countryCode === 'uz') {
-    return parts[0] || text;
-  } else if (countryCode === 'ru') {
-    return parts[1] || parts[0] || text;
-  } else if (countryCode === 'en') {
-    return parts[2] || parts[0] || text;
-  }
-  
-  // Default to first part (uz)
-  return parts[0] || text;
+/**
+ * Picks the right language from a multilingual product field written as
+ * "Uzbek ### Russian ### English". Missing parts fall back to Uzbek.
+ */
+export function firstOrSecond(text: string | null | undefined, countryCode?: string): string {
+  if (!text) return ""
+  if (!text.includes("###")) return text
+
+  const [uz, ru, en] = text.split("###").map((part) => part.trim())
+  const lang = getLang(countryCode)
+  const picked = lang === "ru" ? ru : lang === "en" ? en : uz
+
+  return picked || uz || text
 }
+
+export const localizedText = firstOrSecond

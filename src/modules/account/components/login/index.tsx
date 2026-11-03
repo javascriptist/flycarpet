@@ -12,7 +12,6 @@ type Props = {
 }
 
 const Login = ({ setCurrentView , countryCode }: Props) => {
-  const isLang = countryCode === "uz"
   const [message, formAction] = useActionState(login, null)
 
   return (

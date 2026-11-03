@@ -12,6 +12,7 @@ import OptionSelect from "./option-select"
 import { HttpTypes } from "@medusajs/types"
 import { isSimpleProduct } from "@lib/util/product"
 import { t } from '@lib/util/translations'
+import { firstOrSecond } from "@lib/util/firstorsecond"
 
 type MobileActionsProps = {
   product: HttpTypes.StoreProduct
@@ -23,7 +24,7 @@ type MobileActionsProps = {
   isAdding?: boolean
   show: boolean
   optionsDisabled: boolean
-  isLang?: boolean
+  countryCode?: string
   exchangeRate?: number
   allOptionsSelected?: boolean
 }
@@ -38,7 +39,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   isAdding,
   show,
   optionsDisabled,
-  isLang,
+  countryCode,
   exchangeRate,
   allOptionsSelected,
 }) => {
@@ -102,7 +103,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
           >
             <div className="flex items-center gap-x-2">
               <span data-testid="mobile-title">
-                {product.title.includes("###") ? (isLang ? product.title.split("###")[0] : product.title.split("###")[1]) : product.title}
+                {firstOrSecond(product.title, countryCode)}
               </span>
               <span>—</span>
               {selectedPrice ? (
@@ -140,7 +141,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                   <span>
                     {variant
                       ? Object.values(options).join(" / ")
-                      : t({ uz: 'Tanlang', ru: 'Выберите', en: 'Select' }, isLang ? 'uz' : 'ru')} 
+                      : t({ uz: 'Tanlang', ru: 'Выберите', en: 'Select' }, countryCode)} 
                   </span>
                   <ChevronDown />
                 </div>
@@ -159,10 +160,10 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                 variant="secondary"
               >
                 {!allOptionsSelected
-                  ? t({ uz: 'Avval tanlang', ru: 'Сначала выберите', en: 'Select options first' }, isLang ? 'uz' : 'ru')
+                  ? t({ uz: 'Avval tanlang', ru: 'Сначала выберите', en: 'Select options first' }, countryCode)
                   : !inStock
-                  ? t({ uz: 'Mavjud emas', ru: 'Недоступно', en: 'Out of stock' }, isLang ? 'uz' : 'ru')
-                  : t({ uz: 'Savatchaga qo\u02bcshish', ru: 'Добавить в корзину', en: 'Add to cart' }, isLang ? 'uz' : 'ru')}
+                  ? t({ uz: 'Mavjud emas', ru: 'Недоступно', en: 'Out of stock' }, countryCode)
+                  : t({ uz: 'Savatchaga qo\u02bcshish', ru: 'Добавить в корзину', en: 'Add to cart' }, countryCode)}
               </Button>
             </div>
           </div>

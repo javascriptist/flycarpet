@@ -3,6 +3,7 @@
 import { Button } from "@medusajs/ui"
 import { useState } from "react"
 import { ImageUploader } from "../image-uploader"
+import { t } from "@lib/util/translations"
 // import { CarpetPlacer } from "../carpet-placer" // DEACTIVATED
 
 interface RoomVisualizerButtonProps {
@@ -21,7 +22,6 @@ export const RoomVisualizerButton: React.FC<RoomVisualizerButtonProps> = ({
   
   const [isOpen, setIsOpen] = useState(false)
   const [roomImage, setRoomImage] = useState<string | null>(null)
-  const isLang = countryCode === "uz"
 
   const handleImageUpload = (imageUrl: string) => {
     setRoomImage(imageUrl)
@@ -56,7 +56,7 @@ export const RoomVisualizerButton: React.FC<RoomVisualizerButtonProps> = ({
             d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
           />
         </svg>
-        {isLang ? "Xonangizda ko'ring" : "Посмотрите в вашей комнате"}
+        {t({ uz: "Xonangizda ko'ring", ru: "Посмотрите в вашей комнате", en: "See it in your room" }, countryCode)}
       </Button>
 
       {isOpen && (
@@ -87,16 +87,12 @@ export const RoomVisualizerButton: React.FC<RoomVisualizerButtonProps> = ({
                 )}
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {isLang ? "Xonangizda ko'ring" : "Визуализация в комнате"}
+                    {t({ uz: "Xonangizda ko'ring", ru: "Визуализация в комнате", en: "See it in your room" }, countryCode)}
                   </h2>
                   <p className="text-sm text-gray-500 mt-1">
                     {roomImage
-                      ? isLang
-                        ? "Gilamni joylashtiring"
-                        : "Разместите ковер"
-                      : isLang
-                      ? "Xona rasmini yuklang"
-                      : "Загрузите фото комнаты"}
+                      ? t({ uz: "Gilamni joylashtiring", ru: "Разместите ковер", en: "Place the carpet" }, countryCode)
+                      : t({ uz: "Xona rasmini yuklang", ru: "Загрузите фото комнаты", en: "Upload a photo of your room" }, countryCode)}
                   </p>
                 </div>
               </div>
