@@ -71,5 +71,8 @@ export const calculateRollCarpet = (spec: RollCarpetSpec, length: number) => {
   return { length, area, total }
 }
 
-export const formatMetres = (value: number): string =>
-  `${Number.isInteger(value) ? value : value.toFixed(1)} m`
+export const metreUnit = (countryCode?: string): string =>
+  countryCode?.toLowerCase() === "ru" ? "м" : "m"
+
+export const formatMetres = (value: number, countryCode?: string): string =>
+  `${Number.isInteger(value) ? value : value.toFixed(1)} ${metreUnit(countryCode)}`

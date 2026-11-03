@@ -53,7 +53,10 @@ module.exports = {
           cream: "#FAF7F3",        // Page background
           linen: "#F4E9DD",        // Raised cream surfaces, chips
           brown: "#5A4636",        // Deep brown - headings
-          accent: "#D4682D",       // Primary action (Add to cart, links)
+          accent: {
+            DEFAULT: "#D4682D",    // Brand orange — icons, large accents
+            strong: "#B4552A",     // Primary buttons & accent text (AA: 4.9:1 with white, 4.6:1 on cream)
+          },
           terracotta: "#A65A3A",   // Pressed / hover of primary action
         },
         // Semantic tokens — prefer these in new UI

@@ -54,7 +54,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid #D4682D;
+    outline: 2px solid #B4552A;
     outline-offset: 2px;
   }
 
@@ -247,7 +247,7 @@
 
   /* Primary action — solid accent, darker on hover/press */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 h-12 px-6 rounded-circle bg-brand-accent text-white font-medium transition hover:bg-brand-terracotta active:bg-brand-terracotta disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 h-12 px-6 rounded-circle bg-brand-accent-strong text-white font-medium transition hover:bg-brand-terracotta active:bg-brand-terracotta disabled:opacity-50;
   }
 
   /* Secondary action — quiet, sits on cream */
@@ -261,7 +261,7 @@
    */
   .liquid-glass-button,
   button[data-ui-button].liquid-glass {
-    background: #D4682D !important;
+    background: #B4552A !important;
     color: #fff !important;
     border: 1px solid transparent !important;
     box-shadow: none !important;

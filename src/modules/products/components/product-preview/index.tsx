@@ -11,10 +11,12 @@ export default async function ProductPreview({
   product,
   isFeatured,
   region,
+  countryCode,
 }: {
   product: HttpTypes.StoreProduct
   isFeatured?: boolean
   region: HttpTypes.StoreRegion
+  countryCode?: string
 }) {
   // const pricedProduct = await listProducts({
   //   regionId: region.id,
@@ -40,7 +42,7 @@ export default async function ProductPreview({
         />
         <div className="flex txt-compact-medium mt-4 justify-between">
           <Text className="text-ui-fg-subtle" data-testid="product-title">
-            {product.title}
+            {firstOrSecond(product.title, countryCode)}
           </Text>
           <div className="flex items-center gap-x-2">
             {cheapestPrice && <PreviewPrice price={cheapestPrice} />}

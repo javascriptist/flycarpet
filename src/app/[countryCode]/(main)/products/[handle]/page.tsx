@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { listProducts } from "@lib/data/products"
 import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
+import { firstOrSecond } from "@lib/util/firstorsecond"
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -63,12 +64,16 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     notFound()
   }
 
+  const title = firstOrSecond(product.title, params.countryCode)
+  const description =
+    firstOrSecond(product.description, params.countryCode).slice(0, 160) || title
+
   return {
-    title: `${product.title} | Premium Carpet`,
-    description: `${product.title}`,
+    title: `${title} | Premium Carpet`,
+    description,
     openGraph: {
-      title: `${product.title} | Premium Carpet`,
-      description: `${product.title}`,
+      title: `${title} | Premium Carpet`,
+      description,
       images: product.thumbnail ? [product.thumbnail] : [],
     },
   }

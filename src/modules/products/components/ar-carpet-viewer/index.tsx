@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from 'react'
-import { Button } from "@medusajs/ui"
 import { useParams } from "next/navigation"
 import { t } from "@lib/util/translations"
 
@@ -123,199 +122,92 @@ export const ARCarpetViewer: React.FC<ARCarpetViewerProps> = ({
     setError(t({ uz: "3D model yuklanmadi", ru: "3D модель не загрузилась", en: "The 3D model didn't load" }, countryCode))
   }
 
-  if (isLoading) {
-    return (
-      <div className={`ar-carpet-viewer ${className}`}>
-        <div className="flex items-center justify-center h-80 bg-gradient-to-b from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-brand-peach mx-auto mb-3"></div>
-            <p className="text-sm text-gray-600 font-medium">
-              {t({ uz: "AR tayyorlanmoqda...", ru: "Подготовка AR...", en: "Preparing AR..." }, countryCode)}
+  const status = (message: string, tone: "loading" | "error" = "loading") => (
+    <div className={`ar-carpet-viewer ${className}`}>
+      <div className="grid h-80 place-items-center rounded-card bg-surface-sunken" role="status">
+        <div className="flex flex-col items-center gap-3 px-6 text-center">
+          {tone === "loading" ? (
+            <span className="h-8 w-8 animate-spin rounded-full border-2 border-line-strong border-t-brand-accent-strong" aria-hidden />
+          ) : (
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="text-ink-subtle" aria-hidden>
+              <path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+          <p className="text-callout text-ink">{message}</p>
+          {tone === "error" && (
+            <p className="text-footnote text-ink-muted">
+              {t({ uz: "AR funksiyasi hozircha mavjud emas", ru: "AR функция временно недоступна", en: "AR isn't available right now" }, countryCode)}
             </p>
-          </div>
+          )}
         </div>
       </div>
-    )
+    </div>
+  )
+
+  if (isLoading) {
+    return status(t({ uz: "AR tayyorlanmoqda...", ru: "Подготовка AR...", en: "Preparing AR..." }, countryCode))
   }
 
   if (error) {
-    return (
-      <div className={`ar-carpet-viewer ${className}`}>
-        <div className="flex items-center justify-center h-80 bg-red-50 border border-red-200 rounded-2xl">
-          <div className="text-center px-6">
-            <p className="text-red-600 mb-2 text-2xl">⚠️</p>
-            <p className="text-red-600 font-medium mb-1">{error}</p>
-            <p className="text-sm text-gray-500">
-              {t({ uz: "AR funksiyasi hozircha mavjud emas", ru: "AR функция временно недоступна", en: "AR isn't available right now" }, countryCode)
-              }
-            </p>
-          </div>
-        </div>
-      </div>
-    )
+    return status(error, "error")
   }
 
-  // Don't render if model URL is not ready yet
   if (!modelUrl) {
-    return (
-      <div className={`ar-carpet-viewer ${className}`}>
-        <div className="flex items-center justify-center h-80 bg-gradient-to-b from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-brand-peach mx-auto mb-3"></div>
-            <p className="text-sm text-gray-600 font-medium">
-              {t({ uz: "3D model tayyorlanmoqda...", ru: "Подготовка 3D модели...", en: "Preparing 3D model..." }, countryCode)}
-            </p>
-          </div>
-        </div>
-      </div>
-    )
+    return status(t({ uz: "3D model tayyorlanmoqda...", ru: "Подготовка 3D модели...", en: "Preparing 3D model..." }, countryCode))
   }
 
   return (
-    <div className={`ar-carpet-viewer ${className}`}>
-      <div 
-        className="bg-white rounded-3xl shadow-sm border overflow-hidden"
-        style={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(40px) saturate(180%)',
-          border: '1px solid rgba(255, 255, 255, 0.5)',
-          boxShadow: '0 24px 64px rgba(0, 0, 0, 0.25), 0 0 1px rgba(255, 255, 255, 0.5) inset',
-        }}
-      >
-        {/* Header - Liquid Glass */}
-        <div 
-          className="px-6 py-4"
+    <div className={`ar-carpet-viewer flex flex-col gap-4 ${className}`}>
+      <div className="relative overflow-hidden rounded-card bg-surface-sunken">
+        <model-viewer
+          ref={modelViewerRef}
+          src={modelUrl}
+          alt={`${product.title} AR model`}
+          ar={isARSupported}
+          ar-modes="webxr scene-viewer quick-look"
+          ar-placement="floor"
+          camera-controls={true}
+          auto-rotate={true}
+          poster={carpetImage}
+          shadow-intensity="1"
+          loading="eager"
+          reveal="auto"
           style={{
-            background: 'linear-gradient(135deg, #f68821ff 0%, #ae5a0bff 100%)',
-            backdropFilter: 'blur(40px) saturate(180%)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+            width: "100%",
+            height: "min(60dvh, 460px)",
+            backgroundColor: "transparent",
           }}
+          onLoad={handleModelLoad}
+          onError={handleModelError}
         >
-          <div className="flex items-center justify-between">
-            <h3 className="text-white font-semibold flex items-center gap-2 text-lg">
-              <span className="text-xl">🏠</span>
-              {t({ uz: "Xonada ko'rish", ru: "Просмотр в комнате", en: "View in your room" }, countryCode)}
-            </h3>
-            {isARSupported && (
-              <span 
-                className="text-white text-xs px-3 py-1 rounded-full"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                }}
-              >
-                AR {t({ uz: "qo'llab-quvvatlanadi", ru: "поддерживается", en: "supported" }, countryCode)}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Model Viewer */}
-        <div className="relative bg-gradient-to-b from-gray-50 to-white">
-          <model-viewer
-            ref={modelViewerRef}
-            src={modelUrl}
-            alt={`${product.title} AR model`}
-            ar={isARSupported}
-            ar-modes="webxr scene-viewer quick-look"
-            ar-placement="floor"
-            camera-controls={true}
-            auto-rotate={true}
-            poster={carpetImage}
-            shadow-intensity="1"
-            loading="eager"
-            reveal="auto"
-            style={{
-              width: '100%',
-              height: '450px',
-              backgroundColor: 'transparent'
-            }}
-            onLoad={handleModelLoad}
-            onError={handleModelError}
-          >
-            {/* AR Button */}
-            {isARSupported && (
-              <button
-                slot="ar-button"
-                className="absolute top-4 right-4 bg-brand-peach hover:bg-[#e55d17] text-white px-4 py-2 rounded-full shadow-lg transition duration-200 flex items-center gap-2 font-medium"
-              >
-                <span>📱</span>
-                <span>{t({ uz: "AR ko'rish", ru: "Просмотр в AR", en: "View in AR" }, countryCode)}</span>
-              </button>
-            )}
-          </model-viewer>
-
-          {/* Instructions */}
-          <div 
-            className="absolute bottom-6 left-6 right-6 text-gray-700 text-sm px-4 py-3 rounded-xl border"
-            style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(20px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.5)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
-            }}
-          >
-            {isARSupported ? (
-              <p className="flex items-start gap-2">
-                <span className="text-base flex-shrink-0">📱</span>
-                <span>
-                  {t({ uz: "AR tugmasini bosing va gilamni xonangizda joylashtiring", ru: "Нажмите AR и разместите ковер в вашей комнате", en: "Tap AR and place the carpet in your room" }, countryCode)
-                  }
-                </span>
-              </p>
-            ) : (
-              <p className="flex items-start gap-2">
-                <span className="text-base flex-shrink-0">🖱️</span>
-                <span>
-                  {t({ uz: "Sichqoncha bilan gilamni aylantirib ko'ring", ru: "Поворачивайте ковер мышкой для просмотра", en: "Drag to rotate the carpet" }, countryCode)
-                  }
-                </span>
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Info Panel - Liquid Glass Footer */}
-        <div 
-          className="px-6 py-4"
-          style={{
-            background: 'rgba(249, 250, 251, 0.8)',
-            backdropFilter: 'blur(20px)',
-            borderTop: '1px solid rgba(0, 0, 0, 0.05)',
-          }}
-        >
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-700">
-                {t({ uz: "O'lcham:", ru: "Размер:", en: "Size:" }, countryCode)} 
-              </span>
-              <span className="text-sm text-brand-peach font-semibold">
-                {carpetSize.width}m × {carpetSize.length}m
-              </span>
-            </div>
-            
-            <div className="flex items-center gap-4 text-xs text-gray-500">
-              <span className="flex items-center gap-1 transition-colors hover:text-brand-peach">
-                <span>🔄</span>
-                <span className="hidden sm:inline">{t({ uz: "Aylantirish", ru: "Поворот", en: "Rotate" }, countryCode)}</span>
-              </span>
-              <span className="flex items-center gap-1 transition-colors hover:text-brand-peach">
-                <span>🔍</span>
-                <span className="hidden sm:inline">{t({ uz: "Kattalashtirish", ru: "Масштаб", en: "Zoom" }, countryCode)}</span>
-              </span>
-              {isARSupported && (
-                <span className="flex items-center gap-1 transition-colors hover:text-brand-peach">
-                  <span>📱</span>
-                  <span className="hidden sm:inline">{t({ uz: "AR rejim", ru: "AR режим", en: "AR mode" }, countryCode)}</span>
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
+          {isARSupported && (
+            <button
+              slot="ar-button"
+              className="btn-primary absolute bottom-4 left-1/2 -translate-x-1/2 shadow-float"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z" /><path d="M4 7.5 12 12l8-4.5M12 12v9" />
+              </svg>
+              {t({ uz: "Xonamda ko\u02bcrish", ru: "Открыть в комнате", en: "Place in my room" }, countryCode)}
+            </button>
+          )}
+        </model-viewer>
       </div>
 
-      {/* CSS for model-viewer (removed progress bar line) */}
+      <div className="flex flex-wrap items-center justify-between gap-2 text-footnote text-ink-muted">
+        <span>
+          {t({ uz: "O'lcham:", ru: "Размер:", en: "Size:" }, countryCode)}{" "}
+          <span className="num font-medium text-ink">
+            {carpetSize.width} m × {carpetSize.length} m
+          </span>
+        </span>
+        <span>
+          {isARSupported
+            ? t({ uz: "Tugmani bosing va gilamni polga qo\u02bcying", ru: "Нажмите кнопку и поставьте ковер на пол", en: "Tap the button, then point at your floor" }, countryCode)
+            : t({ uz: "Aylantirish uchun suring, kattalashtirish uchun chimchilang", ru: "Проведите, чтобы повернуть, сведите пальцы для масштаба", en: "Drag to rotate, pinch or scroll to zoom" }, countryCode)}
+        </span>
+      </div>
+
       <style jsx>{`
         model-viewer::part(default-progress-bar) {
           display: none;

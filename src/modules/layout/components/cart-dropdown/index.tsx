@@ -17,6 +17,7 @@ import Thumbnail from "@modules/products/components/thumbnail"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
 import { t } from "@lib/util/translations"
+import { formatMetres } from "@lib/util/carpet-helpers"
 
 const CartDropdown = ({
   cart: cartState,
@@ -33,7 +34,8 @@ const CartDropdown = ({
 
   const totalItems =
     cartState?.items?.reduce((acc, item) => {
-      return acc + item.quantity
+      // a cut-to-length roll is one item, even though its quantity is metres
+      return acc + (item.metadata?.carpet_type === "roll_custom" ? 1 : item.quantity)
     }, 0) || 0
 
   const subtotal = cartState?.subtotal ?? 0
@@ -163,8 +165,15 @@ const CartDropdown = ({
                                   data-testid="cart-item-quantity"
                                   data-value={item.quantity}
                                 >
-                                  {t({ uz: "Soni", ru: "Количество", en: "Quantity" }, countryCode)}{" "}
-                                  : {item.quantity}
+                                  {item.metadata?.carpet_type === "roll_custom" ? (
+                                    <>
+                                      {t({ uz: "Uzunlik", ru: "Длина", en: "Length" }, countryCode)}: {formatMetres(Number(item.metadata?.custom_length ?? item.quantity), countryCode)}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {t({ uz: "Soni", ru: "Количество", en: "Quantity" }, countryCode)}: {item.quantity}
+                                    </>
+                                  )}
                                 </span>
                               </div>
                               <div className="flex justify-end">
