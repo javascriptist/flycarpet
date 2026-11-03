@@ -1,6 +1,6 @@
 "use client"
 
-import { addToCart } from "@lib/data/cart"
+import { addRollCarpetToCart, addToCart } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import { cx } from "@lib/util/cx"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
@@ -134,18 +134,12 @@ export default function EnhancedProductActions({
     setBuyState("adding")
     try {
       if (isRoll) {
-        await addToCart({
+        // priced on the server: price per metre × length, one line item
+        await addRollCarpetToCart({
           variantId: selectedVariant.id,
-          // price is per metre, so quantity = length in metres
-          quantity: rollLength,
+          length: rollLength,
+          note: note.trim() || undefined,
           countryCode,
-          metadata: {
-            carpet_type: "roll_custom",
-            custom_length: rollLength,
-            width: rollSpec.width,
-            area: rollTotal.area,
-            ...(note.trim() ? { customer_specifications: note.trim() } : {}),
-          },
         })
         setNote("")
         setNoteOpen(false)
@@ -157,7 +151,7 @@ export default function EnhancedProductActions({
     } catch {
       setBuyState("error")
     }
-  }, [needsSelection, canBuy, selectedVariant, isRoll, rollLength, rollSpec.width, rollTotal.area, note, countryCode, router])
+  }, [needsSelection, canBuy, selectedVariant, isRoll, rollLength, note, countryCode, router])
 
   const priceLabel = isRoll
     ? formatStorePrice(rollTotal.total, exchangeRate, countryCode)
