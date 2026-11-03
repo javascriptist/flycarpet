@@ -1,5 +1,5 @@
-import { getExchangeRate } from "@lib/data/exchange-rate"
-import { convertUsdToUzs, formatUzsAmount } from "@lib/util/money"
+import { getExchangeRate, getLiveExchangeRate } from "@lib/data/exchange-rate"
+import { formatUzsAmount } from "@lib/util/money"
 import Image from "next/image"
 
 import OrderView from "@modules/order/components/order-view"
@@ -21,14 +21,20 @@ export default async function OrderCompletedTemplate({
   order,
   countryCode,
 }: OrderCompletedTemplateProps) {
-  const exchangeRateObj = await getExchangeRate()
-  const exchangeRate = exchangeRateObj?.rate || 12750
+  // Payme verifies the amount against the backend's live rate, so use it too
+  const exchangeRate = (await getLiveExchangeRate()) ?? (await getExchangeRate())?.rate ?? 12750
   const tr = (m: { uz: string; ru: string; en: string }) => t(m, countryCode)
 
-  // Same conversion the Payme form has always used (amount in tiyin)
-  const uzs = convertUsdToUzs(order.total, exchangeRate)
-  const tiyin = Math.round(uzs * 100)
-  const needsPayment = order.total > 0 && !PAID_STATUSES.includes(String((order as any).payment_status ?? ""))
+  // Must match the backend's check exactly: USD → UZS → tiyin, rounded once
+  // at the end (rounding to whole so'm first could be off by up to 50 tiyin)
+  const tiyin = Math.round(Number(order.total) * exchangeRate * 100)
+  const uzs = tiyin / 100
+  const meta = (order.metadata ?? {}) as Record<string, unknown>
+  const alreadyPaid =
+    PAID_STATUSES.includes(String((order as any).payment_status ?? "")) ||
+    Boolean(meta.payment_captured) ||
+    meta.payment_status_override === "paid"
+  const needsPayment = order.total > 0 && !alreadyPaid
 
   return (
     <div className="py-8 small:py-12">

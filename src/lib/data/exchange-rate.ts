@@ -44,3 +44,21 @@ export const getExchangeRate = cache(async (): Promise<ExchangeRate | null> => {
   
   return rate
 })
+
+/**
+ * Uncached rate, for amounts that Payme will verify. The backend checks the
+ * payment against its live rate, so the amount we send must use the same
+ * value, not one cached for up to an hour.
+ */
+export const getLiveExchangeRate = async (): Promise<number | null> => {
+  try {
+    const res = await sdk.client.fetch<ExchangeRate>("/store/exchange-rate", {
+      method: "GET",
+      cache: "no-store",
+    })
+    return res?.rate ?? null
+  } catch (error) {
+    console.error("Failed to fetch live exchange rate:", error)
+    return null
+  }
+}
