@@ -25,3 +25,14 @@ export const getTranslation = (
 
 // Short alias
 export const t = getTranslation
+
+/** Locale for dates in the current language. */
+export const dateLocale = (countryCode?: string): string =>
+  ({ uz: "uz-UZ", ru: "ru-RU", en: "en-GB" } as const)[getLang(countryCode)]
+
+export const formatDate = (date: string | Date, countryCode?: string): string =>
+  new Intl.DateTimeFormat(dateLocale(countryCode), {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(date))

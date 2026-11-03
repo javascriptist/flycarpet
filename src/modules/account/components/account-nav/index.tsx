@@ -1,209 +1,116 @@
 "use client"
 
-import { clx } from "@medusajs/ui"
-import { ArrowRightOnRectangle } from "@medusajs/icons"
 import { useParams, usePathname } from "next/navigation"
-
-import ChevronDown from "@modules/common/icons/chevron-down"
-import User from "@modules/common/icons/user"
-import MapPin from "@modules/common/icons/map-pin"
-import Package from "@modules/common/icons/package"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 import { signout } from "@lib/data/customer"
-import { t } from '@lib/util/translations'
+import { t } from "@lib/util/translations"
 
-const AccountNav = ({
-  customer,
-}: {
-  customer: HttpTypes.StoreCustomer | null
-}) => {
+const LINKS = [
+  { href: "/account", testId: "overview-link", uz: "Umumiy", ru: "Обзор", en: "Overview" },
+  { href: "/account/orders", testId: "orders-link", uz: "Buyurtmalar", ru: "Заказы", en: "Orders" },
+  { href: "/account/profile", testId: "profile-link", uz: "Profil", ru: "Профиль", en: "Profile" },
+  { href: "/account/addresses", testId: "addresses-link", uz: "Manzillar", ru: "Адреса", en: "Addresses" },
+]
+
+/**
+ * Phone: on the overview, a grouped list of sections; on a sub-page, a
+ * "‹ Account" back link. Desktop: a sidebar with the current page highlighted.
+ */
+const AccountNav = ({ customer }: { customer: HttpTypes.StoreCustomer | null }) => {
   const route = usePathname()
   const { countryCode } = useParams() as { countryCode: string }
-  const handleLogout = async () => {
-    await signout(countryCode)
-  }
+  const current = route.split(`/${countryCode}`)[1] || "/"
+  const onOverview = current === "/account"
+
+  const logout = () => signout(countryCode)
+  const logoutLabel = t({ uz: "Chiqish", ru: "Выйти", en: "Sign out" }, countryCode)
 
   return (
-    <div>
+    <nav aria-label={t({ uz: "Hisob", ru: "Аккаунт", en: "Account" }, countryCode)}>
+      {/* Phone */}
       <div className="small:hidden" data-testid="mobile-account-nav">
-        {route !== `/${countryCode}/account` ? (
-          <LocalizedClientLink
-            href="/account"
-            className="flex items-center gap-x-2 text-small-regular py-2"
-            data-testid="account-main-link"
-          >
-            <>
-              <ChevronDown className="transform rotate-90" />
-              <span>  
-                {t({ uz: 'Akkount', ru: 'Аккаунт', en: 'Account' }, countryCode)}
-              </span>
-            </>
-          </LocalizedClientLink>
-        ) : (
-          <>
-            <div className="text-xl-semi mb-4 px-8">
-                {t({ uz: 'Salom, ', ru: 'Здравствуйте, ', en: 'Hello, ' }, countryCode)}
-               {customer?.first_name}
-            </div>
-            <div className="text-base-regular">
-              <ul>
-                <li>
+        {onOverview ? (
+          <div className="flex flex-col gap-4">
+            <h1 className="text-title-1 text-ink">
+              {t({ uz: "Salom", ru: "Здравствуйте", en: "Hello" }, countryCode)}
+              {customer?.first_name ? `, ${customer.first_name}` : ""}
+            </h1>
+            <ul className="divide-y divide-line overflow-hidden rounded-card bg-surface-raised shadow-card">
+              {LINKS.slice(1).map((link) => (
+                <li key={link.href}>
                   <LocalizedClientLink
-                    href="/account/profile"
-                    className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                    data-testid="profile-link"
+                    href={link.href}
+                    className="flex h-14 items-center justify-between px-5 text-body text-ink"
+                    data-testid={link.testId}
                   >
-                    <>
-                      <div className="flex items-center gap-x-2">
-                        <User size={20} />
-                        <span>
-                          {t({ uz: 'Profil', ru: 'Профиль', en: 'Profile' }, countryCode)}
-                        </span>
-                      </div>
-                      <ChevronDown className="transform -rotate-90" />
-                    </>
+                    {t(link, countryCode)}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-ink-subtle" aria-hidden>
+                      <path d="M9 6l6 6-6 6" />
+                    </svg>
                   </LocalizedClientLink>
                 </li>
-                <li>
-                  <LocalizedClientLink
-                    href="/account/addresses"
-                    className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                    data-testid="addresses-link"
-                  >
-                    <>
-                      <div className="flex items-center gap-x-2">
-                        <MapPin size={20} />
-                        <span>
-                          {t({ uz: 'Manzillar', ru: 'Адреса', en: 'Addresses' }, countryCode)}
-                        </span>
-                      </div>
-                      <ChevronDown className="transform -rotate-90" />
-                    </>
-                  </LocalizedClientLink>
-                </li>
-                <li>
-                  <LocalizedClientLink
-                    href="/account/orders"
-                    className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                    data-testid="orders-link"
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <Package size={20} />
-                      <span>
-                        {t({ uz: 'Buyurtmalar', ru: 'Заказы', en: 'Orders' }, countryCode)}
-                      </span>
-                    </div>
-                    <ChevronDown className="transform -rotate-90" />
-                  </LocalizedClientLink>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    className="flex items-center justify-between py-4 border-b border-gray-200 px-8 w-full"
-                    onClick={handleLogout}
-                    data-testid="logout-button"
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <ArrowRightOnRectangle />
-                      <span>
-                        {t({ uz: 'Chiqish', ru: 'Выход', en: 'Logout' }, countryCode)}
-                      </span>
-                    </div>
-                    <ChevronDown className="transform -rotate-90" />
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </>
-        )}
-      </div>
-      <div className="hidden small:block" data-testid="account-nav">
-        <div>
-          <div className="pb-4">
-            <h3 className="text-base-semi">{t({ uz: 'Akkount', ru: 'Аккаунт', en: 'Account' }, countryCode)}</h3>
-          </div>
-          <div className="text-base-regular">
-            <ul className="flex mb-0 justify-start items-start flex-col gap-y-4">
+              ))}
               <li>
-                <AccountNavLink
-                  href="/account"
-                  route={route!}
-                  data-testid="overview-link"
-                >
-                  {t({ uz: 'Umumiy', ru: 'Обзор', en: 'Overview' }, countryCode)}
-                </AccountNavLink>
-              </li>
-              <li>
-                <AccountNavLink
-                  href="/account/profile"
-                  route={route!}
-                  data-testid="profile-link"
-                >
-                  {t({ uz: 'Profil', ru: 'Профиль', en: 'Profile' }, countryCode)}
-                </AccountNavLink>
-              </li>
-              <li>
-                <AccountNavLink
-                  href="/account/addresses"
-                  route={route!}
-                  data-testid="addresses-link"
-                >
-                  {t({ uz: 'Manzillar', ru: 'Адреса', en: 'Addresses' }, countryCode)}
-                </AccountNavLink>
-              </li>
-              <li>
-                <AccountNavLink
-                  href="/account/orders"
-                  route={route!}
-                  data-testid="orders-link"
-                >
-                  {t({ uz: 'Buyurtmalar', ru: 'Заказы', en: 'Orders' }, countryCode)}
-                </AccountNavLink>
-              </li>
-              <li className="text-grey-700">
                 <button
                   type="button"
-                  onClick={handleLogout}
+                  onClick={logout}
+                  className="no-press flex h-14 w-full items-center px-5 text-body text-red-700"
                   data-testid="logout-button"
                 >
-                  {t({ uz: 'Chiqish', ru: 'Выход', en: 'Logout' }, countryCode)}
+                  {logoutLabel}
                 </button>
               </li>
             </ul>
           </div>
-        </div>
+        ) : (
+          <LocalizedClientLink
+            href="/account"
+            className="-ml-1 inline-flex items-center gap-1 text-callout text-brand-accent-strong"
+            data-testid="account-main-link"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+            {t({ uz: "Hisob", ru: "Аккаунт", en: "Account" }, countryCode)}
+          </LocalizedClientLink>
+        )}
       </div>
-    </div>
-  )
-}
 
-type AccountNavLinkProps = {
-  href: string
-  route: string
-  children: React.ReactNode
-  "data-testid"?: string
-}
-
-const AccountNavLink = ({
-  href,
-  route,
-  children,
-  "data-testid": dataTestId,
-}: AccountNavLinkProps) => {
-  const { countryCode }: { countryCode: string } = useParams()
-
-  const active = route.split(countryCode)[1] === href
-  return (
-    <LocalizedClientLink
-      href={href}
-      className={clx("text-ui-fg-subtle hover:text-ui-fg-base", {
-        "text-ui-fg-base font-semibold": active,
-      })}
-      data-testid={dataTestId}
-    >
-      {children}
-    </LocalizedClientLink>
+      {/* Desktop */}
+      <div className="hidden small:block" data-testid="account-nav">
+        <p className="mb-3 px-3 text-footnote text-ink-muted">{customer?.email}</p>
+        <ul className="flex flex-col gap-1">
+          {LINKS.map((link) => {
+            const active = current === link.href
+            return (
+              <li key={link.href}>
+                <LocalizedClientLink
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`flex h-10 items-center rounded-control px-3 text-callout transition ${
+                    active ? "bg-brand-linen font-medium text-ink" : "text-ink-muted hover:bg-brand-linen/60 hover:text-ink"
+                  }`}
+                  data-testid={link.testId}
+                >
+                  {t(link, countryCode)}
+                </LocalizedClientLink>
+              </li>
+            )
+          })}
+          <li className="mt-3 border-t border-line pt-3">
+            <button
+              type="button"
+              onClick={logout}
+              className="no-press flex h-10 w-full items-center rounded-control px-3 text-callout text-ink-muted hover:text-red-700"
+              data-testid="logout-button"
+            >
+              {logoutLabel}
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
   )
 }
 

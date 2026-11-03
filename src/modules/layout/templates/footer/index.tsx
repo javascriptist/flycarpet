@@ -1,155 +1,86 @@
+import Image from "next/image"
 import { listCategories } from "@lib/data/categories"
 import { listCollections } from "@lib/data/collections"
-import { Text, clx } from "@medusajs/ui"
-
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import MedusaCTA from "@modules/layout/components/medusa-cta"
+import { firstOrSecond } from "@lib/util/firstorsecond"
+import { t } from "@lib/util/translations"
 
-export default async function Footer() {
-  const { collections } = await listCollections({
-    fields: "*products",
-  })
-  const productCategories = await listCategories()
+/**
+ * Dark footer that bookends the dark nav: brand + promise, then three short
+ * link columns (shop, collections, customer). Everything is translated.
+ */
+export default async function Footer({ countryCode }: { countryCode?: string }) {
+  const [{ collections }, productCategories] = await Promise.all([
+    listCollections({ fields: "id,handle,title" }).catch(() => ({ collections: [] as any[] })),
+    listCategories().catch(() => [] as any[]),
+  ])
+
+  const tr = (m: { uz: string; ru: string; en: string }) => t(m, countryCode)
+  const topCategories = (productCategories ?? []).filter((c: any) => !c.parent_category).slice(0, 6)
+
+  const columns = [
+    {
+      title: tr({ uz: "Doʼkon", ru: "Магазин", en: "Shop" }),
+      links: [
+        { href: "/store", label: tr({ uz: "Barcha mahsulotlar", ru: "Все товары", en: "All products" }) },
+        ...topCategories.map((c: any) => ({ href: `/categories/${c.handle}`, label: firstOrSecond(c.name, countryCode) })),
+      ],
+    },
+    {
+      title: tr({ uz: "Kolleksiyalar", ru: "Коллекции", en: "Collections" }),
+      links: (collections ?? []).slice(0, 6).map((c: any) => ({
+        href: `/collections/${c.handle}`,
+        label: firstOrSecond(c.title, countryCode),
+      })),
+    },
+    {
+      title: tr({ uz: "Xaridorlar uchun", ru: "Покупателям", en: "Customer" }),
+      links: [
+        { href: "/account", label: tr({ uz: "Hisob", ru: "Аккаунт", en: "Account" }) },
+        { href: "/account/orders", label: tr({ uz: "Buyurtmalar", ru: "Заказы", en: "Orders" }) },
+        { href: "/cart", label: tr({ uz: "Savatcha", ru: "Корзина", en: "Cart" }) },
+        { href: "/about", label: tr({ uz: "Biz haqimizda", ru: "О нас", en: "About us" }) },
+      ],
+    },
+  ].filter((col) => col.links.length > 0)
 
   return (
-    <footer className="border-t border-ui-border-base w-full">
-      <div className="content-container flex flex-col w-full">
-        <div className="flex flex-col gap-y-6 xsmall:flex-row items-start justify-between py-40">
-          <div>
-            <LocalizedClientLink
-              href="/"
-              className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
-            >
-               Premium Carpet
-            </LocalizedClientLink>
-          </div>
-          <div className="text-small-regular gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">
-            {productCategories && productCategories?.length > 0 && (
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus txt-ui-fg-base">
-                  Kategoriyalar
-                </span>
-                <ul
-                  className="grid grid-cols-1 gap-2"
-                  data-testid="footer-categories"
-                >
-                  {productCategories?.slice(0, 6).map((c) => {
-                    if (c.parent_category) {
-                      return
-                    }
-
-                    const children =
-                      c.category_children?.map((child) => ({
-                        name: child.name,
-                        handle: child.handle,
-                        id: child.id,
-                      })) || null
-
-                    return (
-                      <li
-                        className="flex flex-col gap-2 text-ui-fg-subtle txt-small"
-                        key={c.id}
-                      >
-                        <LocalizedClientLink
-                          className={clx(
-                            "hover:text-ui-fg-base",
-                            children && "txt-small-plus"
-                          )}
-                          href={`/categories/${c.handle}`}
-                          data-testid="category-link"
-                        >
-                          {c.name}
-                        </LocalizedClientLink>
-                        {children && (
-                          <ul className="grid grid-cols-1 ml-3 gap-2">
-                            {children &&
-                              children.map((child) => (
-                                <li key={child.id}>
-                                  <LocalizedClientLink
-                                    className="hover:text-ui-fg-base"
-                                    href={`/categories/${child.handle}`}
-                                    data-testid="category-link"
-                                  >
-                                    {child.name}
-                                  </LocalizedClientLink>
-                                </li>
-                              ))}
-                          </ul>
-                        )}
-                      </li>
-                    )
-                  })}
-                </ul>
-              </div>
-            )}
-            {collections && collections.length > 0 && (
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus txt-ui-fg-base">
-                  Collections
-                </span>
-                <ul
-                  className={clx(
-                    "grid grid-cols-1 gap-2 text-ui-fg-subtle txt-small",
-                    {
-                      "grid-cols-2": (collections?.length || 0) > 3,
-                    }
-                  )}
-                >
-                  {collections?.slice(0, 6).map((c) => (
-                    <li key={c.id}>
-                      <LocalizedClientLink
-                        className="hover:text-ui-fg-base"
-                        href={`/collections/${c.handle}`}
-                      >
-                        {c.title}
-                      </LocalizedClientLink>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {/* <div className="flex flex-col gap-y-2">
-              <span className="txt-small-plus txt-ui-fg-base">Medusa</span>
-              <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
-                <li>
-                  <a
-                    href="https://github.com/medusajs"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
-                  >
-                    GitHub
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://docs.medusajs.com"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
-                  >
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://github.com/medusajs/nextjs-starter-medusa"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
-                  >
-                    Source code
-                  </a>
-                </li>
-              </ul>
-            </div> */}
-          </div>
+    <footer className="w-full bg-[#191718] text-white/70">
+      <div className="content-container flex flex-col gap-12 py-14 small:flex-row small:justify-between small:py-20">
+        <div className="flex max-w-xs flex-col gap-4">
+          <LocalizedClientLink href="/" aria-label="Premium Carpet" className="self-start hover:opacity-80">
+            <Image src="/pclogo_tp.png" alt="Premium Carpet" width={150} height={40} />
+          </LocalizedClientLink>
+          <p className="text-callout">
+            {tr({
+              uz: "Gilamlar, rulon gilamlar va sunʼiy gazon. Oʼzbekiston boʼylab yetkazib berish.",
+              ru: "Ковры, ковролин и искусственный газон. Доставка по всему Узбекистану.",
+              en: "Rugs, roll carpet and artificial grass. Delivery across Uzbekistan.",
+            })}
+          </p>
         </div>
-        <div className="flex w-full mb-16 justify-between text-ui-fg-muted">
-          <Text className="txt-compact-small">
-            © {new Date().getFullYear()} Premium Carpet. All rights reserved.
-          </Text>
-          {/* <MedusaCTA /> */}
+
+        <nav className="grid grid-cols-2 gap-x-8 gap-y-10 xsmall:grid-cols-3 small:gap-x-16" aria-label="Footer">
+          {columns.map((col) => (
+            <div key={col.title} className="flex flex-col gap-3">
+              <h2 className="text-footnote font-medium uppercase tracking-[0.08em] text-brand-peach">{col.title}</h2>
+              <ul className="flex flex-col gap-2" data-testid={col.title === columns[0].title ? "footer-categories" : undefined}>
+                {col.links.map((link) => (
+                  <li key={link.href}>
+                    <LocalizedClientLink href={link.href} className="text-callout text-white/70 transition hover:text-white">
+                      {link.label}
+                    </LocalizedClientLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </nav>
+      </div>
+      <div className="border-t border-white/10">
+        <div className="content-container flex flex-col gap-2 py-6 text-footnote text-white/50 xsmall:flex-row xsmall:justify-between">
+          <span>© {new Date().getFullYear()} Premium Carpet</span>
+          <span>{tr({ uz: "Barcha huquqlar himoyalangan", ru: "Все права защищены", en: "All rights reserved" })}</span>
         </div>
       </div>
     </footer>

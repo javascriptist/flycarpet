@@ -16,14 +16,14 @@ const Login = ({ setCurrentView , countryCode }: Props) => {
 
   return (
     <div
-      className="max-w-sm w-full flex flex-col items-center p-8 rounded-3xl shadow-lg border border-gray-100"
+      className="flex w-full max-w-sm flex-col items-center rounded-card bg-surface-raised p-6 shadow-card small:p-8"
       data-testid="login-page"
     >
-      <h1 className="text-large-semi uppercase mb-6 text-brand-brown">
-        {t({ uz: 'Xush kelibsiz', ru: 'Вас приветствует', en: 'Welcome' }, countryCode)}
+      <h1 className="mb-2 text-title-2 text-ink">
+        {t({ uz: 'Xush kelibsiz', ru: 'Добро пожаловать', en: 'Welcome back' }, countryCode)}
       </h1>
-      <p className="text-center text-base-regular text-ui-fg-base mb-8">
-        {t({ uz: 'Roʼyxatdan oʼting va xarid qilish tajribangizni yaxshilang.', ru: 'Зарегистрируйтесь и улучшите свой опыт покупок.', en: 'Sign up and improve your shopping experience.' }, countryCode)}
+      <p className="mb-6 text-center text-callout text-ink-muted">
+        {t({ uz: 'Buyurtmalaringizni ko\u02bcrish va tezroq rasmiylashtirish uchun kiring.', ru: 'Войдите, чтобы видеть заказы и оформлять быстрее.', en: 'Sign in to see your orders and check out faster.' }, countryCode)}
       </p>
       <form className="w-full" action={formAction}>
         <div className="flex flex-col w-full gap-y-2">
@@ -46,16 +46,16 @@ const Login = ({ setCurrentView , countryCode }: Props) => {
           />
         </div>
         <ErrorMessage error={message} data-testid="login-error-message" />
-        <SubmitButton data-testid="sign-in-button" className="w-full mt-6 rounded-3xl liquid-glass">
+        <SubmitButton data-testid="sign-in-button" className="mt-6 small:w-full">
           {t({ uz: 'Kirish', ru: 'Войти', en: 'Sign in' }, countryCode)}
         </SubmitButton>
       </form>
-      <span className="text-center text-ui-fg-base text-small-regular mt-6">
+      <span className="mt-6 text-center text-callout text-ink-muted">
         {t({ uz: 'Yoki', ru: 'Или', en: 'Or' }, countryCode)}
         {" "}
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.REGISTER)}
-          className="underline hover:text-brand-peach transition-colors"
+          className="no-press font-medium text-brand-accent-strong hover:underline"
           data-testid="register-button"
         >
           {t({ uz: 'roʼyxatdan oʼting', ru: 'Зарегистрируйтесь', en: 'register' }, countryCode)}

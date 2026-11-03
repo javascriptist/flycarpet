@@ -6,6 +6,7 @@ import AddressBook from "@modules/account/components/address-book"
 import { getRegion } from "@lib/data/regions"
 import { retrieveCustomer } from "@lib/data/customer"
 import { t } from "@lib/util/translations"
+import AccountPageHeader from "@modules/account/components/page-header"
 
 export const metadata: Metadata = {
   title: "Addresses",
@@ -26,14 +27,10 @@ export default async function Addresses(props: {
 
   return (
     <div className="w-full" data-testid="addresses-page-wrapper">
-      <div className="mb-8 flex flex-col gap-y-4">
-        <h1 className="text-2xl-semi">
-          {t({ uz: "Manzillar", ru: "Адреса", en: "Addresses" }, countryCode)}
-        </h1>
-        <p className="text-base-regular">
-          {t({ uz: "Barcha manzillarni ko'ring va yangilang", ru: "Просмотрите и обновите все адреса", en: "View and update your saved addresses" }, countryCode)}
-        </p>
-      </div>
+      <AccountPageHeader
+        title={t({ uz: "Manzillar", ru: "Адреса", en: "Addresses" }, countryCode)}
+        subtitle={t({ uz: "Yetkazib berish manzillaringiz.", ru: "Ваши адреса доставки.", en: "Your saved delivery addresses." }, countryCode)}
+      />
       <AddressBook customer={customer} region={region} />
     </div>
   )

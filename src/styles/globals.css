@@ -129,7 +129,7 @@
 
   input:focus ~ label,
   input:not(:placeholder-shown) ~ label {
-    @apply -translate-y-2 text-xsmall-regular;
+    @apply -translate-y-2.5 text-[0.6875rem] leading-4;
   }
 
   input:focus ~ label {
@@ -260,16 +260,21 @@
    * They now render as solid surfaces (glass only for header/popover).
    */
   .liquid-glass-button,
-  button[data-ui-button].liquid-glass {
+  button.liquid-glass {
     background: #B4552A !important;
     color: #fff !important;
     border: 1px solid transparent !important;
     box-shadow: none !important;
   }
 
+  button.liquid-glass:disabled {
+    background: rgba(28, 25, 23, 0.08) !important;
+    color: rgba(28, 25, 23, 0.4) !important;
+  }
+
   @media (hover: hover) and (pointer: fine) {
     .liquid-glass-button:hover,
-    button[data-ui-button].liquid-glass:hover {
+    button.liquid-glass:not(:disabled):hover {
       background: #A65A3A !important;
       color: #fff !important;
     }

@@ -1,6 +1,8 @@
-import { Disclosure } from "@headlessui/react"
-import { Badge, Button, clx } from "@medusajs/ui"
+"use client"
+
 import { useEffect } from "react"
+import { useParams } from "next/navigation"
+import { tUi } from "@lib/util/ui-strings"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
 import { useFormStatus } from "react-dom"
@@ -17,7 +19,7 @@ type AccountInfoProps = {
 }
 
 const AccountInfo = ({
-  label,
+  label: labelProp,
   currentInfo,
   isSuccess,
   isError,
@@ -41,97 +43,60 @@ const AccountInfo = ({
     }
   }, [isSuccess, close])
 
+  const countryCode = useParams()?.countryCode as string | undefined
+  const label = tUi(labelProp, countryCode)
+
   return (
-    <div className="text-small-regular" data-testid={dataTestid}>
-      <div className="flex items-end justify-between">
-        <div className="flex flex-col">
-          <span className="uppercase text-ui-fg-base">{label}</span>
-          <div className="flex items-center flex-1 basis-0 justify-end gap-x-4">
+    <div className="py-5" data-testid={dataTestid}>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="text-footnote text-ink-muted">{label}</span>
+          <div className="text-callout text-ink">
             {typeof currentInfo === "string" ? (
-              <span className="font-semibold" data-testid="current-info">{currentInfo}</span>
+              <span data-testid="current-info">{tUi(currentInfo, countryCode)}</span>
             ) : (
               currentInfo
             )}
           </div>
         </div>
-        <div>
-          <Button
-            variant="secondary"
-            className="w-[100px] min-h-[25px] py-1"
-            onClick={handleToggle}
-            type={state ? "reset" : "button"}
-            data-testid="edit-button"
-            data-active={state}
-          >
-            {state ? "Cancel" : "Edit"}
-          </Button>
-        </div>
+        <button
+          type={state ? "reset" : "button"}
+          onClick={handleToggle}
+          className="no-press shrink-0 text-callout font-medium text-brand-accent-strong hover:underline"
+          data-testid="edit-button"
+          data-active={state}
+        >
+          {state ? tUi("Cancel", countryCode) : tUi("Edit", countryCode)}
+        </button>
       </div>
 
-      {/* Success state */}
-      <Disclosure>
-        <Disclosure.Panel
-          static
-          className={clx(
-            "transition-[max-height,opacity] duration-200 ease-in-out overflow-hidden",
-            {
-              "max-h-[1000px] opacity-100": isSuccess,
-              "max-h-0 opacity-0": !isSuccess,
-            }
-          )}
-          data-testid="success-message"
-        >
-          <Badge className="p-2 my-4" color="green">
-            <span>{label} updated succesfully</span>
-          </Badge>
-        </Disclosure.Panel>
-      </Disclosure>
+      {isSuccess && (
+        <p className="mt-3 text-footnote text-green-700" role="status" data-testid="success-message">
+          ✓ {label} {tUi("updated succesfully", countryCode)}
+        </p>
+      )}
+      {isError && (
+        <p className="mt-3 text-footnote text-red-700" role="alert" data-testid="error-message">
+          {errorMessage}
+        </p>
+      )}
 
-      {/* Error state  */}
-      <Disclosure>
-        <Disclosure.Panel
-          static
-          className={clx(
-            "transition-[max-height,opacity] duration-200 ease-in-out overflow-hidden",
-            {
-              "max-h-[1000px] opacity-100": isError,
-              "max-h-0 opacity-0": !isError,
-            }
-          )}
-          data-testid="error-message"
-        >
-          <Badge className="p-2 my-4" color="red">
-            <span>{errorMessage}</span>
-          </Badge>
-        </Disclosure.Panel>
-      </Disclosure>
-
-      <Disclosure>
-        <Disclosure.Panel
-          static
-          className={clx(
-            "transition-[max-height,opacity] duration-200 ease-in-out overflow-visible",
-            {
-              "max-h-[1000px] opacity-100": state,
-              "max-h-0 opacity-0": !state,
-            }
-          )}
-        >
-          <div className="flex flex-col gap-y-2 py-4">
-            <div>{children}</div>
-            <div className="flex items-center justify-end mt-2">
-              <Button
-                isLoading={pending}
-                className="w-full small:max-w-[140px]"
-                type="submit"
-                data-testid="save-button"
-              >
-                Save changes
-              </Button>
-            </div>
+      {state && (
+        <div className="flex flex-col gap-y-3 pt-4">
+          <div>{children}</div>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={pending}
+              className="btn-primary h-11 w-full small:w-auto"
+              data-testid="save-button"
+            >
+              {pending && <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden />}
+              {tUi("Save changes", countryCode)}
+            </button>
           </div>
-        </Disclosure.Panel>
-      </Disclosure>
+        </div>
+      )}
     </div>
   )
 }

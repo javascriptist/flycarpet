@@ -3,7 +3,9 @@ import { Metadata } from "next"
 import OrderOverview from "@modules/account/components/order-overview"
 import { notFound } from "next/navigation"
 import { listOrders } from "@lib/data/orders"
-import Divider from "@modules/common/components/divider"
+import AccountPageHeader from "@modules/account/components/page-header"
+import { getExchangeRate } from "@lib/data/exchange-rate"
+import { t } from "@lib/util/translations"
 import TransferRequestForm from "@modules/account/components/transfer-request-form"
 
 export const metadata: Metadata = {
@@ -11,8 +13,12 @@ export const metadata: Metadata = {
   description: "Overview of your previous orders.",
 }
 
-export default async function Orders() {
+export default async function Orders(props: {
+  params: Promise<{ countryCode: string }>
+}) {
+  const { countryCode } = await props.params
   const orders = await listOrders()
+  const rate = await getExchangeRate()
 
   if (!orders) {
     notFound()
@@ -20,16 +26,19 @@ export default async function Orders() {
 
   return (
     <div className="w-full" data-testid="orders-page-wrapper">
-      <div className="mb-8 flex flex-col gap-y-4">
-        <h1 className="text-2xl-semi">Orders</h1>
-        <p className="text-base-regular">
-          View your previous orders and their status. You can also create
-          returns or exchanges for your orders if needed.
-        </p>
-      </div>
-      <div>
-        <OrderOverview orders={orders} />
-        <Divider className="my-16" />
+      <AccountPageHeader
+        title={t({ uz: "Buyurtmalar", ru: "Заказы", en: "Orders" }, countryCode)}
+        subtitle={t(
+          {
+            uz: "Buyurtmalaringiz holati va tafsilotlari.",
+            ru: "Статус и детали ваших заказов.",
+            en: "The status and details of your orders.",
+          },
+          countryCode
+        )}
+      />
+      <OrderOverview orders={orders} countryCode={countryCode} exchangeRate={rate?.rate} />
+      <div className="mt-12 border-t border-line pt-8">
         <TransferRequestForm />
       </div>
     </div>

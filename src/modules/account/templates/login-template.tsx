@@ -20,7 +20,7 @@ const LoginTemplate = () => {
   const [currentView, setCurrentView] = useState("sign-in")
   const countryCode = getCountryCode()
   return (
-    <div className="w-full flex justify-start px-8 py-8">
+    <div className="flex w-full justify-center py-4 small:py-8">
       {currentView === "sign-in" ? (
         <Login setCurrentView={setCurrentView} countryCode={countryCode} />
       ) : (

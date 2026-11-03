@@ -1,62 +1,45 @@
 import { Metadata } from "next"
 
 import Hero from "@modules/home/components/hero"
+import CategoryTiles from "@modules/home/components/category-tiles"
+import NewArrivals from "@modules/home/components/new-arrivals"
+import CollectionsRail from "@modules/home/components/collections-rail"
+import AboutBanner from "@modules/home/components/about-banner"
+import Reassurance from "@modules/home/components/reassurance"
 import { listCollections } from "@lib/data/collections"
 import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
-import HeroCollections from "@modules/home/components/hero/hero-collections"
-import AboutUsLink from "@modules/home/components/hero/aboutuslink"
-import CollectionSlide from "@modules/home/components/hero/collectionslide"
-import ProductSlide from "@modules/home/components/hero/productsslide"
+
 export const metadata: Metadata = {
-  title: "Premium Carpet Store",
-  description:
-    "Premium Carpet Gilamlari. O'zbekiston bo'ylab yetkazib berish.",
+  title: "Premium Carpet",
+  description: "Premium Carpet gilamlari. Oʼzbekiston boʼylab yetkazib berish.",
 }
 
-export default async function Home(props: {
-  params: Promise<{ countryCode: string }>
-}) {
-  const params = await props.params
-
-  const { countryCode } = params
+/**
+ * Home: hero → categories → new arrivals → promises → collections → about.
+ * One idea per section, generous spacing, the same cards as the shop.
+ */
+export default async function Home(props: { params: Promise<{ countryCode: string }> }) {
+  const { countryCode } = await props.params
 
   const region = await getRegion(countryCode)
-  const { response: { products, count },} = await listProducts({
-    pageParam: 0,
-    queryParams: {
-      limit: 10
-    },
-    countryCode,
-  })
-  const productsToPass = products.map((product) => {
-    return {
-      id: product.id,
-      title: product.title,
-      handle: product.handle,
-      img: product.images?.[0]?.url || null
-    }
-  })
-  const { collections } = await listCollections({})
-  if (!collections || !region) {
+  if (!region) {
     return null
   }
 
+  const [{ response }, { collections }] = await Promise.all([
+    listProducts({ pageParam: 0, queryParams: { limit: 8 }, countryCode }),
+    listCollections({}),
+  ])
+
   return (
-    <>
+    <div className="flex flex-col gap-16 pb-16 small:gap-24 small:pb-24">
       <Hero countryCode={countryCode} />
-      <div className="py-12">
-        <HeroCollections countryCode={countryCode} />
-      </div>
-      <div className="py-12">
-        <ProductSlide listOfProducts={productsToPass} countryCode={countryCode} />
-      </div>
-      <div className="py-12">
-        <AboutUsLink countryCode={countryCode} />
-      </div>
-      <div className="py-12">
-        <CollectionSlide listOfCollections={collections} countryCode={countryCode} />
-      </div>
-    </>
+      <CategoryTiles countryCode={countryCode} />
+      <NewArrivals products={response.products} countryCode={countryCode} />
+      <Reassurance countryCode={countryCode} />
+      <CollectionsRail collections={collections ?? []} countryCode={countryCode} />
+      <AboutBanner countryCode={countryCode} />
+    </div>
   )
 }
