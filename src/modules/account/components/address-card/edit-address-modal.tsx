@@ -5,6 +5,8 @@ import { PencilSquare as Edit, Trash } from "@medusajs/icons"
 import { Button, Heading, Text, clx } from "@medusajs/ui"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
+import { useParams } from "next/navigation"
+import { tUi } from "@lib/util/ui-strings"
 import CountrySelect from "@modules/checkout/components/country-select"
 import Input from "@modules/common/components/input"
 import Modal from "@modules/common/components/modal"
@@ -28,6 +30,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
   isActive = false,
 }) => {
   const [removing, setRemoving] = useState(false)
+  const countryCode = useParams()?.countryCode as string | undefined
   const [successState, setSuccessState] = useState(false)
   const { state, open, close: closeModal } = useToggleState(false)
 
@@ -64,17 +67,15 @@ const EditAddress: React.FC<EditAddressProps> = ({
   return (
     <>
       <div
-        className={clx(
-          "border rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between transition-colors",
-          {
-            "border-gray-900": isActive,
-          }
-        )}
+        className={[
+          "flex h-full min-h-[180px] w-full flex-col justify-between gap-4 rounded-card bg-surface-raised p-5 shadow-card",
+          isActive ? "ring-2 ring-brand-accent-strong" : "",
+        ].join(" ")}
         data-testid="address-container"
       >
         <div className="flex flex-col">
           <Heading
-            className="text-left text-base-semi"
+            className="text-left text-headline text-ink"
             data-testid="address-name"
           >
             {address.first_name} {address.last_name}
@@ -87,7 +88,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
               {address.company}
             </Text>
           )}
-          <Text className="flex flex-col text-left text-base-regular mt-2">
+          <Text className="mt-2 flex flex-col text-left text-callout text-ink-muted">
             <span data-testid="address-address">
               {address.address_1}
               {address.address_2 && <span>, {address.address_2}</span>}
@@ -103,27 +104,26 @@ const EditAddress: React.FC<EditAddressProps> = ({
         </div>
         <div className="flex items-center gap-x-4">
           <button
-            className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+            className="no-press text-callout font-medium text-brand-accent-strong hover:underline"
             onClick={open}
             data-testid="address-edit-button"
           >
-            <Edit />
-            Edit
+            {tUi("Edit", countryCode)}
           </button>
           <button
-            className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+            className="no-press flex items-center gap-x-2 text-callout text-ink-muted hover:text-red-700"
             onClick={removeAddress}
             data-testid="address-delete-button"
           >
-            {removing ? <Spinner /> : <Trash />}
-            Remove
+            {removing && <Spinner />}
+            {tUi("Remove", countryCode)}
           </button>
         </div>
       </div>
 
       <Modal isOpen={state} close={close} data-testid="edit-address-modal">
         <Modal.Title>
-          <Heading className="mb-2">Edit address</Heading>
+          <Heading className="mb-2 text-title-3">{tUi("Edit address", countryCode)}</Heading>
         </Modal.Title>
         <form action={formAction}>
           <input type="hidden" name="addressId" value={address.id} />
@@ -225,9 +225,9 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 className="h-10"
                 data-testid="cancel-button"
               >
-                Cancel
+                {tUi("Cancel", countryCode)}
               </Button>
-              <SubmitButton data-testid="save-button">Save</SubmitButton>
+              <SubmitButton data-testid="save-button">{tUi("Save", countryCode)}</SubmitButton>
             </div>
           </Modal.Footer>
         </form>

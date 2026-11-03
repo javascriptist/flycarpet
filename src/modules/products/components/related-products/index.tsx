@@ -2,6 +2,7 @@ import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 import { HttpTypes } from "@medusajs/types"
 import Product from "../product-preview"
+import { t } from "@lib/util/translations"
 
 type RelatedProductsProps = {
   product: HttpTypes.StoreProduct
@@ -45,27 +46,17 @@ export default async function RelatedProducts({
   if (!products.length) {
     return null
   }
-  const isLang = countryCode === "uz"
 
   return (
     <div className="product-page-constraint">
-      <div className="flex flex-col items-center text-center mb-16">
-        <span className="text-base-regular text-gray-600 mb-6">
-          {isLang
-            ? "O'xshash mahsulotlar"
-            : "Похожие товары"}
-        </span>
-        <p className="text-2xl-regular text-ui-fg-base max-w-lg">
-          {isLang
-            ? "Ushbu mahsulotlarni ham ko'rib chiqishingiz mumkin."
-            : "Вы также можете ознакомиться с этими продуктами."}
-        </p>
-      </div>
+      <h2 className="mb-6 text-title-2 text-ink">
+        {t({ uz: "Sizga yoqishi mumkin", ru: "Вам может понравиться", en: "You might also like" }, countryCode)}
+      </h2>
 
-      <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
+      <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-4 gap-y-10 small:gap-x-6">
         {products.map((product) => (
           <li key={product.id}>
-            <Product region={region} product={product} />
+            <Product region={region} product={product} countryCode={countryCode} />
           </li>
         ))}
       </ul>

@@ -5,6 +5,7 @@ import Addresses from "@modules/checkout/components/addresses"
 import Payment from "@modules/checkout/components/payment"
 import Review from "@modules/checkout/components/review"
 import Shipping from "@modules/checkout/components/shipping"
+import CheckoutSteps from "@modules/checkout/components/checkout-steps"
 
 export default async function CheckoutForm({
   cart,
@@ -26,15 +27,25 @@ export default async function CheckoutForm({
     return null
   }
 
+  const card = "rounded-card bg-surface-raised p-5 shadow-card small:p-8"
+
   return (
-    <div className="w-full grid grid-cols-1 gap-y-8">
-      <Addresses cart={cart} customer={customer} countryCode={countryCode} />
-
-      <Shipping cart={cart} availableShippingMethods={shippingMethods} countryCode={countryCode} />
-
-      <Payment cart={cart} availablePaymentMethods={paymentMethods} countryCode={countryCode} />
-
-      <Review cart={cart} countryCode={countryCode} />
+    <div className="grid w-full grid-cols-1 gap-y-4">
+      <div className="pb-2">
+        <CheckoutSteps countryCode={countryCode} />
+      </div>
+      <section className={card}>
+        <Addresses cart={cart} customer={customer} countryCode={countryCode} />
+      </section>
+      <section className={card}>
+        <Shipping cart={cart} availableShippingMethods={shippingMethods} countryCode={countryCode} />
+      </section>
+      <section className={card}>
+        <Payment cart={cart} availablePaymentMethods={paymentMethods} countryCode={countryCode} />
+      </section>
+      <section className={card}>
+        <Review cart={cart} countryCode={countryCode} />
+      </section>
     </div>
   )
 }

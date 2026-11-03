@@ -1,6 +1,5 @@
-import { convertToLocale, formatUzsAmount } from "@lib/util/money"
+import { formatMoney } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
-import { clx, Text } from "@medusajs/ui"
 
 type LineItemPriceProps = {
   item: HttpTypes.StoreCartLineItem | HttpTypes.StoreOrderLineItem
@@ -8,6 +7,7 @@ type LineItemPriceProps = {
   className?: string
   currencyCode?: string
   exchangeRate?: number
+  countryCode?: string
 }
 
 export default function LineItemPrice({
@@ -16,47 +16,32 @@ export default function LineItemPrice({
   className,
   currencyCode,
   exchangeRate,
+  countryCode,
 }: LineItemPriceProps) {
   const currency = currencyCode || "usd"
   const { total, original_total } = item
   const hasDiscount = total < original_total
 
-  // For UZS conversion: multiply by exchange rate if provided
-  const isUsd = currency?.toLowerCase() === "usd"
-  const shouldConvert = isUsd && exchangeRate
+  const formatPrice = (amount: number) =>
+    formatMoney(amount, currency, exchangeRate, countryCode)
 
-  const formatPrice = (amount: number) => {
-    if (shouldConvert) {
-      const uzsAmount = Math.round(amount * exchangeRate!)
-      const uzsFormatted = formatUzsAmount(uzsAmount)
-      const usdFormatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(amount)
-      return `${uzsFormatted} (${usdFormatted})`
-    }
-    return convertToLocale({
-      amount,
-      currency_code: currency,
-    })
-  }
 
   return (
     <div
-      className={clx("flex flex-col text-ui-fg-base txt-medium-plus", className, {
-        "items-end": style === "tight",
-      })}
+      className={[
+        "flex shrink-0 flex-col text-callout num",
+        style === "tight" ? "items-end text-right" : "",
+        className ?? "",
+      ].join(" ")}
     >
       {hasDiscount && (
-        <Text className="text-ui-fg-subtle line-through txt-small">
+        <span className="text-footnote text-ink-subtle line-through">
           {formatPrice(original_total)}
-        </Text>
+        </span>
       )}
-      <Text className="txt-medium-plus" data-testid="product-price">
+      <span className={hasDiscount ? "font-medium text-brand-accent-strong" : "font-medium text-ink"} data-testid="product-price">
         {formatPrice(total)}
-      </Text>
+      </span>
     </div>
   )
 }

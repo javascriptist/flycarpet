@@ -1,172 +1,80 @@
-import { Container } from "@medusajs/ui"
-
-import ChevronDown from "@modules/common/icons/chevron-down"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { convertToLocale } from "@lib/util/money"
+import OrderRow from "@modules/account/components/order-row"
 import { HttpTypes } from "@medusajs/types"
+import { t } from "@lib/util/translations"
 
 type OverviewProps = {
   customer: HttpTypes.StoreCustomer | null
   orders: HttpTypes.StoreOrder[] | null
+  countryCode: string
+  exchangeRate?: number
 }
 
-const Overview = ({ customer, orders }: OverviewProps) => {
+const Overview = ({ customer, orders, countryCode, exchangeRate }: OverviewProps) => {
+  const completion = getProfileCompletion(customer)
+
   return (
-    <div data-testid="overview-page-wrapper">
-      <div className="hidden small:block">
-        <div className="text-xl-semi flex justify-between items-center mb-4">
-          <span data-testid="welcome-message" data-value={customer?.first_name}>
-            Salom {customer?.first_name}
-          </span>
-          <span className="text-small-regular text-ui-fg-base">
-            Akkount:{" "}
-            <span
-              className="font-semibold"
-              data-testid="customer-email"
-              data-value={customer?.email}
-            >
-              {customer?.email}
-            </span>
-          </span>
-        </div>
-        <div className="flex flex-col py-8 border-t border-gray-200">
-          <div className="flex flex-col gap-y-4 h-full col-span-1 row-span-2 flex-1">
-            <div className="flex items-start gap-x-16 mb-6">
-              <div className="flex flex-col gap-y-4">
-                <h3 className="text-large-semi text-brand-brown">Profil</h3>
-                <div className="flex items-end gap-x-2">
-                  <span
-                    className="text-3xl-semi leading-none"
-                    data-testid="customer-profile-completion"
-                    data-value={getProfileCompletion(customer)}
-                  >
-                    {getProfileCompletion(customer)}%
-                  </span>
-                  <span className="uppercase text-base-regular text-ui-fg-subtle">
-                    to'ldirilgan
-                  </span>
-                </div>
-              </div>
+    <div className="flex flex-col gap-8" data-testid="overview-page-wrapper">
+      <h1 className="hidden text-title-1 text-ink small:block" data-testid="welcome-message" data-value={customer?.first_name}>
+        {t({ uz: "Salom", ru: "Здравствуйте", en: "Hello" }, countryCode)}
+        {customer?.first_name ? `, ${customer.first_name}` : ""}
+      </h1>
 
-              <div className="flex flex-col gap-y-4">
-                <h3 className="text-large-semi text-brand-brown">Manzillar</h3>
-                <div className="flex items-end gap-x-2">
-                  <span
-                    className="text-3xl-semi leading-none"
-                    data-testid="addresses-count"
-                    data-value={customer?.addresses?.length || 0}
-                  >
-                    {customer?.addresses?.length || 0}
-                  </span>
-                  <span className="uppercase text-base-regular text-ui-fg-subtle">
-                    manzil
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-y-4">
-              <div className="flex items-center gap-x-2">
-                <h3 className="text-large-semi">
-                  Buyurtmalar
-                </h3>
-              </div>
-              <ul
-                className="flex flex-col gap-y-4"
-                data-testid="orders-wrapper"
-              >
-                {orders && orders.length > 0 ? (
-                  orders.slice(0, 5).map((order) => {
-                    return (
-                      <li
-                        key={order.id}
-                        data-testid="order-wrapper"
-                        data-value={order.id}
-                      >
-                        <LocalizedClientLink
-                          href={`/account/orders/details/${order.id}`}
-                        >
-                          <Container className="bg-gray-50 flex justify-between items-center p-4">
-                            <div className="grid grid-cols-3 grid-rows-2 text-small-regular gap-x-4 flex-1">
-                              <span className="font-semibold">Date placed</span>
-                              <span className="font-semibold">
-                                Order number
-                              </span>
-                              <span className="font-semibold">
-                                Total amount
-                              </span>
-                              <span data-testid="order-created-date">
-                                {new Date(order.created_at).toDateString()}
-                              </span>
-                              <span
-                                data-testid="order-id"
-                                data-value={order.display_id}
-                              >
-                                #{order.display_id}
-                              </span>
-                              <span data-testid="order-amount">
-                                {convertToLocale({
-                                  amount: order.total,
-                                  currency_code: order.currency_code,
-                                })}
-                              </span>
-                            </div>
-                            <button
-                              className="flex items-center justify-between"
-                              data-testid="open-order-button"
-                            >
-                              <span className="sr-only">
-                                Go to order #{order.display_id}
-                              </span>
-                              <ChevronDown className="-rotate-90" />
-                            </button>
-                          </Container>
-                        </LocalizedClientLink>
-                      </li>
-                    )
-                  })
-                ) : (
-                  <span data-testid="no-orders-message">
-                    Sizda buyurtmalar mavjud emas
-                  </span>
-                )}
-              </ul>
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-2 gap-4">
+        <LocalizedClientLink href="/account/profile" className="flex flex-col gap-1 rounded-card bg-surface-raised p-5 shadow-card">
+          <span className="text-footnote text-ink-muted">{t({ uz: "Profil", ru: "Профиль", en: "Profile" }, countryCode)}</span>
+          <span className="text-title-2 text-ink num" data-testid="customer-profile-completion" data-value={completion}>
+            {completion}%
+          </span>
+          <span className="text-footnote text-ink-muted">{t({ uz: "toʼldirilgan", ru: "заполнено", en: "complete" }, countryCode)}</span>
+        </LocalizedClientLink>
+        <LocalizedClientLink href="/account/addresses" className="flex flex-col gap-1 rounded-card bg-surface-raised p-5 shadow-card">
+          <span className="text-footnote text-ink-muted">{t({ uz: "Manzillar", ru: "Адреса", en: "Addresses" }, countryCode)}</span>
+          <span className="text-title-2 text-ink num" data-testid="addresses-count" data-value={customer?.addresses?.length || 0}>
+            {customer?.addresses?.length || 0}
+          </span>
+          <span className="text-footnote text-ink-muted">{t({ uz: "saqlangan", ru: "сохранено", en: "saved" }, countryCode)}</span>
+        </LocalizedClientLink>
       </div>
+
+      <section className="flex flex-col gap-4">
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-title-3 text-ink">{t({ uz: "Soʼnggi buyurtmalar", ru: "Последние заказы", en: "Recent orders" }, countryCode)}</h2>
+          {orders && orders.length > 0 && (
+            <LocalizedClientLink href="/account/orders" className="text-callout font-medium text-brand-accent-strong hover:underline">
+              {t({ uz: "Barchasi", ru: "Все", en: "View all" }, countryCode)}
+            </LocalizedClientLink>
+          )}
+        </div>
+        <ul className="flex flex-col gap-3" data-testid="orders-wrapper">
+          {orders && orders.length > 0 ? (
+            orders.slice(0, 5).map((order) => (
+              <li key={order.id} data-testid="order-wrapper" data-value={order.id}>
+                <OrderRow order={order} countryCode={countryCode} exchangeRate={exchangeRate} />
+              </li>
+            ))
+          ) : (
+            <li className="rounded-card bg-brand-linen p-6 text-callout text-ink-muted" data-testid="no-orders-message">
+              {t({ uz: "Hozircha buyurtmalar yoʼq.", ru: "Заказов пока нет.", en: "No orders yet." }, countryCode)}{" "}
+              <LocalizedClientLink href="/store" className="font-medium text-brand-accent-strong hover:underline">
+                {t({ uz: "Katalogga oʼtish", ru: "Перейти в каталог", en: "Browse rugs" }, countryCode)}
+              </LocalizedClientLink>
+            </li>
+          )}
+        </ul>
+      </section>
     </div>
   )
 }
 
 const getProfileCompletion = (customer: HttpTypes.StoreCustomer | null) => {
+  if (!customer) return 0
   let count = 0
-
-  if (!customer) {
-    return 0
-  }
-
-  if (customer.email) {
-    count++
-  }
-
-  if (customer.first_name && customer.last_name) {
-    count++
-  }
-
-  if (customer.phone) {
-    count++
-  }
-
-  const billingAddress = customer.addresses?.find(
-    (addr) => addr.is_default_billing
-  )
-
-  if (billingAddress) {
-    count++
-  }
-
-  return (count / 4) * 100
+  if (customer.email) count++
+  if (customer.first_name && customer.last_name) count++
+  if (customer.phone) count++
+  if (customer.addresses?.find((addr) => addr.is_default_billing)) count++
+  return Math.round((count / 4) * 100)
 }
 
 export default Overview

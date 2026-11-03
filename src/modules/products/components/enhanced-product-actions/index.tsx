@@ -1,276 +1,340 @@
 "use client"
 
-import { addToCart } from "@lib/data/cart"
-import { useIntersection } from "@lib/hooks/use-in-view"
+import { addRollCarpetToCart, addToCart } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
-import { Button } from "@medusajs/ui"
-import Divider from "@modules/common/components/divider"
+import { cx } from "@lib/util/cx"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import FastDelivery from "@modules/common/icons/fast-delivery"
+import Refresh from "@modules/common/icons/refresh"
 import { isEqual } from "lodash"
-import { useParams } from "next/navigation"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useParams, useRouter } from "next/navigation"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import ProductPrice from "../product-price"
-import MobileActions from "../product-actions/mobile-actions"
 import { RollCarpetSelector } from "../roll-carpet-selector"
-import { RollCarpetAddToCart } from "../roll-carpet-add-to-cart"
 import { ARToggleButton } from "../ar-toggle-button"
-import { RoomVisualizerButton } from "../room-visualizer-button"
-import { isRollCarpet, getCarpetWidth, getStockLength } from "@lib/util/carpet-helpers"
-import { getExchangeRate } from "@lib/data/exchange-rate"
-import { t } from '@lib/util/translations'
+import {
+  isRollCarpet,
+  getCarpetSize,
+  getRollCarpetSpec,
+  clampRollLength,
+  calculateRollCarpet,
+  formatMetres,
+} from "@lib/util/carpet-helpers"
+import { formatStorePrice } from "@lib/util/money"
+import { firstOrSecond } from "@lib/util/firstorsecond"
+import { t } from "@lib/util/translations"
 
 type EnhancedProductActionsProps = {
   product: HttpTypes.StoreProduct
   region: HttpTypes.StoreRegion
   disabled?: boolean
   exchangeRate?: number
-  cartId?: string
 }
+
+type BuyState = "idle" | "adding" | "added" | "error"
 
 const optionsAsKeymap = (
   variantOptions: HttpTypes.StoreProductVariant["options"]
-) => {
-  return variantOptions?.reduce((acc: Record<string, string>, varopt: any) => {
+) =>
+  variantOptions?.reduce((acc: Record<string, string>, varopt: any) => {
     acc[varopt.option_id] = varopt.value
     return acc
   }, {})
+
+/**
+ * True once the element has scrolled up and out of view (not while it's
+ * still below the fold), so the sticky bar only appears after the user has
+ * passed the main button.
+ */
+const useScrolledPast = (ref: React.RefObject<HTMLElement | null>) => {
+  const [past, setPast] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(([e]) =>
+      setPast(!e.isIntersecting && e.boundingClientRect.top < 0)
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [ref])
+  return past
 }
 
 export default function EnhancedProductActions({
   product,
-  region,
   disabled,
   exchangeRate,
-  cartId,
 }: EnhancedProductActionsProps) {
-  const [options, setOptions] = useState<Record<string, string | undefined>>({})
-  const [isAdding, setIsAdding] = useState(false)
-  const [customLength, setCustomLength] = useState<number>(1)
-  const [customPrice, setCustomPrice] = useState<number>(0)
-  
+  const router = useRouter()
   const countryCode = useParams().countryCode as string
-  const isLang = countryCode === "uz"
+  const tr = (m: { uz: string; ru: string; en: string }) => t(m, countryCode)
+
   const isRoll = isRollCarpet(product)
+  const rollSpec = useMemo(() => getRollCarpetSpec(product), [product])
+  const [length, setLength] = useState<number>(() => clampRollLength(2, rollSpec))
+  const [note, setNote] = useState("")
+  const [noteOpen, setNoteOpen] = useState(false)
 
-  // Debug logging
-  console.log('EnhancedProductActions - cartId:', cartId)
-  console.log('EnhancedProductActions - isRoll:', isRoll)
-  console.log('EnhancedProductActions - product.metadata:', product.metadata)
+  const [options, setOptions] = useState<Record<string, string | undefined>>({})
+  const [buyState, setBuyState] = useState<BuyState>("idle")
 
-  // If there is only 1 variant, preselect the options
+  const optionsRef = useRef<HTMLDivElement>(null)
+  const buyRef = useRef<HTMLDivElement>(null)
+  const showBar = useScrolledPast(buyRef)
+
+  const carpetImage = product.thumbnail || product.images?.[0]?.url || ""
+  const title = firstOrSecond(product.title, countryCode)
+
+  // Preselect when there's only one variant
   useEffect(() => {
     if (product.variants?.length === 1) {
-      const variantOptions = optionsAsKeymap(product.variants[0].options)
-      setOptions(variantOptions ?? {})
+      setOptions(optionsAsKeymap(product.variants[0].options) ?? {})
     }
   }, [product.variants])
 
   const selectedVariant = useMemo(() => {
-    if (!product.variants || product.variants.length === 0) {
-      return
-    }
+    if (isRoll) return product.variants?.[0]
+    return product.variants?.find((v) =>
+      isEqual(optionsAsKeymap(v.options), options)
+    )
+  }, [isRoll, product.variants, options])
 
-    return product.variants.find((v) => {
-      const variantOptions = optionsAsKeymap(v.options)
-      return isEqual(variantOptions, options)
-    })
-  }, [product.variants, options])
-
-  // update the options when a variant is selected
-  const setOptionValue = (optionId: string, value: string) => {
-    setOptions((prev) => ({
-      ...prev,
-      [optionId]: value,
-    }))
-  }
-
-  //check if the selected options produce a valid variant
-  const isValidVariant = useMemo(() => {
-    return product.variants?.some((v) => {
-      const variantOptions = optionsAsKeymap(v.options)
-      return isEqual(variantOptions, options)
-    })
-  }, [product.variants, options])
-
-  // check if the selected variant is in stock
   const inStock = useMemo(() => {
-    // If we don't manage inventory, we can always add to cart
-    if (selectedVariant && !selectedVariant.manage_inventory) {
-      return true
-    }
-
-    // If we allow back orders on the variant, we can add to cart
-    if (selectedVariant?.allow_backorder) {
-      return true
-    }
-
-    // If there is inventory available, we can add to cart
-    if (
-      selectedVariant?.manage_inventory &&
-      (selectedVariant?.inventory_quantity || 0) > 0
-    ) {
-      return true
-    }
-
-    // Otherwise, we can't add to cart
-    return false
+    if (!selectedVariant) return false
+    if (!selectedVariant.manage_inventory || selectedVariant.allow_backorder) return true
+    return (selectedVariant.inventory_quantity || 0) > 0
   }, [selectedVariant])
 
-  const actionsRef = useRef<HTMLDivElement>(null)
-  const inView = useIntersection(actionsRef, "0px")
+  // The "Added" confirmation fades back to the normal label
+  useEffect(() => {
+    if (buyState !== "added") return
+    const id = window.setTimeout(() => setBuyState("idle"), 2400)
+    return () => window.clearTimeout(id)
+  }, [buyState])
 
-  // add the selected variant to the cart (regular products)
-  const handleAddToCart = async () => {
-    if (!selectedVariant?.id) return null
+  const rollLength = clampRollLength(length, rollSpec)
+  const rollTotal = calculateRollCarpet(rollSpec, rollLength)
+  const needsSelection = !isRoll && !selectedVariant
+  const canBuy =
+    !disabled &&
+    buyState !== "adding" &&
+    !!selectedVariant &&
+    inStock &&
+    (!isRoll || rollSpec.pricePerMeter > 0)
 
-    setIsAdding(true)
-
-    await addToCart({
-      variantId: selectedVariant.id,
-      quantity: 1,
-      countryCode,
-    })
-
-    setIsAdding(false)
-  }
-
-  // handle success for roll carpet
-  const handleRollCarpetSuccess = () => {
-    // Optionally redirect or show success message
-    window.location.reload() // Simple approach to refresh cart
-  }
-
-  if (isRoll) {
-    // Roll Carpet Product - Custom Interface with AR
-    const carpetWidth = parseFloat(getCarpetWidth(product)) || 3
-    const stockLength = getStockLength(product)
-    const carpetLength = customLength || stockLength || 2
-    const carpetSize = { 
-      width: carpetWidth, 
-      length: carpetLength 
+  const handleBuy = useCallback(async () => {
+    if (needsSelection) {
+      optionsRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+      optionsRef.current?.querySelector<HTMLButtonElement>("button")?.focus({ preventScroll: true })
+      return
     }
-    const carpetImage = product.thumbnail || product.images?.[0]?.url || ''
+    if (!canBuy || !selectedVariant?.id) return
 
-    return (
-      <div className="flex flex-col gap-y-6" ref={actionsRef}>
-        {/* AR Viewer Button */}
-        <ARToggleButton
-          product={product}
-          carpetImage={carpetImage}
-          carpetSize={carpetSize}
-        />
-        
-        {/* Room Visualizer Button */}
-        <RoomVisualizerButton
-          productImage={carpetImage}
-          productTitle={product.title || ''}
-          countryCode={countryCode}
-        />
-        
-        <RollCarpetSelector
-          product={product}
-          countryCode={countryCode}
-          exchangeRate={exchangeRate}
-          onPriceChange={(price) => setCustomPrice(price)}
-          onLengthChange={(length) => setCustomLength(length)}
-        />
-        
-        <RollCarpetAddToCart
-          product={product}
-          customLength={customLength}
-          totalPrice={customPrice}
-          countryCode={countryCode}
-          exchangeRate={exchangeRate}
-          cartId={cartId}
-          onSuccess={handleRollCarpetSuccess}
-        />
-      </div>
-    )
+    setBuyState("adding")
+    try {
+      if (isRoll) {
+        // priced on the server: price per metre × length, one line item
+        await addRollCarpetToCart({
+          variantId: selectedVariant.id,
+          length: rollLength,
+          note: note.trim() || undefined,
+          countryCode,
+        })
+        setNote("")
+        setNoteOpen(false)
+      } else {
+        await addToCart({ variantId: selectedVariant.id, quantity: 1, countryCode })
+      }
+      setBuyState("added")
+      router.refresh()
+    } catch {
+      setBuyState("error")
+    }
+  }, [needsSelection, canBuy, selectedVariant, isRoll, rollLength, note, countryCode, router])
+
+  const priceLabel = isRoll
+    ? formatStorePrice(rollTotal.total, exchangeRate, countryCode)
+    : null
+
+  const buttonLabel = (compact = false) => {
+    if (buyState === "adding") return tr({ uz: "Qoʼshilmoqda…", ru: "Добавляем…", en: "Adding…" })
+    if (buyState === "added") return tr({ uz: "Savatchada", ru: "В корзине", en: "Added" })
+    if (needsSelection) return tr({ uz: "Oʼlchamni tanlang", ru: "Выберите размер", en: "Choose a size" })
+    if (!inStock) return tr({ uz: "Mavjud emas", ru: "Нет в наличии", en: "Out of stock" })
+    if (isRoll && !compact)
+      return tr({
+        uz: `${formatMetres(rollLength, countryCode)} — savatchaga`,
+        ru: `${formatMetres(rollLength, countryCode)} — в корзину`,
+        en: `Add ${formatMetres(rollLength, countryCode)} to cart`,
+      })
+    return tr({ uz: "Savatchaga qoʼshish", ru: "В корзину", en: "Add to cart" })
   }
 
-  // Regular Product - Standard Interface with AR
-  const regularCarpetSize = { 
-    width: parseFloat(getCarpetWidth(product)) || 3, 
-    length: getStockLength(product) || 2 
-  }
-  const regularCarpetImage = product.thumbnail || product.images?.[0]?.url || ''
+  const renderPrimaryButton = (compact = false) => (
+    <button
+      type="button"
+      onClick={handleBuy}
+      disabled={!needsSelection && !canBuy && buyState !== "added"}
+      aria-disabled={buyState === "adding"}
+      className={cx("btn-primary", compact ? "h-11 px-5 text-callout" : "w-full")}
+      data-testid={compact ? "mobile-cart-button" : "add-product-button"}
+    >
+      {buyState === "adding" && (
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden />
+      )}
+      {buyState === "added" && (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M5 12.5l4.5 4.5L19 7.5" />
+        </svg>
+      )}
+      <span>{buttonLabel(compact)}</span>
+    </button>
+  )
 
   return (
     <>
-      <div className="flex flex-col gap-y-2" ref={actionsRef}>
-        {/* AR Viewer for Regular Products */}
-        <ARToggleButton
-          product={product}
-          carpetImage={regularCarpetImage}
-          carpetSize={regularCarpetSize}
-          className="mb-4"
-        />
-        
-        {/* Room Visualizer for Regular Products */}
-        <RoomVisualizerButton
-          productImage={regularCarpetImage}
-          productTitle={product.title || ''}
-          countryCode={countryCode}
-        />
-        
-        <div>
-          {(product.variants?.length ?? 0) > 1 && (
-            <div className="flex flex-col gap-y-4 mb-4 ">
-              {(product.options || []).map((option) => {
-                return (
-                  <div key={option.id} >
-                    <OptionSelect
-                      option={option}
-                      current={options[option.id]}
-                      updateOption={setOptionValue}
-                      title={option.title ?? ""}
-                      data-testid="product-options"
-                      disabled={!!disabled || isAdding}
-                    />
-                  </div>
-                )
-              })}
-              <Divider />
+      <div className="flex flex-col gap-6">
+        {/* Price */}
+        {isRoll ? (
+          <div className="flex flex-col gap-1">
+            <span className="text-title-2 text-ink num" data-testid="product-price">
+              {priceLabel}
+            </span>
+            <span className="text-footnote text-ink-muted num">
+              {formatStorePrice(rollSpec.pricePerMeter, exchangeRate, countryCode)} {tr({ uz: "/ metr", ru: "/ метр", en: "per metre" })}
+            </span>
+          </div>
+        ) : (
+          <ProductPrice product={product} variant={selectedVariant} exchangeRate={exchangeRate} />
+        )}
+
+        {/* Size */}
+        {isRoll ? (
+          <RollCarpetSelector
+            spec={rollSpec}
+            length={length}
+            onLengthChange={setLength}
+            countryCode={countryCode}
+            exchangeRate={exchangeRate}
+            disabled={disabled || buyState === "adding"}
+          />
+        ) : (
+          (product.variants?.length ?? 0) > 1 && (
+            <div ref={optionsRef} className="flex flex-col gap-5">
+              {(product.options || []).map((option) => (
+                <OptionSelect
+                  key={option.id}
+                  option={option}
+                  current={options[option.id]}
+                  updateOption={(id, value) => setOptions((prev) => ({ ...prev, [id]: value }))}
+                  title={option.title ?? ""}
+                  data-testid="product-options"
+                  disabled={!!disabled || buyState === "adding"}
+                />
+              ))}
             </div>
-          )}
+          )
+        )}
+
+        {/* Optional note for cut-to-length orders */}
+        {isRoll && (
+          <div>
+            {noteOpen ? (
+              <label className="flex flex-col gap-2">
+                <span className="text-footnote text-ink-muted">
+                  {tr({ uz: "Izoh (ixtiyoriy)", ru: "Комментарий (необязательно)", en: "Note (optional)" })}
+                </span>
+                <textarea
+                  autoFocus
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  rows={2}
+                  placeholder={tr({ uz: "Masalan: chetlarini oʼrash kerak", ru: "Например: нужна обработка краёв", en: "e.g. edges need binding" })}
+                  className="rounded-control bg-surface-raised p-3 text-body text-ink shadow-hairline outline-none placeholder:text-ink-subtle focus:ring-2 focus:ring-brand-accent-strong"
+                />
+              </label>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setNoteOpen(true)}
+                className="text-callout text-brand-accent-strong hover:underline"
+              >
+                + {tr({ uz: "Izoh qoʼshish", ru: "Добавить комментарий", en: "Add a note" })}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Actions */}
+        <div ref={buyRef} className="flex flex-col gap-3">
+          {renderPrimaryButton()}
+          <ARToggleButton
+            product={product}
+            carpetImage={carpetImage}
+            carpetSize={isRoll ? { width: rollSpec.width, length: rollLength } : getCarpetSize(product)}
+          />
         </div>
 
-        <ProductPrice product={product} variant={selectedVariant} exchangeRate={exchangeRate} />
+        <p aria-live="polite" className="-mt-3 min-h-[1.25rem] text-footnote">
+          {buyState === "added" && (
+            <span className="text-ink-muted">
+              {tr({ uz: "Savatchaga qoʼshildi.", ru: "Добавлено в корзину.", en: "Added to your cart." })}{" "}
+              <LocalizedClientLink href="/cart" className="font-medium text-brand-accent-strong hover:underline">
+                {tr({ uz: "Savatchani koʼrish", ru: "Открыть корзину", en: "View cart" })}
+              </LocalizedClientLink>
+            </span>
+          )}
+          {buyState === "error" && (
+            <span role="alert" className="text-red-700">
+              {tr({
+                uz: "Qoʼshib boʼlmadi. Qayta urinib koʼring.",
+                ru: "Не удалось добавить. Попробуйте ещё раз.",
+                en: "Couldn't add to cart. Please try again.",
+              })}
+            </span>
+          )}
+        </p>
 
-        <Button
-          onClick={handleAddToCart}
-          disabled={
-            !inStock ||
-            !selectedVariant ||
-            !!disabled ||
-            isAdding ||
-            !isValidVariant
-          }
-          variant="secondary"
-          className="w-full h-10 rounded-3xl liquid-glass text-black hover:bg-[#D4682D] hover:text-white transition-all duration-200 border-transparent outline-none focus:outline-none focus:ring-2 focus:ring-brand-peach focus:ring-offset-2 focus:ring-offset-white"
-          isLoading={isAdding}
-          data-testid="add-product-button"
-        >
-          {!selectedVariant && !options
-            ? t({ uz: 'Tanlang', ru: 'Выберите', en: 'Select' }, countryCode)
-            : !inStock || !isValidVariant
-            ? t({ uz: 'Mavjud emas', ru: 'Недоступно', en: 'Out of stock' }, countryCode)
-            : t({ uz: 'Savatchaga qo\u02bcshish', ru: 'Добавить в корзину', en: 'Add to cart' }, countryCode)
-          }
-        </Button>
-        <MobileActions
-          product={product}
-          variant={selectedVariant}
-          options={options}
-          updateOptions={setOptionValue}
-          inStock={inStock}
-          handleAddToCart={handleAddToCart}
-          isAdding={isAdding}
-          show={!inView}
-          optionsDisabled={!!disabled || isAdding}
-          isLang={isLang}
-          exchangeRate={exchangeRate}
-        />
+        {/* Reassurance */}
+        <ul className="flex flex-col gap-3 border-t border-line pt-5 text-footnote text-ink-muted">
+          <li className="flex items-center gap-3">
+            <FastDelivery size="20" />
+            {tr({ uz: "Oʼzbekiston boʼylab 3–5 kunda yetkazib berish", ru: "Доставка по Узбекистану за 3–5 дней", en: "Delivery across Uzbekistan in 3–5 days" })}
+          </li>
+          <li className="flex items-center gap-3">
+            <Refresh size="20" />
+            {tr({ uz: "Oson almashtirish va qaytarish", ru: "Лёгкий обмен и возврат", en: "Easy exchanges and returns" })}
+          </li>
+        </ul>
+      </div>
+
+      {/* Phone: buy bar slides up when the main button scrolls away */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-40 small:hidden"
+        style={{
+          transform: showBar ? "translateY(0)" : "translateY(100%)",
+          transition: "transform 250ms var(--ease-out)",
+        }}
+        aria-hidden={!showBar}
+        inert={showBar ? undefined : true}
+        data-testid="mobile-actions"
+      >
+        <div className="glass flex items-center gap-3 border-t border-line px-4 pt-3 pb-safe">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-footnote text-ink-muted" data-testid="mobile-title">{title}</p>
+            <div className="text-headline text-ink num">
+              {isRoll ? (
+                <>
+                  {priceLabel} <span className="text-footnote text-ink-muted">· {formatMetres(rollLength, countryCode)}</span>
+                </>
+              ) : (
+                <ProductPrice product={product} variant={selectedVariant} exchangeRate={exchangeRate} compact />
+              )}
+            </div>
+          </div>
+          {renderPrimaryButton(true)}
+        </div>
       </div>
     </>
   )

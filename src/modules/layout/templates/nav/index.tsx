@@ -25,8 +25,9 @@ export default async function Nav() {
           <div className="flex items-center h-full">
             <LocalizedClientLink
               href="/"
-              className="txt-compact-xlarge-plus hover:opacity-80 uppercase"
+              className="hover:opacity-80"
               data-testid="nav-store-link"
+              aria-label="Premium Carpet"
             >
               <Image  
                 src="/pclogo_tp.png"
@@ -37,12 +38,13 @@ export default async function Nav() {
             </LocalizedClientLink>
           </div>
 
-          <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
-            <div className="hidden small:flex items-center gap-x-6 h-full">
+          <div className="flex items-center gap-x-1 h-full flex-1 basis-0 justify-end">
+            <div className="hidden small:flex items-center h-full">
               <LocalizedClientLink
-                className="hover:text-brand-terracotta transition-colors"
+                className="grid h-11 w-11 place-items-center rounded-full hover:bg-white/10"
                 href="/account"
                 data-testid="nav-account-link"
+                aria-label="Account"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
@@ -53,11 +55,14 @@ export default async function Nav() {
             <Suspense
               fallback={
                 <LocalizedClientLink
-                  className="hover:text-ui-fg-base flex gap-2"
+                  className="grid h-11 w-11 place-items-center rounded-full"
                   href="/cart"
                   data-testid="nav-cart-link"
+                  aria-label="Cart"
                 >
-                  Savatcha (0)
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" />
+                  </svg>
                 </LocalizedClientLink>
               }
             >

@@ -4,12 +4,13 @@ import { Badge, Heading, Input, Label, Text, Tooltip } from "@medusajs/ui"
 import React, { useActionState } from "react";
 
 import { applyPromotions, submitPromotionForm } from "@lib/data/cart"
-import { convertToLocale } from "@lib/util/money"
 import { InformationCircleSolid } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import Trash from "@modules/common/icons/trash"
 import ErrorMessage from "../error-message"
 import { SubmitButton } from "../submit-button"
+import { t } from "@lib/util/translations"
+import { useMoney } from "@lib/context/currency-context"
 
 type DiscountCodeProps = {
   cart: HttpTypes.StoreCart & {
@@ -19,7 +20,7 @@ type DiscountCodeProps = {
 }
 
 const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
-  const isLang = countryCode === "uz"
+  const money = useMoney()
   const [isOpen, setIsOpen] = React.useState(false)
 
   const { items = [], promotions = [] } = cart
@@ -28,8 +29,9 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
       (promotion) => promotion.code !== code
     )
 
+    // keep every other manually entered code
     await applyPromotions(
-      validPromotions.filter((p) => p.code === undefined).map((p) => p.code!)
+      validPromotions.filter((p) => !!p.code && !p.is_automatic).map((p) => p.code!)
     )
   }
 
@@ -39,8 +41,9 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
       return
     }
     const input = document.getElementById("promotion-input") as HTMLInputElement
+    // keep codes already applied, then add the new one
     const codes = promotions
-      .filter((p) => p.code === undefined)
+      .filter((p) => !!p.code && !p.is_automatic)
       .map((p) => p.code!)
     codes.push(code.toString())
 
@@ -56,21 +59,17 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
   return (
     <div className="w-full flex flex-col">
       <div className="txt-medium">
-        <form action={(a) => addPromotionCode(a)} className="w-full mb-5">
-          <Label className="flex gap-x-1 my-2 items-center">
+        <form action={(a) => addPromotionCode(a)} className="w-full">
+          <Label className="flex gap-x-1 items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="txt-medium text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+              className="no-press text-callout text-brand-accent-strong hover:underline"
               data-testid="add-discount-button"
             >
               {isOpen
-                ? isLang
-                  ? "Yopish"
-                  : "Закрыть"
-                : isLang
-                ? "Promo kod qo'shish"
-                : "Добавить промокод"}
+                ? t({ uz: "Yopish", ru: "Закрыть", en: "Close" }, countryCode)
+                : `+ ${t({ uz: "Promo kod qo'shish", ru: "Добавить промокод", en: "Add promo code" }, countryCode)}`}
             </button>
 
             {/* <Tooltip content="You can add multiple promotion codes">
@@ -80,7 +79,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
 
           {isOpen && (
             <>
-              <div className="flex w-full gap-x-2">
+              <div className="mt-3 flex w-full gap-x-2">
                 <Input
                   className="size-full"
                   id="promotion-input"
@@ -93,7 +92,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
                   variant="secondary"
                   data-testid="discount-apply-button"
                 >
-                  {isLang ? "Qo'shish" : "Добавить"}
+                  {t({ uz: "Qo'shish", ru: "Добавить", en: "Add" }, countryCode)}
                 </SubmitButton>
               </div>
 
@@ -108,8 +107,8 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
         {promotions.length > 0 && (
           <div className="w-full flex items-center">
             <div className="flex flex-col w-full">
-              <Heading className="txt-medium mb-2">
-                Promotion(s) applied:
+              <Heading className="mb-2 mt-4 text-footnote text-ink-muted">
+                {t({ uz: "Qo\u02bcllangan promo kodlar:", ru: "Применённые промокоды:", en: "Promo codes applied:" }, countryCode)}
               </Heading>
 
               {promotions.map((promotion) => {
@@ -135,12 +134,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
                               {promotion.application_method.type ===
                               "percentage"
                                 ? `${promotion.application_method.value}%`
-                                : convertToLocale({
-                                    amount: promotion.application_method.value,
-                                    currency_code:
-                                      promotion.application_method
-                                        .currency_code,
-                                  })}
+                                : money(Number(promotion.application_method.value), promotion.application_method.currency_code)}
                             </>
                           )}
                         )
@@ -165,9 +159,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart, countryCode }) => {
                       >
                         <Trash size={14} />
                         <span className="sr-only">
-                          {isLang
-                            ? "Promo kodni olib tashlash"
-                            : "Удалить промокод"}
+                          {t({ uz: "Promo kodni olib tashlash", ru: "Удалить промокод", en: "Remove promo code" }, countryCode)}
                         </span>
                       </button>
                     )}

@@ -1,43 +1,36 @@
 import { HttpTypes } from "@medusajs/types"
-import { Heading, Text } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { firstOrSecond } from "@lib/util/firstorsecond"
 
 type ProductInfoProps = {
-  product: HttpTypes.StoreProduct,
+  product: HttpTypes.StoreProduct
   countryCode?: string
 }
 
 const ProductInfo = ({ product, countryCode }: ProductInfoProps) => {
-  const isLang = countryCode === "uz"
+  const description = firstOrSecond(product.description, countryCode)
 
   return (
-    <div id="product-info">
-      <div className="flex flex-col gap-y-4 lg:max-w-[500px] mx-auto">
-        {product.collection && (
-          <LocalizedClientLink
-            href={`/collections/${product.collection.handle}`}
-            className="text-medium text-[#D4682D] -muted hover:text-brand-peach transition-all duration-200"
-          >
-            {product.collection.title}
-          </LocalizedClientLink>
-        )}
-        <Heading
-          level="h2"
-          className="text-3xl leading-10 text-ui-fg-base"
-          data-testid="product-title"
+    <div id="product-info" className="flex flex-col gap-3">
+      {product.collection && (
+        <LocalizedClientLink
+          href={`/collections/${product.collection.handle}`}
+          className="self-start text-footnote font-medium uppercase tracking-[0.06em] text-ink-muted hover:text-brand-accent-strong"
         >
-          {product.title.includes("###") ? (isLang ? product.title.split("###")[0] : product.title.split("###")[1]) : product.title}
-        </Heading>
-
-        <Text
-          className="text-medium text-ui-fg-subtle whitespace-pre-line"
+          {firstOrSecond(product.collection.title, countryCode)}
+        </LocalizedClientLink>
+      )}
+      <h1 className="text-title-1 text-ink text-balance" data-testid="product-title">
+        {firstOrSecond(product.title, countryCode)}
+      </h1>
+      {description && (
+        <p
+          className="max-w-[65ch] whitespace-pre-line text-callout text-ink-muted"
           data-testid="product-description"
         >
-          {
-            product.description?.includes("###") ? (isLang ? product.description.split("###")[0] : product.description.split("###")[1]) : product.description
-          }
-        </Text>
-      </div>
+          {description}
+        </p>
+      )}
     </div>
   )
 }

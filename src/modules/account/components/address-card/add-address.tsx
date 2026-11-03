@@ -5,6 +5,8 @@ import { Button, Heading } from "@medusajs/ui"
 import { useEffect, useState, useActionState } from "react"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
+import { useParams } from "next/navigation"
+import { tUi } from "@lib/util/ui-strings"
 import CountrySelect from "@modules/checkout/components/country-select"
 import Input from "@modules/common/components/input"
 import Modal from "@modules/common/components/modal"
@@ -20,6 +22,7 @@ const AddAddress = ({
   addresses: HttpTypes.StoreCustomerAddress[]
 }) => {
   const [successState, setSuccessState] = useState(false)
+  const countryCode = useParams()?.countryCode as string | undefined
   const { state, open, close: closeModal } = useToggleState(false)
 
   const [formState, formAction] = useActionState(addCustomerAddress, {
@@ -49,17 +52,17 @@ const AddAddress = ({
   return (
     <>
       <button
-        className="border border-ui-border-base rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between"
+        className="flex h-full min-h-[180px] w-full flex-col items-start justify-between rounded-card border-2 border-dashed border-line-strong p-5 text-ink transition hover:bg-brand-linen/50"
         onClick={open}
         data-testid="add-address-button"
       >
-        <span className="text-base-semi">New address</span>
+        <span className="text-headline">{tUi("New address", countryCode)}</span>
         <Plus />
       </button>
 
       <Modal isOpen={state} close={close} data-testid="add-address-modal">
         <Modal.Title>
-          <Heading className="mb-2">Add address</Heading>
+          <Heading className="mb-2 text-title-3">{tUi("Add address", countryCode)}</Heading>
         </Modal.Title>
         <form action={formAction}>
           <Modal.Body>
@@ -153,9 +156,9 @@ const AddAddress = ({
                 className="h-10"
                 data-testid="cancel-button"
               >
-                Cancel
+                {tUi("Cancel", countryCode)}
               </Button>
-              <SubmitButton data-testid="save-button">Save</SubmitButton>
+              <SubmitButton data-testid="save-button">{tUi("Save", countryCode)}</SubmitButton>
             </div>
           </Modal.Footer>
         </form>

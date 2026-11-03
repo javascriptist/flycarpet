@@ -19,10 +19,10 @@ const Register = ({ setCurrentView, countryCode }: Props) => {
 
   return (
     <div
-      className="max-w-sm flex flex-col items-center p-8 rounded-3xl shadow-lg border border-gray-100"
+      className="flex w-full max-w-sm flex-col items-center rounded-card bg-surface-raised p-6 shadow-card small:p-8"
       data-testid="register-page"
     >
-      <h1 className="text-large-semi uppercase mb-6 text-brand-brown">
+      <h1 className="mb-6 text-title-2 text-ink">
         {t({ uz: "Ro\u02bcyxatdan o\u02bctish", ru: "Регистрация", en: "Sign Up" }, countryCode)}
       </h1>
       
@@ -67,34 +67,16 @@ const Register = ({ setCurrentView, countryCode }: Props) => {
           />
         </div>
         <ErrorMessage error={message} data-testid="register-error" />
-        <span className="text-center text-ui-fg-base text-small-regular mt-6">
-          {t({ uz: "Ro\u02bcyxatdan o\u02bctish orqali", ru: "Зарегистрировавшись,", en: "By signing up, you agree to our" }, countryCode)}
-          {" "}
-          <LocalizedClientLink
-            href="/content/privacy-policy"
-            className="underline"
-          >
-            {t({ uz: "Maxfiylik siyosati", ru: "Политика конфиденциальности", en: "Privacy Policy" }, countryCode)}
-          </LocalizedClientLink>{" "}
-          {t({ uz: "va", ru: "и", en: "and" }, countryCode)}{" "}
-          <LocalizedClientLink
-            href="/content/terms-of-use"
-            className="underline"
-          >
-            {t({ uz: "Foydalanish shartlariga", ru: "Условия использования", en: "Terms of Use" }, countryCode)}
-          </LocalizedClientLink>
-          {t({ uz: " rozi bo\u02bcasiz.", ru: " вы соглашаетесь.", en: "." }, countryCode)}
-        </span>
-        <SubmitButton className="w-full mt-6 rounded-3xl liquid-glass" data-testid="register-button">
+        <SubmitButton className="mt-6 small:w-full" data-testid="register-button">
           {t({ uz: "Ro\u02bcyxatdan o\u02bctish", ru: "Зарегистрироваться", en: "Sign Up" }, countryCode)}
         </SubmitButton>
       </form>
-      <span className="text-center text-ui-fg-base text-small-regular mt-6">
+      <span className="mt-6 text-center text-callout text-ink-muted">
         {t({ uz: "Yoki", ru: "Или", en: "Or" }, countryCode)}
         {" "}
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.SIGN_IN)}
-          className="underline hover:text-brand-peach transition-colors"
+          className="no-press font-medium text-brand-accent-strong hover:underline"
         >
           {t({ uz: "kiring", ru: "войдите", en: "sign in" }, countryCode)}
         </button>

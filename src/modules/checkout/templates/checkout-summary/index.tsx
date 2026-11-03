@@ -1,9 +1,8 @@
-import { Heading } from "@medusajs/ui"
+import { t } from "@lib/util/translations"
 
 import ItemsPreviewTemplate from "@modules/cart/templates/preview"
 import DiscountCode from "@modules/checkout/components/discount-code"
 import CartTotals from "@modules/common/components/cart-totals"
-import Divider from "@modules/common/components/divider"
 import { getExchangeRate } from "@lib/data/exchange-rate"
 
 const CheckoutSummary = async ({ cart, countryCode }: { cart: any; countryCode: string }) => {
@@ -11,21 +10,16 @@ const CheckoutSummary = async ({ cart, countryCode }: { cart: any; countryCode: 
   const rate = exchangeRate?.rate
 
   return (
-    <div className="sticky top-0 flex flex-col-reverse small:flex-col gap-y-8 py-8 small:py-0 ">
-      <div className="w-full flex flex-col">
-        <Divider className="my-6 small:hidden" />
-        <Heading
-          level="h2"
-          className="flex flex-row text-3xl-regular items-baseline"
-        >
-          {countryCode === "uz" ? "Hisob" : "Счет"}   
-        </Heading>
-        <Divider className="my-6" />
-        <CartTotals totals={cart} exchangeRate={rate} countryCode={countryCode} />
+    <div className="small:sticky small:top-8">
+      <div className="flex flex-col gap-5 rounded-card bg-surface-raised p-5 shadow-card small:p-6">
+        <h2 className="text-headline text-ink">
+          {t({ uz: "Buyurtma", ru: "Ваш заказ", en: "Order summary" }, countryCode)}
+        </h2>
         <ItemsPreviewTemplate cart={cart} exchangeRate={rate} countryCode={countryCode} />
-        <div className="my-6">
-          <DiscountCode cart={cart} countryCode={countryCode} />
+        <div className="border-t border-line pt-4">
+          <CartTotals totals={cart} exchangeRate={rate} countryCode={countryCode} />
         </div>
+        <DiscountCode cart={cart} countryCode={countryCode} />
       </div>
     </div>
   )

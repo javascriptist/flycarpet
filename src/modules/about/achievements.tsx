@@ -14,7 +14,7 @@ const Achievements = ({ countryCode }: AchievementsProps) => {
 
   return (
     <div className='cover'>
-      <div className=" mx-14 my-10 px-5 bg-[#F4E9DD] flex justify-between rounded-3xl max-md:flex-col" style={{ gap: '30px', padding: '20px' }}>
+      <div className=" mx-14 my-10 px-5 bg-brand-linen flex justify-between rounded-3xl max-md:flex-col" style={{ gap: '30px', padding: '20px' }}>
         {data.map((item, index) => (
           <div
             key={index}

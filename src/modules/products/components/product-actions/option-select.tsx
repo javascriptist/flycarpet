@@ -1,16 +1,17 @@
 import { HttpTypes } from "@medusajs/types"
-import { clx } from "@medusajs/ui"
+import { cx } from "@lib/util/cx"
 import React from "react"
 
 type OptionSelectProps = {
   option: HttpTypes.StoreProductOption
   current: string | undefined
-  updateOption: (title: string, value: string) => void
+  updateOption: (optionId: string, value: string) => void
   title: string
   disabled: boolean
   "data-testid"?: string
 }
 
+/** Option values (e.g. sizes) as a row of chips. Selected = solid ink. */
 const OptionSelect: React.FC<OptionSelectProps> = ({
   option,
   current,
@@ -19,29 +20,30 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
   "data-testid": dataTestId,
   disabled,
 }) => {
-  const filteredOptions = (option.values ?? []).map((v) => v.value)
+  const values = (option.values ?? []).map((v) => v.value)
 
   return (
-    <div className="flex flex-col gap-y-3">
-      <span className="text-sm"> {title}</span>
-      <div
-        className="flex flex-wrap justify-between gap-2"
-        data-testid={dataTestId}
-      >
-        {filteredOptions.map((v) => {
+    <div className="flex flex-col gap-3">
+      <div className="flex items-baseline justify-between">
+        <span className="text-headline text-ink">{title}</span>
+        {current && <span className="text-footnote text-ink-muted">{current}</span>}
+      </div>
+      <div className="flex flex-wrap gap-2" role="group" aria-label={title} data-testid={dataTestId}>
+        {values.map((v) => {
+          const selected = v === current
           return (
             <button
-              onClick={() => updateOption(option.id, v)}
+              type="button"
               key={v}
-              className={clx(
-                "bg-[#EBEBEB]  text-small-regular h-10 rounded-rounded p-2 flex-1 outline-none focus:ring-2 focus:ring-[#D9A676] focus:ring-offset-2 transition-all duration-150",
-                {
-                  "border-ui-border-interactive": v === current,
-                  "hover:shadow-elevation-card-rest transition-shadow ease-in-out duration-150":
-                    v !== current,
-                }
-              )}
+              onClick={() => updateOption(option.id, v)}
+              aria-pressed={selected}
               disabled={disabled}
+              className={cx(
+                "h-11 min-w-[4.5rem] rounded-control px-4 text-callout num transition disabled:opacity-50",
+                selected
+                  ? "bg-ink text-white"
+                  : "bg-surface-raised text-ink shadow-hairline hover:bg-brand-linen"
+              )}
               data-testid="option-button"
             >
               {v}

@@ -5,6 +5,8 @@ import AddressBook from "@modules/account/components/address-book"
 
 import { getRegion } from "@lib/data/regions"
 import { retrieveCustomer } from "@lib/data/customer"
+import { t } from "@lib/util/translations"
+import AccountPageHeader from "@modules/account/components/page-header"
 
 export const metadata: Metadata = {
   title: "Addresses",
@@ -19,23 +21,16 @@ export default async function Addresses(props: {
   const customer = await retrieveCustomer()
   const region = await getRegion(countryCode)
 
-  const isLang = countryCode === "uz"
   if (!customer || !region) {
     notFound()
   }
 
   return (
     <div className="w-full" data-testid="addresses-page-wrapper">
-      <div className="mb-8 flex flex-col gap-y-4">
-        <h1 className="text-2xl-semi">
-          {isLang ? "Manzillar" : "Адреса"}
-        </h1>
-        <p className="text-base-regular">
-          {isLang
-            ? "Barcha manzillarni ko'ring va yangilang"
-            : "Просмотрите и обновите все адреса"}
-        </p>
-      </div>
+      <AccountPageHeader
+        title={t({ uz: "Manzillar", ru: "Адреса", en: "Addresses" }, countryCode)}
+        subtitle={t({ uz: "Yetkazib berish manzillaringiz.", ru: "Ваши адреса доставки.", en: "Your saved delivery addresses." }, countryCode)}
+      />
       <AddressBook customer={customer} region={region} />
     </div>
   )

@@ -2,9 +2,10 @@ import { retrieveOrder } from "@lib/data/orders"
 import OrderDetailsTemplate from "@modules/order/templates/order-details-template"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { getExchangeRate } from "@lib/data/exchange-rate"
 
 type Props = {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string; countryCode: string }>
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -29,5 +30,7 @@ export default async function OrderDetailPage(props: Props) {
     notFound()
   }
 
-  return <OrderDetailsTemplate order={order} />
+  const rate = await getExchangeRate()
+
+  return <OrderDetailsTemplate order={order} countryCode={params.countryCode} exchangeRate={rate?.rate} />
 }

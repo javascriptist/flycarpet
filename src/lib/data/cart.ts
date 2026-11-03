@@ -115,10 +115,12 @@ export async function addToCart({
   variantId,
   quantity,
   countryCode,
+  metadata,
 }: {
   variantId: string
   quantity: number
   countryCode: string
+  metadata?: Record<string, unknown>
 }) {
   if (!variantId) {
     throw new Error("Missing variant ID when adding to cart")
@@ -140,10 +142,53 @@ export async function addToCart({
       {
         variant_id: variantId,
         quantity,
+        ...(metadata ? { metadata } : {}),
       },
       {},
       headers
     )
+    .then(async () => {
+      const cartCacheTag = await getCacheTag("carts")
+      revalidateTag(cartCacheTag)
+
+      const fulfillmentCacheTag = await getCacheTag("fulfillment")
+      revalidateTag(fulfillmentCacheTag)
+    })
+    .catch(medusaError)
+}
+
+/**
+ * Add a cut-to-length roll carpet. The backend prices it (price per metre ×
+ * length, 10 cm steps) and adds it as one line item — Medusa rounds cart
+ * quantities to whole numbers, so "quantity = metres" can't be used.
+ */
+export async function addRollCarpetToCart({
+  variantId,
+  length,
+  note,
+  countryCode,
+}: {
+  variantId: string
+  length: number
+  note?: string
+  countryCode: string
+}) {
+  const cart = await getOrSetCart(countryCode)
+
+  if (!cart) {
+    throw new Error("Error retrieving or creating cart")
+  }
+
+  const headers = {
+    ...(await getAuthHeaders()),
+  }
+
+  await sdk.client
+    .fetch(`/store/carts/${cart.id}/roll-carpet`, {
+      method: "POST",
+      headers,
+      body: { variant_id: variantId, length, note },
+    })
     .then(async () => {
       const cartCacheTag = await getCacheTag("carts")
       revalidateTag(cartCacheTag)

@@ -1,10 +1,10 @@
 import { Badge } from "@medusajs/ui"
+import { t } from "@lib/util/translations"
 
 const PaymentTest = ({ className, countryCode }: { className?: string; countryCode?: string }) => {
-  const isLang = countryCode === "uz"
   return (
     <Badge color="orange" className={className}>
-      <span className="font-semibold">{isLang ? "Diqqat:" : "Внимание:"}</span> {isLang ? "Faqat sinov maqsadida." : "Только для тестирования."}
+      <span className="font-semibold">{t({ uz: "Diqqat:", ru: "Внимание:", en: "Attention:" }, countryCode)}</span> {t({ uz: "Faqat sinov maqsadida.", ru: "Только для тестирования.", en: "For testing purposes only." }, countryCode)}
     </Badge>
   )
 }

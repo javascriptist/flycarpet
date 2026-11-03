@@ -20,7 +20,7 @@ export function SubmitButton({
   return (
     <Button
       size="large"
-      className={className}
+      className={["h-12 w-full rounded-full small:w-auto small:px-10", variant === "secondary" ? "" : "liquid-glass", className].filter(Boolean).join(" ")}
       type="submit"
       isLoading={pending}
       variant={variant || "primary"}

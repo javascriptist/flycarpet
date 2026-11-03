@@ -1,6 +1,8 @@
 "use client"
 
 import { useActionState } from "react"
+import { useParams } from "next/navigation"
+import { t } from "@lib/util/translations"
 import { createTransferRequest } from "@lib/data/orders"
 import { Text, Heading, Input, Button, IconButton, Toaster } from "@medusajs/ui"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
@@ -22,16 +24,22 @@ export default function TransferRequestForm() {
     }
   }, [state.success, state.order])
 
+  const countryCode = useParams()?.countryCode as string | undefined
+  const tr = (m: { uz: string; ru: string; en: string }) => t(m, countryCode)
+
   return (
     <div className="flex flex-col gap-y-4 w-full">
       <div className="grid sm:grid-cols-2 items-center gap-x-8 gap-y-4 w-full">
         <div className="flex flex-col gap-y-1">
-          <Heading level="h3" className="text-lg text-neutral-950">
-            Order transfers
+          <Heading level="h3" className="text-headline text-ink">
+            {tr({ uz: "Buyurtmani biriktirish", ru: "Привязать заказ", en: "Link an order" })}
           </Heading>
-          <Text className="text-base-regular text-neutral-500">
-            Can&apos;t find the order you are looking for?
-            <br /> Connect an order to your account.
+          <Text className="text-callout text-ink-muted">
+            {tr({
+              uz: "Buyurtmangiz ro\u02bcyxatda yo\u02bcqmi? Uni hisobingizga biriktiring.",
+              ru: "Не видите свой заказ? Привяжите его к аккаунту.",
+              en: "Can\u2019t find an order? Connect it to your account.",
+            })}
           </Text>
         </div>
         <form
@@ -39,12 +47,12 @@ export default function TransferRequestForm() {
           className="flex flex-col gap-y-1 sm:items-end"
         >
           <div className="flex flex-col gap-y-2 w-full">
-            <Input className="w-full" name="order_id" placeholder="Order ID" />
+            <Input className="w-full" name="order_id" placeholder={tr({ uz: "Buyurtma ID", ru: "ID заказа", en: "Order ID" })} />
             <SubmitButton
               variant="secondary"
               className="w-fit whitespace-nowrap self-end"
             >
-              Request transfer
+              {tr({ uz: "So\u02bcrov yuborish", ru: "Отправить запрос", en: "Request transfer" })}
             </SubmitButton>
           </div>
         </form>
@@ -60,10 +68,10 @@ export default function TransferRequestForm() {
             <CheckCircleMiniSolid className="w-4 h-4 text-emerald-500" />
             <div className="flex flex-col gap-y-1">
               <Text className="text-medim-pl text-neutral-950">
-                Transfer for order {state.order?.id} requested
+                {tr({ uz: "So\u02bcrov yuborildi:", ru: "Запрос отправлен:", en: "Transfer requested for" })} {state.order?.id}
               </Text>
               <Text className="text-base-regular text-neutral-600">
-                Transfer request email sent to {state.order?.email}
+                {tr({ uz: "Tasdiqlash xati yuborildi:", ru: "Письмо отправлено на", en: "Confirmation email sent to" })} {state.order?.email}
               </Text>
             </div>
           </div>

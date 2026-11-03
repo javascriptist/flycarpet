@@ -39,13 +39,11 @@ export async function GET(request: NextRequest) {
     let imageDataUri = carpetImage
     try {
       if (carpetImage.startsWith('http')) {
-        console.log('Fetching image to convert to base64...')
         const imageResponse = await fetch(carpetImage)
         const imageBuffer = await imageResponse.arrayBuffer()
         const base64 = Buffer.from(imageBuffer).toString('base64')
         const contentType = imageResponse.headers.get('content-type') || 'image/jpeg'
         imageDataUri = `data:${contentType};base64,${base64}`
-        console.log(`✅ Image converted to base64 (${(base64.length / 1024).toFixed(2)} KB)`)
       }
     } catch (error) {
       console.warn('Failed to fetch image, using URL directly:', error)
@@ -58,7 +56,6 @@ export async function GET(request: NextRequest) {
     const glbBase64 = glbBuffer.toString('base64')
     const glbDataUrl = `data:model/gltf-binary;base64,${glbBase64}`
     
-    console.log(`✅ GLB generated (${(glbBase64.length / 1024).toFixed(2)} KB)`)
     
     const modelData = {
       model_url: glbDataUrl,
@@ -352,7 +349,6 @@ function generateCarpetGLB(imageDataUri: string, width: number, length: number, 
   const imageBase64 = base64Match[1]
   const imageBuffer = Buffer.from(imageBase64, 'base64')
   
-  console.log(`Image buffer size: ${(imageBuffer.length / 1024).toFixed(2)} KB`)
   
   // Generate geometry buffer (positions + normals + texcoords + indices)
   const geometryBuffer = generateGeometryBuffer(width, length)
@@ -496,7 +492,6 @@ function generateCarpetGLB(imageDataUri: string, width: number, length: number, 
     paddedBinBuffer
   ] as any)
   
-  console.log(`✅ GLB total size: ${(glbBuffer.length / 1024).toFixed(2)} KB`)
   
   return glbBuffer
 }

@@ -1,140 +1,98 @@
-'use client'
-import { Github } from "@medusajs/icons"
-import { Button, Heading } from "@medusajs/ui"
-// use client
-import Image from 'next/image'
-import ProductList from "./products-list"
-import Footer from "@modules/layout/templates/footer"
-import { useTranslation } from "next-i18next"
-import { useState, useEffect } from 'react'
-import { t } from '@lib/util/translations'
+"use client"
 
+import Image from "next/image"
+import { useEffect, useState } from "react"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { t } from "@lib/util/translations"
 
-interface HeroProps {
-  countryCode: string;
-}
+const IMAGES = ["/rug-hero.jpg", "/heroimg1.jpg", "/heroimg2.jpg", "/heroimg3.jpg"]
+const INTERVAL_MS = 7000
 
-const Hero: React.FC<HeroProps> = ({ countryCode }) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const images = [
-    '/rug-hero.jpg',
-    '/heroimg1.jpg',
-    '/heroimg2.jpg',
-    '/heroimg3.jpg',
-  ];
+/**
+ * Full-bleed hero: a slow cross-fade between interior photos (paused when
+ * the user prefers reduced motion), copy on a bottom scrim, two actions.
+ */
+const Hero = ({ countryCode }: { countryCode: string }) => {
+  const [current, setCurrent] = useState(0)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % images.length);
-    }, 8000);
-
-    return () => clearInterval(interval);
-  }, [images.length]);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    const id = window.setInterval(() => setCurrent((i) => (i + 1) % IMAGES.length), INTERVAL_MS)
+    return () => window.clearInterval(id)
+  }, [])
 
   return (
-    <div className="w-full h-screen border-b border-ui-border-base relative flex flex-col bg-[#191718]">
-      <div className="img w-full h-[50vh] md:h-[55vh] relative overflow-hidden flex-shrink-0">
-        {images.map((img, index) => (
-          <div
-            key={img}
-            className="absolute inset-0 transition-opacity duration-1000"
-            style={{ opacity: currentSlide === index ? 1 : 0 }}
-          >
-            <Image
-              src={img}
-              alt={`Hero Image ${index + 1}`}
-              fill
-              sizes="100vw"
-              quality={100}
-              className="object-cover"
-              priority={index === 0}
-            />
-          </div>
-        ))}
-      </div>
-      <div className="txt-and-btn w-full flex-1 flex items-center justify-center bg-[#191718]">
-        <div className="flex flex-col w-full small:pr-16 pl-12 py-8 md:py-12 gap-3">
-          <span>
-          <Heading
-              level="h1"
-              className="text-2xl leading-8 text-ui-fg-component text-white font-bold mb-4"
-            >
-              {countryCode === 'uz' ? (
-                <>
-                <span className="border-b-4 border-brand-peach inline-block">
-                  Premium Carpet 
-                  </span>
-                    {' '}gilamlari
-                  
-                </>
-              ) : countryCode === 'gb' ? (
-                <>
-                  <span className="border-b-4 border-brand-peach inline-block">
-                    Premium Carpet
-                  </span>
-                  {' '}
-                </>
-              ) : (
-                <>
-                  Ковры{' '}
-                  <span className="border-b-4 border-brand-peach inline-block">
-                    Premium Carpet
-                  </span>
-                </>
-              )}
-            </Heading>
-            <Heading
-              level="h2"
-              className="text-xl leading- text-ui-fg-subtle text-white font-normal mt-2 mb-6"
-            >
-              {t({ uz: 'Uyga Sharq sehrini qo\u02bcshing va bo\u02bcshliq qanday tirik ekanligini his qiling.', ru: 'Добавьте магию Востока в свой дом и почувствуйте, как пространство оживает.', en: 'Add the magic of the East to your home and feel how the space comes alive.' }, countryCode)}
-            </Heading>
+    <section className="relative isolate h-[min(88svh,760px)] min-h-[520px] w-full overflow-hidden bg-[#191718]">
+      {IMAGES.map((src, i) => (
+        <Image
+          key={src}
+          src={src}
+          alt=""
+          fill
+          sizes="100vw"
+          priority={i === 0}
+          className="-z-10 object-cover"
+          style={{
+            opacity: i === current ? 1 : 0,
+            transition: "opacity 900ms var(--ease-in-out)",
+          }}
+        />
+      ))}
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-black/75 via-black/30 to-black/0"
+      />
+
+      <div className="content-container flex h-full flex-col justify-end pb-12 small:pb-20">
+        <div className="flex max-w-2xl flex-col gap-4 text-white">
+          <span className="text-footnote font-medium uppercase tracking-[0.12em] text-brand-peach">
+            Premium Carpet
           </span>
-          <a
-            href={`/${countryCode}/store`}
-          >
-            <Button variant="secondary" className="bg-ui-fg-component liquid-glass text-white rounded-3xl py-4 px-8 text-md bg-[#D9A676] hover:bg-[#A65A3A] hover:text-white transition-all duration-200">
-              {t({ uz: 'Mahsulotlarni ko\u02bcrish', ru: 'Посмотреть продукты', en: 'View products' }, countryCode)}
-            </Button>
-          </a>
+          <h1 className="text-display text-balance">
+            {t(
+              {
+                uz: "Uyingizga Sharq iliqligini olib keling",
+                ru: "Тепло Востока — в вашем доме",
+                en: "Bring the warmth of the East home",
+              },
+              countryCode
+            )}
+          </h1>
+          <p className="max-w-[48ch] text-body text-white/85 small:text-title-3 small:font-normal">
+            {t(
+              {
+                uz: "Qoʼlda toʼqilgan va zamonaviy gilamlar, oʼlchamingizga kesiladigan rulonlar va Oʼzbekiston boʼylab yetkazib berish.",
+                ru: "Ковры ручной работы и современные модели, ковролин на отрез по вашему размеру и доставка по всему Узбекистану.",
+                en: "Hand-knotted and modern rugs, roll carpet cut to your size, and delivery across Uzbekistan.",
+              },
+              countryCode
+            )}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-3">
+            <LocalizedClientLink href="/store" className="btn-primary">
+              {t({ uz: "Katalogni koʼrish", ru: "Смотреть каталог", en: "Shop rugs" }, countryCode)}
+            </LocalizedClientLink>
+            <a
+              href="#categories"
+              className="inline-flex h-12 items-center justify-center rounded-full bg-white/15 px-6 font-medium text-white ring-1 ring-white/30 backdrop-blur-md transition hover:bg-white/25"
+            >
+              {t({ uz: "Turkumlar", ru: "Категории", en: "Categories" }, countryCode)}
+            </a>
+          </div>
+        </div>
+
+        <div className="mt-8 flex gap-1.5" aria-hidden>
+          {IMAGES.map((src, i) => (
+            <span
+              key={src}
+              className={`h-1 rounded-full transition-[width,background-color] duration-300 ${
+                i === current ? "w-6 bg-white" : "w-1.5 bg-white/40"
+              }`}
+            />
+          ))}
         </div>
       </div>
-      {/* <ProductList
-        sortBy={"price_asc" | "price_desc" | "created_at" }
-        page={1}
-        collectionId="pcol_01JNE5NZW1NFZSEMYG3F3R43J6"
-        categoryId="pcat_01JN14ET834W4JJEBKXGQJXY41"
-        countryCode="uz"
-        productsIds={["prod_01JNE50A32D04HEWC82P52X4RD"]}
-      /> */}
-      {/* <div className="absolute inset-0 z-10 flex flex-col justify-center items-center text-center small:p-32 gap-6">
-        <span>
-          <Heading
-            level="h1"
-            className="text-3xl leading-10 text-ui-fg-base font-normal"
-          >
-           Welcome
-          </Heading>
-          <Heading
-            level="h2"
-            className="text-3xl leading-10 text-ui-fg-subtle font-normal"
-          >
-            Powered by Medusa and Next.js
-          </Heading>
-        </span>
-        <a
-          href="https://github.com/medusajs/nextjs-starter-medusa"
-          target="_blank"
-        >
-          <Button variant="secondary">
-            View on GitHub
-            <Github />
-          </Button>
-        </a>
-      </div>
-    </div> */}
-    </div>
+    </section>
   )
 }
 

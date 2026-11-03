@@ -1,11 +1,7 @@
 "use client"
 
-import repeat from "@lib/util/repeat"
 import { HttpTypes } from "@medusajs/types"
-import { Table, clx } from "@medusajs/ui"
-
 import Item from "@modules/cart/components/item"
-import SkeletonLineItem from "@modules/skeletons/components/skeleton-line-item"
 
 type ItemsTemplateProps = {
   cart: HttpTypes.StoreCart
@@ -13,42 +9,28 @@ type ItemsTemplateProps = {
   countryCode?: string
 }
 
+/** Compact, read-only list of cart lines for the checkout summary. */
 const ItemsPreviewTemplate = ({ cart, exchangeRate, countryCode }: ItemsTemplateProps) => {
-  const items = cart.items
-  const hasOverflow = items && items.length > 4
+  const items = [...(cart.items ?? [])].sort((a, b) =>
+    (a.created_at ?? "") > (b.created_at ?? "") ? -1 : 1
+  )
 
   return (
-    <div
-      className={clx({
-        "pl-[1px] overflow-y-scroll overflow-x-hidden no-scrollbar max-h-[420px]":
-          hasOverflow,
-      })}
+    <ul
+      className="max-h-[420px] divide-y divide-line overflow-y-auto overscroll-contain"
+      data-testid="items-table"
     >
-      <Table>
-        <Table.Body data-testid="items-table">
-          {items
-            ? items
-                .sort((a, b) => {
-                  return (a.created_at ?? "") > (b.created_at ?? "") ? -1 : 1
-                })
-                .map((item) => {
-                  return (
-                    <Item
-                      key={item.id}
-                      item={item}
-                      type="preview"
-                      currencyCode={cart.currency_code}
-                      exchangeRate={exchangeRate}
-                      countryCode={countryCode}
-                    />
-                  )
-                })
-            : repeat(5).map((i) => {
-                return <SkeletonLineItem key={i} />
-              })}
-        </Table.Body>
-      </Table>
-    </div>
+      {items.map((item) => (
+        <Item
+          key={item.id}
+          item={item}
+          type="preview"
+          currencyCode={cart.currency_code}
+          exchangeRate={exchangeRate}
+          countryCode={countryCode}
+        />
+      ))}
+    </ul>
   )
 }
 

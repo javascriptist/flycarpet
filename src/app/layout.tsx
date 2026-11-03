@@ -1,5 +1,5 @@
 import { getBaseURL } from "@lib/util/env"
-import { Metadata } from "next"
+import { Metadata, Viewport } from "next"
 import localFont from "next/font/local"
 import "styles/globals.css"
 
@@ -38,10 +38,18 @@ export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
 }
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover", // lets us pad for the notch / home indicator with env(safe-area-inset-*)
+  interactiveWidget: "resizes-content", // Android keyboard resizes the layout like iOS
+  themeColor: "#FAF7F3", // browser chrome matches the cream page
+}
+
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en" data-mode="light">
-      <body className={`${satoshi.variable} font-satoshi bg-brand-cream`}>
+      <body className={`${satoshi.variable} font-satoshi bg-brand-cream text-ink`}>
         <main className="relative">{props.children}</main>
       </body>
     </html>

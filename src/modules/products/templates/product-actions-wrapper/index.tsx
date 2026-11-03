@@ -1,5 +1,4 @@
 import { listProducts } from "@lib/data/products"
-import { retrieveCart } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import EnhancedProductActions from "@modules/products/components/enhanced-product-actions"
 import { getExchangeRate } from "@lib/data/exchange-rate"
@@ -25,14 +24,12 @@ export default async function ProductActionsWrapper({
   }
 
   const exchangeRate = await getExchangeRate()
-  const cart = await retrieveCart().catch(() => null)
 
   return (
     <EnhancedProductActions 
       product={product} 
       region={region} 
       exchangeRate={exchangeRate?.rate}
-      cartId={cart?.id}
     />
   )
 }

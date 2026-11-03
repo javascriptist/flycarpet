@@ -1,43 +1,38 @@
-"use client"
-
-import { Button } from "@medusajs/ui"
-
-import OrderCard from "../order-card"
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import OrderRow from "@modules/account/components/order-row"
+import { t } from "@lib/util/translations"
 
-const OrderOverview = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
+const OrderOverview = ({
+  orders,
+  countryCode,
+  exchangeRate,
+}: {
+  orders: HttpTypes.StoreOrder[]
+  countryCode: string
+  exchangeRate?: number
+}) => {
   if (orders?.length) {
     return (
-      <div className="flex flex-col gap-y-8 w-full">
+      <ul className="flex w-full flex-col gap-3">
         {orders.map((o) => (
-          <div
-            key={o.id}
-            className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
-          >
-            <OrderCard order={o} />
-          </div>
+          <li key={o.id}>
+            <OrderRow order={o} countryCode={countryCode} exchangeRate={exchangeRate} />
+          </li>
         ))}
-      </div>
+      </ul>
     )
   }
 
   return (
-    <div
-      className="w-full flex flex-col items-center gap-y-4"
-      data-testid="no-orders-container"
-    >
-      <h2 className="text-large-semi">Nothing to see here</h2>
-      <p className="text-base-regular">
-        You don&apos;t have any orders yet, let us change that {":)"}
+    <div className="flex w-full flex-col items-center gap-3 rounded-card bg-brand-linen px-6 py-12 text-center" data-testid="no-orders-container">
+      <h2 className="text-title-3 text-ink">{t({ uz: "Hozircha buyurtmalar yoʼq", ru: "Заказов пока нет", en: "No orders yet" }, countryCode)}</h2>
+      <p className="text-callout text-ink-muted">
+        {t({ uz: "Birinchi gilamingizni tanlang.", ru: "Выберите свой первый ковёр.", en: "Find your first rug." }, countryCode)}
       </p>
-      <div className="mt-4">
-        <LocalizedClientLink href="/" passHref>
-          <Button data-testid="continue-shopping-button">
-            Continue shopping
-          </Button>
-        </LocalizedClientLink>
-      </div>
+      <LocalizedClientLink href="/store" className="btn-primary mt-2" data-testid="continue-shopping-button">
+        {t({ uz: "Katalogga oʼtish", ru: "Перейти в каталог", en: "Browse rugs" }, countryCode)}
+      </LocalizedClientLink>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from "react"
+import { t } from "@lib/util/translations"
 
 interface ImageUploaderProps {
   onImageUpload: (imageUrl: string) => void
@@ -13,7 +14,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const isLang = countryCode === "uz"
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -70,7 +70,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         onClick={() => fileInputRef.current?.click()}
         className={`
           border-2 border-dashed rounded-xl p-12 text-center cursor-pointer
-          transition-all duration-200
+          transition duration-200
           ${
             isDragging
               ? 'border-brand-peach bg-orange-50'
@@ -98,19 +98,15 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           
           <div>
             <p className="text-lg font-semibold text-gray-900">
-              {isLang
-                ? "Xona rasmini yuklang"
-                : "Загрузите фото комнаты"}
+              {t({ uz: "Xona rasmini yuklang", ru: "Загрузите фото комнаты", en: "Upload a photo of your room" }, countryCode)}
             </p>
             <p className="text-sm text-gray-500 mt-1">
-              {isLang
-                ? "Rasmni bu yerga sudrab keling yoki bosing"
-                : "Перетащите изображение сюда или нажмите"}
+              {t({ uz: "Rasmni bu yerga sudrab keling yoki bosing", ru: "Перетащите изображение сюда или нажмите", en: "Drag an image here or click" }, countryCode)}
             </p>
           </div>
 
           <p className="text-xs text-gray-400">
-            PNG, JPG, WEBP {isLang ? "gacha" : "до"} 10MB
+            PNG, JPG, WEBP {t({ uz: "gacha", ru: "до", en: "up to" }, countryCode)} 10MB
           </p>
         </div>
       </div>

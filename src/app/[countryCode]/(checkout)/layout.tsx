@@ -1,44 +1,30 @@
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import ChevronDown from "@modules/common/icons/chevron-down"
-import MedusaCTA from "@modules/layout/components/medusa-cta"
+import Image from "next/image"
+import BackToCart from "@modules/checkout/components/back-to-cart"
+import { getExchangeRate } from "@lib/data/exchange-rate"
+import { ExchangeRateProvider } from "@lib/context/currency-context"
 
-export default function CheckoutLayout({
+export default async function CheckoutLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const exchangeRate = await getExchangeRate()
+
   return (
-    
-    <div className="w-full relative small:min-h-screen">
-      <div className="h-16 border-b ">
-        <nav className="flex h-full items-center content-container justify-between">
-          <LocalizedClientLink
-            href="/cart"
-            className="text-small-semi text-ui-fg-base flex items-center gap-x-2 uppercase flex-1 basis-0"
-            data-testid="back-to-cart-link"
-          >
-            <ChevronDown className="rotate-90" size={16} />
-            <span className="mt-px hidden small:block txt-compact-plus text-ui-fg-subtle hover:text-ui-fg-base ">
-              Back to shopping cart
-            </span>
-            <span className="mt-px block small:hidden txt-compact-plus text-ui-fg-subtle hover:text-ui-fg-base">
-              Back
-            </span>
-          </LocalizedClientLink>
-          <LocalizedClientLink
-            href="/"
-            className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
-            data-testid="store-link"
-          >
-            Premium Carpet
+    <ExchangeRateProvider rate={exchangeRate?.rate}>
+    <div className="w-full relative small:min-h-dvh">
+      <header className="sticky top-0 z-50 h-16 bg-[#191718]/90 backdrop-blur-xl backdrop-saturate-150">
+        <nav className="content-container flex h-full items-center justify-between text-brand-peach">
+          <BackToCart />
+          <LocalizedClientLink href="/" data-testid="store-link" aria-label="Premium Carpet" className="hover:opacity-80">
+            <Image src="/pclogo_tp.png" alt="Premium Carpet" width={150} height={40} />
           </LocalizedClientLink>
           <div className="flex-1 basis-0" />
         </nav>
-      </div>
+      </header>
       <div className="relative" data-testid="checkout-container">{children}</div>
-      <div className="py-4 w-full flex items-center justify-center">
-        {/* <MedusaCTA /> */}
-      </div>
     </div>
+    </ExchangeRateProvider>
   )
 }

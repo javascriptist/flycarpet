@@ -22,7 +22,6 @@ export async function POST(request: NextRequest) {
   try {
     // Check if Replicate API token is configured
     if (!REPLICATE_API_TOKEN) {
-      console.log('⚠️  Replicate API token not configured, using OpenCV fallback')
       return NextResponse.json(
         { 
           error: 'Replicate API key not configured',
@@ -44,8 +43,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('🔍 Calling Replicate API for floor detection...')
-    console.log('  Model: meta/sam (Segment Anything)')
     
     // Initialize Replicate client
     const replicate = new Replicate({
@@ -58,8 +55,6 @@ export async function POST(request: NextRequest) {
       imageDataURI = `data:image/jpeg;base64,${image}`
     }
 
-    console.log('  Image size:', image.length, 'bytes')
-    console.log('  Running Grounded SAM for floor segmentation...')
 
     // Run Grounded SAM - no version hash, uses latest
     // Let Replicate auto-select the working version
@@ -75,12 +70,9 @@ export async function POST(request: NextRequest) {
       }
     ) as any
 
-    console.log('✅ Received segmentation results from Replicate')
-    console.log('  Output type:', typeof output, Array.isArray(output) ? 'array' : 'object')
 
     // Grounded SAM returns object with masks, boxes, labels, scores
     if (!output) {
-      console.log('⚠️ No output from model, using OpenCV fallback')
       return NextResponse.json({
         success: false,
         fallback: true,
@@ -92,7 +84,6 @@ export async function POST(request: NextRequest) {
     const hasResults = output.masks && output.masks.length > 0
     
     if (!hasResults) {
-      console.log('⚠️ No floor segments detected, using OpenCV fallback')
       return NextResponse.json({
         success: false,
         fallback: true,
@@ -100,10 +91,6 @@ export async function POST(request: NextRequest) {
       }, { status: 200 })
     }
 
-    console.log('🎯 Floor segmentation successful!')
-    console.log('  Segments found:', output.masks.length)
-    console.log('  Labels:', output.labels)
-    console.log('  Scores:', output.scores?.map((s: number) => (s * 100).toFixed(1) + '%'))
 
     // Get the best mask (first one is usually best)
     const bestMask = output.masks[0]
